@@ -19,6 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
+      <head>
+        <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+      </head>
       <body className="antialiased bg-[#F7F6F2] text-[#101D2B]">{children}</body>
     </html>
   );
