@@ -11,6 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -479,6 +480,99 @@
 
   <script>
     const STORAGE_KEY = 'nesta_prod_state_v2';
+    const SUPABASE_URL = 'https://wmfsfijcbmzkczloylsr.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Z0qyrmANJSauZlG0TIr34g_d4bpTdaE';
+    const sbClient = (window.supabase && window.supabase.createClient)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+      : null;
+    let currentSpaceId = null;
+    let syncTimer = null;
+
+    function getSharedPayload() {
+      return {
+        couple: state.couple,
+        monthlyBudgets: state.monthlyBudgets,
+        customBudgets: state.customBudgets,
+        poolDeposits: state.poolDeposits,
+        expenses: state.expenses,
+        settlements: state.settlements,
+        bills: state.bills,
+        goals: state.goals,
+        categories: state.categories,
+        billCategories: state.billCategories,
+        goalCategories: state.goalCategories
+      };
+    }
+
+    function applySharedPayload(d) {
+      if (!d) return;
+      if (d.couple) state.couple = d.couple;
+      if (d.monthlyBudgets) state.monthlyBudgets = d.monthlyBudgets;
+      if (d.customBudgets) state.customBudgets = d.customBudgets;
+      if (d.poolDeposits) state.poolDeposits = d.poolDeposits;
+      if (d.expenses) state.expenses = d.expenses;
+      if (d.settlements) state.settlements = d.settlements;
+      if (d.bills) state.bills = d.bills;
+      if (d.goals) state.goals = d.goals;
+      if (d.categories) state.categories = d.categories;
+      if (d.billCategories) state.billCategories = d.billCategories;
+      if (d.goalCategories) state.goalCategories = d.goalCategories;
+    }
+
+    async function pushToSupabase() {
+      if (!sbClient || !currentSpaceId || !state.isAuthenticated) return;
+      try {
+        await sbClient
+          .from('nesta_spaces')
+          .update({ data: getSharedPayload(), updated_at: new Date().toISOString() })
+          .eq('id', currentSpaceId);
+      } catch (err) {}
+    }
+
+    async function loadUserSpace(user) {
+      if (!sbClient || !user) return false;
+      const { data: spaces } = await sbClient
+        .from('nesta_spaces')
+        .select('*')
+        .or(`owner_id.eq.${user.id},partner_id.eq.${user.id}`)
+        .limit(1);
+
+      if (spaces && spaces.length > 0) {
+        const sp = spaces[0];
+        currentSpaceId = sp.id;
+        applySharedPayload(sp.data);
+        const role = sp.owner_id === user.id ? 'partner_a' : 'partner_b';
+        state.activeRole = role;
+        state.currentUser = {
+          name: (user.user_metadata && user.user_metadata.full_name) || (role === 'partner_a' ? state.couple.partnerA.name : state.couple.partnerB.name),
+          email: user.email,
+          role,
+          avatar: (state.currentUser && state.currentUser.avatar) || ''
+        };
+        state.isAuthenticated = true;
+        state.activePage = 'dashboard';
+        saveStateLocalOnly();
+        subscribeSpaceRealtime(sp.id);
+        return true;
+      }
+      return false;
+    }
+
+    function subscribeSpaceRealtime(spaceId) {
+      if (!sbClient || !spaceId) return;
+      try {
+        sbClient.channel('nesta-space-' + spaceId)
+          .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'nesta_spaces', filter: 'id=eq.' + spaceId }, payload => {
+            if (payload.new && payload.new.data) {
+              applySharedPayload(payload.new.data);
+              saveStateLocalOnly();
+              render();
+            }
+          })
+          .subscribe();
+      } catch (e) {}
+    }
+
     const DEFAULT_CATEGORIES = [
       'Sewa Rumah', 'Belanja Harian', 'Utilitas', 'Transportasi',
       'Makan & Minum', 'Hiburan', 'Rumah Tangga', 'Lainnya'
@@ -544,11 +638,11 @@
         notifications: { billReminder: true, monthlyWrapup: true },
         hasSeenTutorial: true,
         tutorialStep: 0,
-        isAuthenticated: true,
+        isAuthenticated: false,
         authTab: 'login',
         registeredUsers: [{ name: 'Clayrens', email: 'clayrens@nesta.id', pass: '123456', role: 'partner_a' }],
         currentUser: { name: 'Clayrens', email: 'clayrens@nesta.id', role: 'partner_a' },
-        activePage: 'dashboard',
+        activePage: 'landing',
         selectedMonth: ym,
         sidebarOpen: true,
         couple: {
@@ -590,10 +684,16 @@
       return getDefaultState();
     }
 
-    function saveState() {
+    function saveStateLocalOnly() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (e) {}
+    }
+
+    function saveState() {
+      saveStateLocalOnly();
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(pushToSupabase, 350);
     }
 
     function formatIDR(num) {
@@ -2109,11 +2209,15 @@
       document.getElementById('tutorial-modal').classList.add('hidden');
     }
 
-    function logoutUser() {
+    async function logoutUser() {
+      if (sbClient) {
+        try { await sbClient.auth.signOut(); } catch (e) {}
+      }
+      currentSpaceId = null;
       state.isAuthenticated = false;
       state.currentUser = null;
       state.activePage = 'landing';
-      saveState();
+      saveStateLocalOnly();
       render();
       showToast(state.lang === 'en' ? 'Signed out successfully.' : 'Anda telah keluar dari akun.');
     }
@@ -2131,96 +2235,118 @@
       }
     }
 
-    function handleAuthSubmit(e) {
+    async function handleAuthSubmit(e) {
       e.preventDefault();
       const email = document.getElementById('auth-email').value.trim().toLowerCase();
       const pass = document.getElementById('auth-password').value;
       const errEl = document.getElementById('auth-error');
       const isEn = state.lang === 'en';
+      errEl.classList.add('hidden');
       if (!email || pass.length < 6) {
         errEl.textContent = isEn ? 'Enter a valid email and password (min 6 characters).' : 'Masukkan email yang valid dan kata sandi minimal 6 karakter.';
         errEl.classList.remove('hidden');
         return;
       }
-      if (!state.registeredUsers) state.registeredUsers = [];
 
-      if (state.authTab === 'register') {
-        if (state.registeredUsers.some(u => u.email === email)) {
-          errEl.textContent = isEn ? 'Email already registered. Please sign in.' : 'Email sudah terdaftar. Silakan masuk.';
-          errEl.classList.remove('hidden');
-          return;
-        }
-        const name = document.getElementById('auth-name').value.trim() || email.split('@')[0];
-        const roleChoice = document.getElementById('auth-role').value;
-        if (roleChoice === 'partner_b') {
-          const entered = (document.getElementById('auth-invite-code').value || '').trim();
-          const expectedShort = state.couple.inviteCode.split('/').pop();
-          if (!entered || (!entered.includes(expectedShort) && entered !== state.couple.inviteCode)) {
-            errEl.textContent = isEn ? `Invalid invite link/code. Use "${expectedShort}".` : `Kode/tautan undangan tidak cocok. Gunakan "${expectedShort}".`;
+      if (sbClient) {
+        if (state.authTab === 'register') {
+          const name = document.getElementById('auth-name').value.trim() || email.split('@')[0];
+          const roleChoice = document.getElementById('auth-role').value;
+          const { data: signUpData, error: signUpErr } = await sbClient.auth.signUp({
+            email,
+            password: pass,
+            options: { data: { full_name: name } }
+          });
+          if (signUpErr) {
+            errEl.textContent = signUpErr.message;
             errEl.classList.remove('hidden');
             return;
           }
-          state.couple.partnerJoined = true;
-          state.couple.partnerB.name = name;
+          const user = signUpData.user;
+          if (!signUpData.session || !user) {
+            errEl.textContent = isEn ? 'Check your email to confirm your account, then sign in.' : 'Cek email Anda untuk konfirmasi akun, lalu masuk.';
+            errEl.classList.remove('hidden');
+            return;
+          }
+
+          if (roleChoice === 'partner_b') {
+            const entered = (document.getElementById('auth-invite-code').value || '').trim();
+            const shortCode = entered.split('/').pop();
+            const { data: joined, error: joinErr } = await sbClient.rpc('join_nesta_space', { p_invite: shortCode, p_partner_name: name });
+            if (joinErr || !joined) {
+              errEl.textContent = (joinErr && joinErr.message) || (isEn ? 'Invite code not found.' : 'Kode undangan tidak ditemukan.');
+              errEl.classList.remove('hidden');
+              return;
+            }
+          } else {
+            const randCode = Math.random().toString(36).substring(2, 8);
+            state.couple = {
+              name: (isEn ? 'Shared Space ' : 'Ruang Bersama ') + name,
+              inviteCode: 'https://nesta.id/couple/' + randCode,
+              partnerJoined: false,
+              monthlyBudget: 0,
+              partnerA: { id: 'partner_a', name },
+              partnerB: { id: 'partner_b', name: isEn ? 'Partner' : 'Pasangan' }
+            };
+            state.expenses = [];
+            state.poolDeposits = [];
+            state.settlements = [];
+            state.bills = [];
+            state.goals = [];
+            state.customBudgets = [];
+            const { error: insErr } = await sbClient.from('nesta_spaces').insert({
+              id: 'sp-' + Date.now(),
+              invite_code: randCode,
+              owner_id: user.id,
+              data: getSharedPayload()
+            });
+            if (insErr) {
+              errEl.textContent = insErr.message;
+              errEl.classList.remove('hidden');
+              return;
+            }
+          }
+          await loadUserSpace(user);
+          render();
+          showToast((isEn ? 'Welcome, ' : 'Selamat datang, ') + name + '!');
+          if (!state.hasSeenTutorial) setTimeout(() => openTutorial(0), 250);
+          return;
         } else {
-          const randCode = Math.random().toString(36).substring(2, 8);
-          state.couple = {
-            name: (isEn ? 'Shared Space ' : 'Ruang Bersama ') + name,
-            inviteCode: 'https://nesta.id/couple/' + randCode,
-            partnerJoined: false,
-            monthlyBudget: 0,
-            partnerA: { id: 'partner_a', name },
-            partnerB: { id: 'partner_b', name: isEn ? 'Partner' : 'Pasangan' }
-          };
-          state.expenses = [];
-          state.poolDeposits = [];
-          state.settlements = [];
-          state.bills = [];
-          state.goals = [];
-          state.customBudgets = [];
-        }
-        const userObj = { name, email, pass, role: roleChoice };
-        state.registeredUsers.push(userObj);
-        state.activeRole = roleChoice;
-        state.currentUser = { name, email, role: roleChoice };
-      } else {
-        const found = state.registeredUsers.find(u => u.email === email && u.pass === pass);
-        if (!found) {
-          errEl.textContent = isEn ? 'Account not found or wrong password. Please register first.' : 'Akun tidak ditemukan atau kata sandi salah. Silakan daftar akun terlebih dahulu.';
-          errEl.classList.remove('hidden');
+          const { data: signInData, error: signInErr } = await sbClient.auth.signInWithPassword({ email, password: pass });
+          if (signInErr) {
+            errEl.textContent = signInErr.message;
+            errEl.classList.remove('hidden');
+            return;
+          }
+          const ok = await loadUserSpace(signInData.user);
+          if (!ok) {
+            const name = (signInData.user.user_metadata && signInData.user.user_metadata.full_name) || email.split('@')[0];
+            const randCode = Math.random().toString(36).substring(2, 8);
+            state.couple.partnerA.name = name;
+            state.couple.inviteCode = 'https://nesta.id/couple/' + randCode;
+            await sbClient.from('nesta_spaces').insert({
+              id: 'sp-' + Date.now(),
+              invite_code: randCode,
+              owner_id: signInData.user.id,
+              data: getSharedPayload()
+            });
+            await loadUserSpace(signInData.user);
+          }
+          render();
+          showToast((isEn ? 'Welcome back, ' : 'Selamat datang kembali, ') + state.currentUser.name + '!');
           return;
         }
-        state.activeRole = found.role;
-        state.currentUser = { name: found.name, email: found.email, role: found.role };
-      }
-
-      const isNewUser = state.authTab === 'register';
-      state.isAuthenticated = true;
-      state.activePage = 'dashboard';
-      saveState();
-      render();
-      showToast((isEn ? 'Welcome, ' : 'Selamat datang, ') + state.currentUser.name + '!');
-      if (isNewUser || !state.hasSeenTutorial) {
-        setTimeout(() => openTutorial(0), 250);
       }
     }
 
-    function handleGoogleLogin() {
-      const isEn = state.lang === 'en';
-      if (!state.registeredUsers) state.registeredUsers = [];
-      const gEmail = 'clayrens@gmail.com';
-      let user = state.registeredUsers.find(u => u.email === gEmail);
-      if (!user) {
-        user = { name: state.couple.partnerA.name || 'Clayrens', email: gEmail, pass: 'google-oauth', role: 'partner_a', provider: 'google' };
-        state.registeredUsers.push(user);
+    async function handleGoogleLogin() {
+      if (sbClient) {
+        const { error } = await sbClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: window.location.origin }
+        });
+        if (error) showToast(error.message);
       }
-      state.activeRole = user.role;
-      state.currentUser = { name: user.name, email: user.email, role: user.role, avatar: user.avatar || '' };
-      state.isAuthenticated = true;
-      state.activePage = 'dashboard';
-      saveState();
-      render();
-      showToast((isEn ? 'Signed in with Google as ' : 'Berhasil masuk dengan Google sebagai ') + user.name + '!');
     }
 
     function openForgotMode() {
@@ -2228,29 +2354,22 @@
       render();
     }
 
-    function handleForgotSubmit(e) {
+    async function handleForgotSubmit(e) {
       e.preventDefault();
       const isEn = state.lang === 'en';
       const email = document.getElementById('forgot-email').value.trim().toLowerCase();
-      const newPass = document.getElementById('forgot-newpass').value;
       const errEl = document.getElementById('auth-error');
-      if (!state.registeredUsers) state.registeredUsers = [];
-      const user = state.registeredUsers.find(u => u.email === email);
-      if (!user) {
-        errEl.textContent = isEn ? 'Email not registered.' : 'Email belum terdaftar.';
-        errEl.classList.remove('hidden');
-        return;
+      if (sbClient) {
+        const { error } = await sbClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+        if (error) {
+          errEl.textContent = error.message;
+          errEl.classList.remove('hidden');
+          return;
+        }
+        state.authTab = 'login';
+        render();
+        showToast(isEn ? 'Password reset email sent! Check your inbox.' : 'Email reset kata sandi terkirim! Cek kotak masuk Anda.');
       }
-      if (newPass.length < 6) {
-        errEl.textContent = isEn ? 'New password must be at least 6 characters.' : 'Kata sandi baru minimal 6 karakter.';
-        errEl.classList.remove('hidden');
-        return;
-      }
-      user.pass = newPass;
-      state.authTab = 'login';
-      saveState();
-      render();
-      showToast(isEn ? 'Password reset! Please sign in with your new password.' : 'Kata sandi berhasil diperbarui! Silakan masuk.');
     }
 
     function handleAvatarUpload(input) {
@@ -2296,7 +2415,7 @@
       showToast(state.lang === 'en' ? 'Account profile updated.' : 'Profil akun diperbarui.');
     }
 
-    function changeAccountPassword(e) {
+    async function changeAccountPassword(e) {
       e.preventDefault();
       const isEn = state.lang === 'en';
       const oldP = document.getElementById('acc-old-pass').value;
@@ -2304,10 +2423,6 @@
       const confP = document.getElementById('acc-conf-pass').value;
       if (!state.currentUser) return;
       const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
-      if (reg && reg.pass !== 'google-oauth' && reg.pass !== oldP) {
-        showToast(isEn ? 'Current password is incorrect.' : 'Kata sandi saat ini salah.');
-        return;
-      }
       if (newP.length < 6) {
         showToast(isEn ? 'New password must be at least 6 characters.' : 'Kata sandi baru minimal 6 karakter.');
         return;
@@ -2315,6 +2430,10 @@
       if (newP !== confP) {
         showToast(isEn ? 'Password confirmation does not match.' : 'Konfirmasi kata sandi tidak cocok.');
         return;
+      }
+      if (sbClient) {
+        const { error } = await sbClient.auth.updateUser({ password: newP });
+        if (error) { showToast(error.message); return; }
       }
       if (reg) reg.pass = newP;
       saveState();
@@ -3422,7 +3541,17 @@
     });
 
 
-    window.addEventListener('DOMContentLoaded', render);
+    window.addEventListener('DOMContentLoaded', async () => {
+      if (sbClient) {
+        try {
+          const { data } = await sbClient.auth.getSession();
+          if (data && data.session && data.session.user) {
+            await loadUserSpace(data.session.user);
+          }
+        } catch (e) {}
+      }
+      render();
+    });
   </script>
 </body>
 </html>
