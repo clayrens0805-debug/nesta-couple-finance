@@ -1,0 +1,16 @@
+{
+  "name": "NESTA — Couple & Family Finance",
+  "short_name": "NESTA",
+  "description": "Separate Money. Shared Life. Kelola keuangan bersama tanpa menggabungkan rekening pribadi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F6F2",
+  "theme_color": "#0F1E28",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
