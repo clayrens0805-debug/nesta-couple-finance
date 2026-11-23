@@ -1,0 +1,3428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NESTA — Separate Money. Shared Life.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#0F1E28',
+            forest: '#0E4D38',
+            emerald: '#16A37B',
+            ivory: '#F7F6F2',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #F7F6F2;
+      color: #101D2B;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+    .card-nesta {
+      background: #FFFFFF;
+      border: 1px solid #EAE7DF;
+      border-radius: 18px;
+      box-shadow: 0 2px 8px rgba(16, 29, 43, 0.03);
+    }
+    .btn-primary {
+      background-color: #0E4D38;
+      color: #FFFFFF;
+      transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-primary:hover { background-color: #0B3D2C; }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-emerald {
+      background-color: #16A37B;
+      color: #FFFFFF;
+      transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-emerald:hover { background-color: #128967; }
+    .btn-emerald:active { transform: scale(0.98); }
+    .sidebar-nav-item {
+      color: #9FB0BE;
+      transition: all 150ms ease;
+    }
+    .sidebar-nav-item:hover {
+      background-color: rgba(255, 255, 255, 0.06);
+      color: #FFFFFF;
+    }
+    .sidebar-nav-item.active {
+      background-color: #1D313F;
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+    .tut-spotlight {
+      box-shadow: 0 0 0 4px rgba(22, 163, 123, 0.35), 0 12px 28px rgba(15, 30, 40, 0.14) !important;
+      border-color: #16A37B !important;
+      transition: all 250ms ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row">
+
+  <!-- Desktop Collapsible Left Sidebar -->
+  <aside id="desktop-sidebar" class="hidden md:flex md:flex-col md:w-60 lg:w-64 md:fixed md:inset-y-0 md:left-0 bg-[#0F1E28] text-white z-30">
+    <div class="px-5 pt-6 pb-5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <svg class="w-9 h-9 shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="10" fill="#16A37B" fill-opacity="0.14"/>
+          <path d="M9 31V18C9 11.9249 13.9249 7 20 7C26.0751 7 31 11.9249 31 18V31H24.5V19C24.5 16.5147 22.4853 14.5 20 14.5C17.5147 14.5 15.5 16.5147 15.5 19V31H9Z" fill="#16A37B"/>
+          <path d="M20 7C26.0751 7 31 11.9249 31 18V31H24.5V19C24.5 16.5147 22.4853 14.5 20 14.5V7Z" fill="#22C594"/>
+        </svg>
+        <div>
+          <div class="text-xl font-bold tracking-tight text-white leading-none">NESTA</div>
+          <div class="text-[11px] text-[#8FA2B2] mt-1">Separate Money. Shared Life.</div>
+        </div>
+      </div>
+      <button onclick="toggleSidebar(false)" title="Sembunyikan Menu" class="p-1.5 rounded-lg text-[#9FB0BE] hover:text-white hover:bg-white/10 transition-colors">
+        <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <nav class="flex-1 px-3 py-2 space-y-1 overflow-y-auto" id="desktop-nav">
+      <button data-nav="dashboard" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        <span data-i18n="nav_dashboard">Ringkasan</span>
+      </button>
+      <button data-nav="couple" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm">
+        <i data-lucide="users" class="w-4 h-4"></i>
+        <span data-i18n="nav_couple">Ruang Pasangan</span>
+      </button>
+      <button data-nav="expenses" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm">
+        <i data-lucide="receipt" class="w-4 h-4"></i>
+        <span data-i18n="nav_expenses">Pengeluaran</span>
+      </button>
+      <button data-nav="budgets" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm">
+        <i data-lucide="pie-chart" class="w-4 h-4"></i>
+        <span data-i18n="nav_budgets">Anggaran</span>
+      </button>
+      <button data-nav="bills" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm">
+        <i data-lucide="calendar-clock" class="w-4 h-4"></i>
+        <span data-i18n="nav_bills">Tagihan</span>
+      </button>
+      <button data-nav="goals" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm">
+        <i data-lucide="target" class="w-4 h-4"></i>
+        <span data-i18n="nav_goals">Target Tabungan</span>
+      </button>
+      <button data-nav="settings" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+        <span data-i18n="nav_settings">Pengaturan & Privasi</span>
+      </button>
+    </nav>
+
+    <div class="p-4 border-t border-white/10 space-y-3">
+      <div class="flex items-center gap-3 px-2 py-1.5">
+        <div id="sidebar-user-avatar" class="w-8 h-8 rounded-full bg-[#16A37B] text-white flex items-center justify-center text-xs font-bold shrink-0">C</div>
+        <div class="min-w-0 flex-1">
+          <div id="sidebar-user-name" class="text-xs font-semibold text-white truncate">Clay</div>
+          <div id="sidebar-user-email" class="text-[10px] text-[#8FA2B2] truncate">clay@nesta.id</div>
+        </div>
+      </div>
+      <button onclick="logoutUser()" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#9FB0BE] hover:text-white hover:bg-white/5 transition-colors">
+        <i data-lucide="log-out" class="w-4 h-4"></i>
+        <span data-i18n="nav_logout">Keluar Akun</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile Left Slide-Out Drawer -->
+  <div id="mobile-drawer" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-[#0F1E28]/50 backdrop-blur-sm" onclick="toggleMobileDrawer(false)"></div>
+    <div class="absolute inset-y-0 left-0 w-64 bg-[#0F1E28] text-white p-5 flex flex-col justify-between overflow-y-auto shadow-2xl">
+      <div>
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-2.5">
+            <svg class="w-8 h-8 shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 32V18C8 11.3726 13.3726 6 20 6C26.6274 6 32 11.3726 32 18V32H25V19C25 16.2386 22.7614 14 20 14C17.2386 14 15 16.2386 15 19V32H8Z" fill="#16A37B"/>
+              <path d="M20 6C26.6274 6 32 11.3726 32 18V32H25V19C25 16.2386 22.7614 14 20 14V6Z" fill="#22C594"/>
+            </svg>
+            <span class="text-lg font-bold tracking-tight">NESTA</span>
+          </div>
+          <button onclick="toggleMobileDrawer(false)" class="p-1.5 rounded-lg bg-white/10 text-white">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div class="space-y-1">
+          <button data-nav="dashboard" onclick="toggleMobileDrawer(false)" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> <span data-i18n="nav_dashboard">Ringkasan</span></button>
+          <button data-nav="couple" onclick="toggleMobileDrawer(false)" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm"><i data-lucide="users" class="w-4 h-4"></i> <span data-i18n="nav_couple">Ruang Pasangan</span></button>
+          <button data-nav="expenses" onclick="toggleMobileDrawer(false)" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm"><i data-lucide="receipt" class="w-4 h-4"></i> <span data-i18n="nav_expenses">Pengeluaran</span></button>
+          <button data-nav="budgets" onclick="toggleMobileDrawer(false)" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm"><i data-lucide="pie-chart" class="w-4 h-4"></i> <span data-i18n="nav_budgets">Anggaran</span></button>
+          <button data-nav="bills" onclick="toggleMobileDrawer(false)" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm"><i data-lucide="calendar-clock" class="w-4 h-4"></i> <span data-i18n="nav_bills">Tagihan</span></button>
+          <button data-nav="goals" onclick="toggleMobileDrawer(false)" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm"><i data-lucide="target" class="w-4 h-4"></i> <span data-i18n="nav_goals">Target Tabungan</span></button>
+          <button data-nav="settings" onclick="toggleMobileDrawer(false)" class="sidebar-nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm"><i data-lucide="settings" class="w-4 h-4"></i> <span data-i18n="nav_settings">Pengaturan & Privasi</span></button>
+        </div>
+      </div>
+      <div class="pt-4 border-t border-white/10 space-y-3">
+        <div class="flex items-center gap-3 px-2 py-1">
+          <div id="drawer-user-avatar" class="w-8 h-8 rounded-full bg-[#16A37B] text-white flex items-center justify-center text-xs font-bold shrink-0">C</div>
+          <div class="min-w-0 flex-1">
+            <div id="drawer-user-name" class="text-xs font-semibold text-white truncate">Clay</div>
+            <div id="drawer-user-email" class="text-[10px] text-[#8FA2B2] truncate">clay@nesta.id</div>
+          </div>
+        </div>
+        <button onclick="toggleMobileDrawer(false); logoutUser();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#9FB0BE] hover:text-white hover:bg-white/5">
+          <i data-lucide="log-out" class="w-4 h-4"></i> <span data-i18n="nav_logout">Keluar Akun</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <main id="main-shell" class="flex-1 md:pl-60 lg:pl-64 pb-10 transition-all duration-200">
+    <div id="topbar-menu-wrap" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 flex items-center justify-between">
+      <button id="open-menu-btn" onclick="handleMenuButtonClick()" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-[#EAE7DF] text-xs font-semibold text-[#101D2B] shadow-sm hover:bg-[#FAF9F6]">
+        <i data-lucide="panel-left-open" class="w-4 h-4 text-[#0E4D38]"></i>
+        <span data-i18n="btn_menu">Menu</span>
+      </button>
+
+    </div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6" id="app-content">
+      <!-- Rendered dynamically by JS -->
+    </div>
+  </main>
+
+  <!-- Expense Modal (Add / Edit) -->
+  <div id="expense-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/45 backdrop-blur-sm" onclick="closeExpenseModal()"></div>
+    <div class="relative bg-white rounded-2xl border border-[#EAE7DF] w-full max-w-lg p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-xl font-bold text-[#101D2B]" id="expense-modal-title">Tambah Pengeluaran</h3>
+        <button onclick="closeExpenseModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2]">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <form id="expense-form" class="space-y-4">
+        <input type="hidden" id="exp-id" />
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Nama Transaksi</label>
+          <input type="text" id="exp-title" required placeholder="Belanja bulanan" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm focus:outline-none focus:border-[#16A37B]" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-medium text-[#5E6D7E]">${state.lang === 'en' ? 'Category' : 'Kategori'}</label>
+              <button type="button" onclick="toggleQuickAddCat()" class="text-[11px] font-semibold text-[#16A37B] hover:underline">+ Kategori Baru</button>
+            </div>
+            <select id="exp-category" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white focus:outline-none focus:border-[#16A37B]"></select>
+            <div id="quick-cat-box" class="hidden mt-2 flex gap-1.5">
+              <input type="text" id="quick-cat-input" placeholder="Nama kategori baru" class="flex-1 min-w-0 px-3 py-1.5 rounded-lg border border-[#EAE7DF] text-xs" />
+              <button type="button" onclick="addQuickCategory()" class="btn-emerald px-3 py-1.5 rounded-lg text-xs font-medium">Tambah</button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Tanggal</label>
+            <input type="date" id="exp-date" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm focus:outline-none focus:border-[#16A37B]" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Jumlah (Rp)</label>
+            <input type="text" inputmode="numeric" id="exp-amount" required placeholder="750.000" oninput="onNominalInput(this); updateSplitPreview()" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm tabular-nums focus:outline-none focus:border-[#16A37B]" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Model Pembayaran</label>
+            <select id="exp-source" onchange="onPaymentSourceChange()" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white focus:outline-none focus:border-[#16A37B]">
+              <option value="talangan">${state.lang === 'en' ? 'Personal Advance' : 'Talangan Pribadi'}</option>
+              <option value="kas_bersama">${state.lang === 'en' ? 'Shared Pot' : 'Kas Bersama'}</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="talangan-fields" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Ditalangi Penuh Oleh</label>
+            <select id="exp-paidby" onchange="updateSplitPreview()" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white focus:outline-none focus:border-[#16A37B]">
+              <option value="partner_a" id="opt-pa">Clay</option>
+              <option value="partner_b" id="opt-pb">Partner</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#5E6D7E] mb-1.5">Jatah Beban Masing-Masing</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" data-split="50_50" onclick="setSplitMethod('50_50')" class="split-tab py-2 px-2 rounded-xl border text-xs font-medium transition-all">50 : 50</button>
+              <button type="button" data-split="custom_pct" onclick="setSplitMethod('custom_pct')" class="split-tab py-2 px-2 rounded-xl border text-xs font-medium transition-all">Persen (%)</button>
+              <button type="button" data-split="custom_amount" onclick="setSplitMethod('custom_amount')" class="split-tab py-2 px-2 rounded-xl border text-xs font-medium transition-all">${state.lang === 'en' ? 'Amount (Rp)' : 'Nominal (Rp)'}</button>
+            </div>
+          </div>
+          <div id="split-custom-inputs" class="hidden bg-[#F7F6F2] p-3.5 rounded-xl border border-[#EAE7DF] space-y-2.5">
+            <div id="split-pct-box" class="hidden grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] text-[#5E6D7E] mb-1"><span class="name-pa">Clay</span> (%)</label>
+                <input type="number" id="split-pct-a" min="0" max="100" value="50" oninput="syncPct('a')" class="w-full px-3 py-2 rounded-lg border border-[#EAE7DF] text-sm bg-white tabular-nums" />
+              </div>
+              <div>
+                <label class="block text-[11px] text-[#5E6D7E] mb-1"><span class="name-pb">Partner</span> (%)</label>
+                <input type="number" id="split-pct-b" min="0" max="100" value="50" oninput="syncPct('b')" class="w-full px-3 py-2 rounded-lg border border-[#EAE7DF] text-sm bg-white tabular-nums" />
+              </div>
+            </div>
+            <div id="split-amt-box" class="hidden grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] text-[#5E6D7E] mb-1">Porsi <span class="name-pa">Clay</span> (Rp)</label>
+                <input type="text" inputmode="numeric" id="split-amt-a" oninput="onNominalInput(this); syncAmt('a')" class="w-full px-3 py-2 rounded-lg border border-[#EAE7DF] text-sm bg-white tabular-nums" />
+              </div>
+              <div>
+                <label class="block text-[11px] text-[#5E6D7E] mb-1">Porsi <span class="name-pb">Partner</span> (Rp)</label>
+                <input type="text" inputmode="numeric" id="split-amt-b" oninput="onNominalInput(this); syncAmt('b')" class="w-full px-3 py-2 rounded-lg border border-[#EAE7DF] text-sm bg-white tabular-nums" />
+              </div>
+            </div>
+          </div>
+          <div class="bg-[#F0F8F5] rounded-xl px-3.5 py-3 text-xs border border-[#D4EDE4] space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="text-[#0E4D38] font-medium">Jatah Beban:</span>
+              <span class="font-semibold text-[#101D2B] tabular-nums" id="split-summary-text">Clay Rp0 • Partner Rp0</span>
+            </div>
+            <div class="text-[11px] text-[#0E4D38] font-medium" id="split-settle-preview"></div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Catatan Singkat (Opsional)</label>
+          <input type="text" id="exp-note" placeholder="Contoh: Beli galon + kebutuhan dapur" class="w-full px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-sm focus:outline-none focus:border-[#16A37B]" />
+        </div>
+
+        <div id="kas-bersama-info" class="hidden bg-[#EEF7F3] rounded-xl px-3.5 py-3 text-xs text-[#0E4D38] border border-[#D8ECE3]">
+          Pengeluaran ini akan memotong langsung <strong>Saldo Kas Bersama</strong> dan tidak menimbulkan utang penyelesaian pribadi.
+        </div>
+        <div id="kas-bersama-warn" class="hidden bg-[#FDF6EB] rounded-xl px-3.5 py-2.5 text-xs text-[#B45309] border border-[#F5E4C8]"></div>
+
+        <div id="expense-form-error" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg"></div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeExpenseModal()" class="px-4 py-2.5 rounded-xl border border-[#EAE7DF] text-sm font-medium hover:bg-[#F7F6F2]">Batal</button>
+          <button type="submit" class="btn-primary px-5 py-2.5 rounded-xl text-sm font-medium">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Kas Bersama Deposit Modal -->
+  <div id="deposit-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/45 backdrop-blur-sm" onclick="closeDepositModal()"></div>
+    <div class="relative bg-white rounded-2xl border border-[#EAE7DF] w-full max-w-md p-6 shadow-xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-[#101D2B]">Setor ke Kas Bersama</h3>
+        <button onclick="closeDepositModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2]">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <p class="text-xs text-[#5E6D7E] mb-4">Setoran menambah saldo Kas Bersama dan <strong>tidak</strong> dihitung sebagai pengeluaran bulanan.</p>
+      <form onsubmit="submitDeposit(event)" class="space-y-3.5">
+        <input type="hidden" id="dep-id" />
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Penyetor</label>
+          <select id="dep-partner" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+            <option value="partner_a" id="dep-opt-pa">Clay</option>
+            <option value="partner_b" id="dep-opt-pb">Partner</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Amount (Rp)' : 'Nominal (Rp)'}</label>
+            <input type="text" inputmode="numeric" id="dep-amount" required placeholder="2.500.000" oninput="onNominalInput(this)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm tabular-nums" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Tanggal</label>
+            <input type="date" id="dep-date" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Catatan (Opsional)</label>
+          <input type="text" id="dep-note" placeholder="Contoh: Jatah belanja bulanan" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeDepositModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-sm font-medium">Batal</button>
+          <button type="submit" class="btn-emerald px-5 py-2 rounded-xl text-sm font-medium">Simpan Setoran</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bill Payment Model Modal -->
+  <div id="bill-pay-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/45 backdrop-blur-sm" onclick="closeBillPayModal()"></div>
+    <div class="relative bg-white rounded-2xl border border-[#EAE7DF] w-full max-w-md p-6 shadow-xl">
+      <h3 class="text-lg font-bold text-[#101D2B] mb-1">Lunasi Tagihan</h3>
+      <p class="text-xs text-[#5E6D7E] mb-4" id="bill-pay-subtitle"></p>
+      <form onsubmit="confirmBillPay(event)" class="space-y-4">
+        <input type="hidden" id="bp-bill-id" />
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1.5">Pilih Sumber Pembayaran</label>
+          <select id="bp-source" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+            <option value="kas_bersama">Kas Bersama (Tanpa Utang Pribadi)</option>
+            <option value="talangan_a" id="bp-opt-a">Talangan Pribadi — Clay</option>
+            <option value="talangan_b" id="bp-opt-b">Talangan Pribadi — Partner</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeBillPayModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-sm font-medium">Batal</button>
+          <button type="submit" class="btn-emerald px-4 py-2 rounded-xl text-sm font-medium">Catat Lunas</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Monthly Wrap-up Modal -->
+  <div id="wrapup-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/45 backdrop-blur-sm" onclick="closeWrapupModal()"></div>
+    <div class="relative bg-white rounded-2xl border border-[#EAE7DF] w-full max-w-md p-6 shadow-xl">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-lg font-bold text-[#101D2B]">Ringkasan Tutup Buku</h3>
+        <button onclick="closeWrapupModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2]"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div id="wrapup-body" class="space-y-2.5 text-sm mb-5"></div>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex gap-2">
+          <button type="button" onclick="exportCSV()" class="px-3 py-2 rounded-xl border border-[#EAE7DF] bg-[#F7F6F2] hover:bg-[#EAE7DF] text-xs font-semibold text-[#101D2B]">CSV</button>
+          <button type="button" onclick="exportPDF()" class="px-3 py-2 rounded-xl border border-[#EAE7DF] bg-[#F7F6F2] hover:bg-[#EAE7DF] text-xs font-semibold text-[#101D2B]">PDF</button>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="closeWrapupModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-sm font-medium">Tutup</button>
+          <button onclick="copyWrapupText()" class="btn-primary px-4 py-2 rounded-xl text-sm font-medium">Salin Ringkasan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Couple Onboarding Modal -->
+  <div id="onboarding-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/45 backdrop-blur-sm" onclick="closeOnboardingModal()"></div>
+    <div class="relative bg-white rounded-2xl border border-[#EAE7DF] w-full max-w-md p-6 shadow-xl">
+      <h3 class="text-lg font-bold text-[#101D2B] mb-1">Atur Ruang Pasangan Baru</h3>
+      <p class="text-xs text-[#5E6D7E] mb-4">Sesuaikan NESTA untuk fase hubungan dan anggaran bulanan kalian.</p>
+      <form onsubmit="submitOnboarding(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Fase Hubungan</label>
+          <select id="ob-stage" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+            <option value="Persiapan Menikah">Persiapan Menikah (Tunangan)</option>
+            <option value="Baru Menikah">Baru Menikah (Keluarga Baru)</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Nama Anda</label>
+            <input type="text" id="ob-pa" required value="Clay" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Nama Pasangan</label>
+            <input type="text" id="ob-pb" required value="Partner" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Anggaran Bulanan Bersama (Rp)</label>
+          <input type="text" inputmode="numeric" id="ob-budget" required value="12.000.000" oninput="onNominalInput(this)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm tabular-nums" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeOnboardingModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-sm font-medium">Batal</button>
+          <button type="submit" class="btn-emerald px-4 py-2 rounded-xl text-sm font-medium">Mulai Pakai NESTA</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Simple First-Time Interactive Tutorial Modal (Blocks background clicks) -->
+  <div id="tutorial-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/55 backdrop-blur-sm"></div>
+    <div class="relative bg-white rounded-3xl border border-[#EAE7DF] w-full max-w-lg p-6 sm:p-7 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <span id="tut-badge" class="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#EEF7F3] text-[#0E4D38]">Langkah 1 dari 5</span>
+        <button onclick="finishTutorial()" class="text-xs font-medium text-[#5E6D7E] hover:text-[#101D2B]" id="tut-skip-btn">Lewati</button>
+      </div>
+      <div id="tut-icon-box" class="w-12 h-12 rounded-2xl bg-[#EEF7F3] text-[#16A37B] flex items-center justify-center mb-4"></div>
+      <h3 id="tut-title" class="text-xl font-bold text-[#101D2B] mb-2"></h3>
+      <p id="tut-desc" class="text-sm text-[#5E6D7E] leading-relaxed mb-5"></p>
+      <div id="tut-points" class="bg-[#F7F6F2] border border-[#EAE7DF] rounded-2xl p-4 space-y-2 text-xs text-[#101D2B] mb-6"></div>
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex gap-1.5" id="tut-dots"></div>
+        <div class="flex items-center gap-2">
+          <button id="tut-prev-btn" onclick="prevTutorialStep()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-xs font-semibold text-[#101D2B] hover:bg-[#F7F6F2]">Sebelumnya</button>
+          <button id="tut-next-btn" onclick="nextTutorialStep()" class="btn-primary px-5 py-2.5 rounded-xl text-xs font-semibold">Lanjut →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generic Confirmation Modal -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/45 backdrop-blur-sm" onclick="closeConfirmModal()"></div>
+    <div class="relative bg-white rounded-2xl border border-[#EAE7DF] w-full max-w-md p-6 shadow-xl">
+      <h3 class="text-lg font-bold text-[#101D2B] mb-2" id="confirm-title">Konfirmasi</h3>
+      <p class="text-sm text-[#5E6D7E] mb-5" id="confirm-desc"></p>
+      <div class="flex justify-end gap-2">
+        <button onclick="closeConfirmModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-sm font-medium">Batal</button>
+        <button id="confirm-ok-btn" class="btn-primary px-4 py-2 rounded-xl text-sm font-medium">Ya, Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-4 lg:right-6 z-50 hidden bg-[#0F1E28] text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2.5 max-w-sm">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-[#16A37B] shrink-0"></i>
+    <span id="toast-msg"></span>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'nesta_prod_state_v2';
+    const DEFAULT_CATEGORIES = [
+      'Sewa Rumah', 'Belanja Harian', 'Utilitas', 'Transportasi',
+      'Makan & Minum', 'Hiburan', 'Rumah Tangga', 'Lainnya'
+    ];
+
+    const DEFAULT_BILL_CATEGORIES = ['Sewa Rumah', 'Listrik', 'Internet', 'Air', 'Langganan', 'Lainnya'];
+    const DEFAULT_GOAL_CATEGORIES = ['Pernikahan', 'Bulan Madu', 'Dana Darurat', 'Uang Muka Rumah', 'Mobil Baru', 'Lainnya'];
+
+    const CAT_EN_MAP = {
+      'Sewa Rumah': 'Rent',
+      'Belanja Harian': 'Groceries',
+      'Utilitas': 'Utilities',
+      'Transportasi': 'Transportation',
+      'Makan & Minum': 'Dining',
+      'Hiburan': 'Entertainment',
+      'Rumah Tangga': 'Household',
+      'Lainnya': 'Other',
+      'Listrik': 'Electricity',
+      'Internet': 'Internet',
+      'Air': 'Water',
+      'Langganan': 'Subscriptions',
+      'Pernikahan': 'Wedding',
+      'Bulan Madu': 'Honeymoon',
+      'Dana Darurat': 'Emergency Fund',
+      'Uang Muka Rumah': 'House Down Payment',
+      'Mobil Baru': 'New Car'
+    };
+
+    function displayCat(name) {
+      if (state.lang === 'en' && CAT_EN_MAP[name]) return CAT_EN_MAP[name];
+      return name;
+    }
+
+    function getCategories() {
+      if (!state.categories || !state.categories.length) state.categories = [...DEFAULT_CATEGORIES];
+      return state.categories;
+    }
+
+    function getBillCategories() {
+      if (!state.billCategories || !state.billCategories.length) state.billCategories = [...DEFAULT_BILL_CATEGORIES];
+      return state.billCategories;
+    }
+
+    function getGoalCategories() {
+      if (!state.goalCategories || !state.goalCategories.length) state.goalCategories = [...DEFAULT_GOAL_CATEGORIES];
+      return state.goalCategories;
+    }
+
+    const AVAILABLE_MONTHS = [
+      { value: getCurrentMonthYM(), label: new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) }
+    ];
+
+    function getCurrentMonthYM() {
+      const now = new Date();
+      return now.toISOString().slice(0, 7);
+    }
+
+    function getDefaultState() {
+      const ym = getCurrentMonthYM();
+      return {
+        activeRole: 'partner_a',
+        lang: 'id',
+        notifications: { billReminder: true, monthlyWrapup: true },
+        hasSeenTutorial: true,
+        tutorialStep: 0,
+        isAuthenticated: true,
+        authTab: 'login',
+        registeredUsers: [{ name: 'Clayrens', email: 'clayrens@nesta.id', pass: '123456', role: 'partner_a' }],
+        currentUser: { name: 'Clayrens', email: 'clayrens@nesta.id', role: 'partner_a' },
+        activePage: 'dashboard',
+        selectedMonth: ym,
+        sidebarOpen: true,
+        couple: {
+          name: 'Ruang Finansial Bersama',
+          inviteCode: 'https://nesta.id/couple/' + Math.random().toString(36).substring(2, 8),
+          partnerJoined: false,
+          monthlyBudget: 0,
+          partnerA: { id: 'partner_a', name: 'Clayrens' },
+          partnerB: { id: 'partner_b', name: 'Pasangan' }
+        },
+        monthlyBudgets: {},
+        poolDeposits: [],
+        expenses: [],
+        settlements: [],
+        categories: [...DEFAULT_CATEGORIES],
+        billCategories: [...DEFAULT_BILL_CATEGORIES],
+        goalCategories: [...DEFAULT_GOAL_CATEGORIES],
+        categoryBudgets: {},
+        customBudgets: [],
+        bills: [],
+        goals: []
+      };
+    }
+
+    let state = loadState();
+    let currentSplitMethod = '50_50';
+    let expenseFilterCat = 'Semua';
+    let expenseFilterSource = 'Semua';
+    let expenseSearch = '';
+    let billFilter = 'Semua';
+    let donutChart = null;
+    let budgetChart = null;
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return getDefaultState();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    function formatIDR(num) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(Math.round(num || 0));
+    }
+
+    function parseNominal(val) {
+      const digits = String(val || '').replace(/\D/g, '');
+      return digits ? Number(digits) : 0;
+    }
+
+    function formatNominalStr(num) {
+      const n = Math.round(Number(num || 0));
+      if (!n) return '';
+      return new Intl.NumberFormat('id-ID').format(n);
+    }
+
+    function onNominalInput(el) {
+      const digits = el.value.replace(/\D/g, '');
+      el.value = digits ? new Intl.NumberFormat('id-ID').format(Number(digits)) : '';
+    }
+
+    function formatDateID(iso) {
+      if (!iso) return '-';
+      const d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString(state.lang === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function formatMonthLabel(ym) {
+      const [y, m] = ym.split('-');
+      const d = new Date(Number(y), Number(m) - 1, 1);
+      return d.toLocaleDateString(state.lang === 'en' ? 'en-US' : 'id-ID', { month: 'long', year: 'numeric' });
+    }
+
+    const I18N = {
+      id: {
+        nav_dashboard: 'Ringkasan',
+        nav_couple: 'Ruang Pasangan',
+        nav_expenses: 'Pengeluaran',
+        nav_budgets: 'Anggaran',
+        nav_bills: 'Tagihan',
+        nav_goals: 'Target Tabungan',
+        nav_settings: 'Pengaturan & Privasi',
+        nav_logout: 'Keluar Akun',
+        btn_menu: 'Menu',
+        btn_wrapup: 'Ringkasan',
+        btn_add_exp: 'Tambah Pengeluaran',
+        kpi_total_exp: 'Total Pengeluaran',
+        kpi_rem_budget: 'Sisa Anggaran Bulan Ini',
+        kpi_kas: 'Saldo Kas Bersama',
+        kpi_unpaid: 'Tagihan Belum Bayar',
+        hello: 'Halo',
+        period_sub: 'Ringkasan keuangan bersama periode',
+        talangan_title: 'Talangan Pribadi & Penyelesaian',
+        budget_prog: 'Progres Anggaran',
+        detail: 'Detail',
+        balanced_msg: 'Seimbang ✓ — Tidak ada saldo talangan yang perlu dibayar bulan ini.',
+        settle_btn: 'Tandai Lunas',
+        recent_tx: 'Transaksi',
+        upcoming_bills: 'Tagihan Mendatang',
+        view_all: 'Lihat Semua →',
+        setor_kas: '+ Setor Kas',
+        riwayat: 'Riwayat',
+        couple_title: 'Ruang Pasangan & Kas Bersama',
+        couple_sub: 'Kelola ruang bersama, setoran Kas Bersama, dan tautan undangan.',
+        exp_title: 'Pengeluaran Bersama',
+        exp_sub: 'Menampilkan transaksi bulan',
+        bud_title: 'Anggaran Bersama',
+        bud_sub: 'Perhitungan anggaran khusus periode',
+        bills_title: 'Tagihan Rutin',
+        goals_title: 'Target Tabungan Bersama',
+        goals_sub: 'Capai tujuan besar bersama dengan kontribusi yang terukur.',
+        set_title: 'Pengaturan & Privasi',
+        set_sub: 'Kelola akun, bahasa, pengingat, dan kebijakan privasi NESTA.',
+        set_account: 'Akun Saya',
+        set_lang: 'Preferensi Bahasa',
+        set_notif: 'Pengingat & Notifikasi',
+        set_privacy: 'Privasi & Data'
+      },
+      en: {
+        nav_dashboard: 'Dashboard',
+        nav_couple: 'Couple Space',
+        nav_expenses: 'Expenses',
+        nav_budgets: 'Budgets',
+        nav_bills: 'Bills',
+        nav_goals: 'Savings Goals',
+        nav_settings: 'Settings & Privacy',
+        nav_logout: 'Sign Out',
+        btn_menu: 'Menu',
+        btn_wrapup: 'Monthly Wrap-Up',
+        btn_add_exp: 'Add Expense',
+        kpi_total_exp: 'Total Expenses',
+        kpi_rem_budget: 'Remaining Budget',
+        kpi_kas: 'Shared Pot Balance',
+        kpi_unpaid: 'Unpaid Bills',
+        hello: 'Hello',
+        period_sub: 'Shared financial summary for',
+        talangan_title: 'Personal Advances & Settlement',
+        budget_prog: 'Budget Progress',
+        detail: 'Details',
+        balanced_msg: 'Settled ✓ — No advance balance owed this month.',
+        settle_btn: 'Mark Settled',
+        recent_tx: 'Transactions',
+        upcoming_bills: 'Upcoming Bills',
+        view_all: 'View All →',
+        setor_kas: '+ Deposit Pot',
+        riwayat: 'History',
+        couple_title: 'Couple Space & Shared Pot',
+        couple_sub: 'Manage your shared space, Shared Pot deposits, and invite link.',
+        exp_title: 'Shared Expenses',
+        exp_sub: 'Showing transactions for',
+        bud_title: 'Shared Budgets',
+        bud_sub: 'Monthly budget tracking for',
+        bills_title: 'Recurring Bills',
+        goals_title: 'Shared Savings Goals',
+        goals_sub: 'Reach big milestones together with transparent contributions.',
+        set_title: 'Settings & Privacy',
+        set_sub: 'Manage your account, language, reminders, and NESTA privacy policy.',
+        set_account: 'My Account',
+        set_lang: 'Language Preference',
+        set_notif: 'Reminders & Notifications',
+        set_privacy: 'Privacy & Data'
+      }
+    };
+
+    function t(key) {
+      const lang = state.lang === 'en' ? 'en' : 'id';
+      return (I18N[lang] && I18N[lang][key]) || I18N.id[key] || key;
+    }
+
+    function setLanguage(lang) {
+      state.lang = lang === 'en' ? 'en' : 'id';
+      if (state.lang === 'en') {
+        if (state.couple.name === 'Ruang Finansial Bersama') state.couple.name = 'Shared Financial Space';
+        if (state.couple.partnerB.name === 'Pasangan') state.couple.partnerB.name = 'Partner';
+      } else {
+        if (state.couple.name === 'Shared Financial Space') state.couple.name = 'Ruang Finansial Bersama';
+        if (state.couple.partnerB.name === 'Partner') state.couple.partnerB.name = 'Pasangan';
+      }
+      saveState();
+      render();
+      showToast(state.lang === 'en' ? 'Language switched to English.' : 'Bahasa diubah ke Indonesia.');
+    }
+
+    function toggleNotif(key) {
+      if (!state.notifications) state.notifications = { billReminder: true, monthlyWrapup: true };
+      state.notifications[key] = !state.notifications[key];
+      saveState();
+      render();
+      showToast(state.lang === 'en' ? 'Reminder preference saved.' : 'Preferensi pengingat disimpan.');
+    }
+
+    function applyStaticI18n() {
+      const isEn = state.lang === 'en';
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = t(el.getAttribute('data-i18n'));
+      });
+      const setTxt = (sel, txt) => { const el = document.querySelector(sel); if (el) el.textContent = txt; };
+      const setHtml = (sel, html) => { const el = document.querySelector(sel); if (el) el.innerHTML = html; };
+      const setPh = (sel, ph) => { const el = document.querySelector(sel); if (el) el.placeholder = ph; };
+
+      // Expense Modal
+      setTxt('#expense-modal-title', isEn ? 'Add Expense' : 'Tambah Pengeluaran');
+      setPh('#exp-title', isEn ? 'Monthly groceries' : 'Belanja bulanan');
+      const expLabels = document.querySelectorAll('#expense-form label');
+      if (expLabels.length >= 9) {
+        expLabels[0].textContent = isEn ? 'Description' : 'Nama Transaksi';
+        expLabels[1].textContent = isEn ? 'Category' : 'Kategori';
+        expLabels[2].textContent = isEn ? 'Date' : 'Tanggal';
+        expLabels[3].textContent = isEn ? 'Amount (Rp)' : 'Jumlah (Rp)';
+        expLabels[4].textContent = isEn ? 'Payment Model' : 'Model Pembayaran';
+        expLabels[5].textContent = isEn ? 'Paid in Full By' : 'Ditalangi Penuh Oleh';
+        expLabels[6].textContent = isEn ? 'Burden Split' : 'Jatah Beban Masing-Masing';
+      }
+      setTxt('#expense-form button[onclick="toggleQuickAddCat()"]', isEn ? '+ New Category' : '+ Kategori Baru');
+      setPh('#quick-cat-input', isEn ? 'New category name' : 'Nama kategori baru');
+      setTxt('#quick-cat-box button', isEn ? 'Add' : 'Tambah');
+      setTxt('#exp-source option[value="talangan"]', isEn ? 'Personal Advance' : 'Talangan Pribadi');
+      setTxt('#exp-source option[value="kas_bersama"]', isEn ? 'Shared Pot' : 'Kas Bersama');
+      setTxt('.split-tab[data-split="custom_pct"]', isEn ? 'Percent (%)' : 'Persen (%)');
+      setTxt('.split-tab[data-split="custom_amount"]', isEn ? 'Amount (Rp)' : 'Nominal (Rp)');
+      setTxt('#talangan-fields .text-\\[\\#0E4D38\\]', isEn ? 'Burden Share:' : 'Jatah Beban:');
+      setPh('#exp-note', isEn ? 'e.g. Drinking water & kitchen items' : 'Contoh: Beli galon + kebutuhan dapur');
+      setHtml('#kas-bersama-info', isEn
+        ? 'This expense will be deducted directly from the <strong>Shared Pot Balance</strong> with zero personal debt.'
+        : 'Pengeluaran ini akan memotong langsung <strong>Saldo Kas Bersama</strong> dan tidak menimbulkan utang penyelesaian pribadi.');
+      setTxt('#expense-form button[onclick="closeExpenseModal()"]', isEn ? 'Cancel' : 'Batal');
+      setTxt('#expense-form button[type="submit"]', isEn ? 'Save' : 'Simpan');
+
+      // Deposit Modal
+      setTxt('#deposit-modal h3', isEn ? 'Deposit to Shared Pot' : 'Setor ke Kas Bersama');
+      setHtml('#deposit-modal p', isEn
+        ? 'Deposits add to your Shared Pot balance and are <strong>not</strong> counted as monthly expenses.'
+        : 'Setoran menambah saldo Kas Bersama dan <strong>tidak</strong> dihitung sebagai pengeluaran bulanan.');
+      const depLabels = document.querySelectorAll('#deposit-modal label');
+      if (depLabels.length >= 4) {
+        depLabels[0].textContent = isEn ? 'Depositor' : 'Penyetor';
+        depLabels[1].textContent = isEn ? 'Amount (Rp)' : 'Nominal (Rp)';
+        depLabels[2].textContent = isEn ? 'Date' : 'Tanggal';
+        depLabels[3].textContent = isEn ? 'Note (Optional)' : 'Catatan (Opsional)';
+      }
+      setPh('#dep-note', isEn ? 'e.g. Monthly grocery pot' : 'Contoh: Jatah belanja bulanan');
+      setTxt('#deposit-modal button[onclick="closeDepositModal()"]', isEn ? 'Cancel' : 'Batal');
+      setTxt('#deposit-modal button[type="submit"]', isEn ? 'Save Deposit' : 'Simpan Setoran');
+
+      // Bill Pay Modal
+      setTxt('#bill-pay-modal h3', isEn ? 'Pay Bill' : 'Lunasi Tagihan');
+      setTxt('#bill-pay-modal label', isEn ? 'Choose Payment Source' : 'Pilih Sumber Pembayaran');
+      setTxt('#bp-source option[value="kas_bersama"]', isEn ? 'Shared Pot (No Personal Debt)' : 'Kas Bersama (Tanpa Utang Pribadi)');
+      setTxt('#bill-pay-modal button[onclick="closeBillPayModal()"]', isEn ? 'Cancel' : 'Batal');
+      setTxt('#bill-pay-modal button[type="submit"]', isEn ? 'Mark Paid' : 'Catat Lunas');
+
+      // Wrap-up Modal
+      setTxt('#wrapup-modal h3', isEn ? 'Monthly Wrap-Up' : 'Ringkasan Tutup Buku');
+      setTxt('#wrapup-modal .justify-end button[onclick="closeWrapupModal()"]', isEn ? 'Close' : 'Tutup');
+      setTxt('#wrapup-modal button[onclick="copyWrapupText()"]', isEn ? 'Copy Summary' : 'Salin Ringkasan');
+
+      // Onboarding Modal
+      setTxt('#onboarding-modal h3', isEn ? 'Customize Couple Space' : 'Atur Ruang Pasangan Baru');
+      setTxt('#onboarding-modal p', isEn ? 'Tailor NESTA to your relationship stage and monthly budget.' : 'Sesuaikan NESTA untuk fase hubungan dan anggaran bulanan kalian.');
+      const obLabels = document.querySelectorAll('#onboarding-modal label');
+      if (obLabels.length >= 4) {
+        obLabels[0].textContent = isEn ? 'Relationship Stage' : 'Fase Hubungan';
+        obLabels[1].textContent = isEn ? 'Your Name' : 'Nama Anda';
+        obLabels[2].textContent = isEn ? 'Partner Name' : 'Nama Pasangan';
+        obLabels[3].textContent = isEn ? 'Shared Monthly Budget (Rp)' : 'Anggaran Bulanan Bersama (Rp)';
+      }
+      setTxt('#onboarding-modal button[onclick="closeOnboardingModal()"]', isEn ? 'Cancel' : 'Batal');
+      setTxt('#onboarding-modal button[type="submit"]', isEn ? 'Save Space' : 'Simpan Ruang');
+      setTxt('#ob-stage option[value="Persiapan Menikah"]', isEn ? 'Engaged / Wedding Prep' : 'Persiapan Menikah (Tunangan)');
+      setTxt('#ob-stage option[value="Baru Menikah"]', isEn ? 'Newlywed / Family' : 'Baru Menikah (Keluarga Baru)');
+
+      // Confirm Modal
+      setTxt('#confirm-title', isEn ? 'Confirm' : 'Konfirmasi');
+      setTxt('#confirm-modal button[onclick="closeConfirmModal()"]', isEn ? 'Cancel' : 'Batal');
+      setTxt('#confirm-ok-btn', isEn ? 'Yes, Continue' : 'Ya, Lanjutkan');
+    }
+
+    function escapeHTML(str) {
+      return String(str || '').replace(/[&<>"']/g, s => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[s]));
+    }
+
+    function partnerName(id) {
+      if (id === 'kas_bersama') return state.lang === 'en' ? 'Shared Pot' : 'Kas Bersama';
+      return id === 'partner_a' ? state.couple.partnerA.name : state.couple.partnerB.name;
+    }
+
+    // ==========================================
+    // MONTH-SCOPED & DUAL-MODEL MATH ENGINE
+    // ==========================================
+    function getMonthOptions() {
+      const set = new Set(AVAILABLE_MONTHS.map(m => m.value));
+      state.expenses.forEach(e => { if (e.date) set.add(e.date.slice(0, 7)); });
+      state.poolDeposits.forEach(d => { if (d.date) set.add(d.date.slice(0, 7)); });
+      return Array.from(set).sort().reverse();
+    }
+
+    function getMonthBudget(ym = state.selectedMonth) {
+      return (state.monthlyBudgets && state.monthlyBudgets[ym] !== undefined)
+        ? state.monthlyBudgets[ym]
+        : state.couple.monthlyBudget;
+    }
+
+    function getMonthExpenses(ym = state.selectedMonth) {
+      return state.expenses.filter(e => e.date && e.date.startsWith(ym));
+    }
+
+    function renderMonthSelector() {
+      const opts = getMonthOptions();
+      return `
+        <div id="month-selector-wrap" class="inline-flex items-center gap-2 bg-white border border-[#EAE7DF] rounded-xl px-3 py-2 shadow-sm">
+          <i data-lucide="calendar" class="w-4 h-4 text-[#0E4D38]"></i>
+          <select onchange="changeMonth(this.value)" class="text-xs font-semibold text-[#101D2B] bg-transparent focus:outline-none cursor-pointer">
+            ${opts.map(ym => `<option value="${ym}" ${ym === state.selectedMonth ? 'selected' : ''}>${formatMonthLabel(ym)}</option>`).join('')}
+          </select>
+        </div>
+      `;
+    }
+
+    function changeMonth(ym) {
+      state.selectedMonth = ym;
+      saveState();
+      render();
+    }
+
+    // Settlement ONLY calculates "Talangan Pribadi" expenses in the selected month!
+    // "Kas Bersama" expenses NEVER create personal settlement debt.
+    function calculateSettlement(ym = state.selectedMonth) {
+      const monthExps = getMonthExpenses(ym).filter(e => e.paymentSource !== 'kas_bersama');
+      let paidA = 0, paidB = 0, shouldA = 0, shouldB = 0;
+
+      monthExps.forEach(e => {
+        if (e.paidBy === 'partner_a') paidA += e.amount;
+        else if (e.paidBy === 'partner_b') paidB += e.amount;
+        shouldA += e.partnerAShare;
+        shouldB += e.partnerBShare;
+      });
+
+      let netA = paidA - shouldA;
+      let netB = paidB - shouldB;
+
+      state.settlements
+        .filter(s => s.date && s.date.startsWith(ym))
+        .forEach(s => {
+          if (s.from === 'partner_a') {
+            netA += s.amount;
+            netB -= s.amount;
+          } else {
+            netB += s.amount;
+            netA -= s.amount;
+          }
+        });
+
+      const roundedA = Math.round(netA);
+      if (Math.abs(roundedA) < 1) {
+        return { paidA, paidB, shouldA, shouldB, netA: 0, netB: 0, owesFrom: null, owesTo: null, amount: 0 };
+      }
+      if (roundedA > 0) {
+        return { paidA, paidB, shouldA, shouldB, netA: roundedA, netB: -roundedA, owesFrom: 'partner_b', owesTo: 'partner_a', amount: roundedA };
+      }
+      return { paidA, paidB, shouldA, shouldB, netA: roundedA, netB: -roundedA, owesFrom: 'partner_a', owesTo: 'partner_b', amount: Math.abs(roundedA) };
+    }
+
+    // Kas Bersama balance = Total All Deposits - Total All Kas Bersama Expenses
+    // Plus monthly breakdown for the selected month.
+    function calculateKasBersama(ym = state.selectedMonth) {
+      const totalDepositsAll = state.poolDeposits.reduce((s, d) => s + d.amount, 0);
+      const totalPoolSpentAll = state.expenses
+        .filter(e => e.paymentSource === 'kas_bersama')
+        .reduce((s, e) => s + e.amount, 0);
+
+      const monthDeposits = state.poolDeposits.filter(d => d.date && d.date.startsWith(ym));
+      const monthDepA = monthDeposits.filter(d => d.partner === 'partner_a').reduce((s, d) => s + d.amount, 0);
+      const monthDepB = monthDeposits.filter(d => d.partner === 'partner_b').reduce((s, d) => s + d.amount, 0);
+      const monthPoolSpent = getMonthExpenses(ym)
+        .filter(e => e.paymentSource === 'kas_bersama')
+        .reduce((s, e) => s + e.amount, 0);
+
+      const allDepA = state.poolDeposits.filter(d => d.partner === 'partner_a').reduce((s, d) => s + d.amount, 0);
+      const allDepB = state.poolDeposits.filter(d => d.partner === 'partner_b').reduce((s, d) => s + d.amount, 0);
+
+      return {
+        saldoTotal: totalDepositsAll - totalPoolSpentAll,
+        totalDepositsAll,
+        totalPoolSpentAll,
+        allDepA,
+        allDepB,
+        monthDepA,
+        monthDepB,
+        monthPoolSpent,
+        monthDeposits
+      };
+    }
+
+    function getCategorySpending(ym = state.selectedMonth) {
+      const map = {};
+      getCategories().forEach(c => map[c] = 0);
+      getMonthExpenses(ym).forEach(e => {
+        map[e.category] = (map[e.category] || 0) + e.amount;
+      });
+      return map;
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.add('hidden'), 3200);
+    }
+
+    function openConfirm(title, desc, onOk) {
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-desc').textContent = desc;
+      document.getElementById('confirm-ok-btn').onclick = () => {
+        closeConfirmModal();
+        onOk();
+      };
+      document.getElementById('confirm-modal').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').classList.add('hidden');
+    }
+
+    function toggleMobileDrawer(show) {
+      const el = document.getElementById('mobile-drawer');
+      if (show) el.classList.remove('hidden');
+      else el.classList.add('hidden');
+    }
+
+    function navigate(page) {
+      state.activePage = page;
+      saveState();
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleSidebar(show) {
+      state.sidebarOpen = show;
+      saveState();
+      updateNavHighlight();
+    }
+
+    function handleMenuButtonClick() {
+      if (window.innerWidth < 768) {
+        toggleMobileDrawer(true);
+      } else {
+        toggleSidebar(!state.sidebarOpen);
+      }
+    }
+
+    function updateNavHighlight() {
+      const isLanding = state.activePage === 'landing';
+      const showDesktopSidebar = !isLanding && state.sidebarOpen !== false;
+      const sidebarEl = document.getElementById('desktop-sidebar');
+      sidebarEl.classList.toggle('md:flex', showDesktopSidebar);
+      sidebarEl.classList.toggle('md:hidden', !showDesktopSidebar);
+
+      const mainShell = document.getElementById('main-shell');
+      mainShell.classList.toggle('md:pl-60', showDesktopSidebar);
+      mainShell.classList.toggle('lg:pl-64', showDesktopSidebar);
+
+      const topbarWrap = document.getElementById('topbar-menu-wrap');
+      topbarWrap.classList.toggle('hidden', isLanding);
+
+      const openBtn = document.getElementById('open-menu-btn');
+      openBtn.classList.toggle('md:hidden', showDesktopSidebar);
+
+      const uName = (state.currentUser && state.currentUser.name) || partnerName(state.activeRole);
+      const uEmail = (state.currentUser && state.currentUser.email) || 'clay@nesta.id';
+      const uInit = uName ? uName[0].toUpperCase() : 'N';
+
+      const uAvatar = state.currentUser && state.currentUser.avatar;
+      ['sidebar-user-name', 'drawer-user-name'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = uName; });
+      ['sidebar-user-email', 'drawer-user-email'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = uEmail; });
+      ['sidebar-user-avatar', 'drawer-user-avatar'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (uAvatar) {
+          el.innerHTML = `<img src="${uAvatar}" alt="Avatar" class="w-full h-full object-cover rounded-full" />`;
+        } else {
+          el.textContent = uInit;
+        }
+      });
+
+
+
+      document.querySelectorAll('[data-nav]').forEach(btn => {
+        const isActive = btn.getAttribute('data-nav') === state.activePage;
+        btn.classList.toggle('active', isActive);
+      });
+      applyStaticI18n();
+    }
+
+    // ==========================================
+    // EXPENSE & DEPOSIT MODALS
+    // ==========================================
+    function onPaymentSourceChange() {
+      const src = document.getElementById('exp-source').value;
+      const isKas = src === 'kas_bersama';
+      document.getElementById('talangan-fields').classList.toggle('hidden', isKas);
+      document.getElementById('kas-bersama-info').classList.toggle('hidden', !isKas);
+    }
+
+    function openExpenseModal(editId = null) {
+      const form = document.getElementById('expense-form');
+      form.reset();
+      const catSel = document.getElementById('exp-category');
+      catSel.innerHTML = getCategories().map(c => `<option value="${escapeHTML(c)}">${escapeHTML(displayCat(c))}</option>`).join('');
+      const qBox = document.getElementById('quick-cat-box');
+      if (qBox) qBox.classList.add('hidden');
+      document.getElementById('expense-form-error').classList.add('hidden');
+      document.getElementById('opt-pa').textContent = state.couple.partnerA.name;
+      document.getElementById('opt-pb').textContent = state.couple.partnerB.name;
+      document.querySelectorAll('.name-pa').forEach(el => el.textContent = state.couple.partnerA.name);
+      document.querySelectorAll('.name-pb').forEach(el => el.textContent = state.couple.partnerB.name);
+
+      if (editId) {
+        const exp = state.expenses.find(x => x.id === editId);
+        if (!exp) return;
+        document.getElementById('expense-modal-title').textContent = state.lang === 'en' ? 'Edit Expense' : 'Edit Pengeluaran';
+        document.getElementById('exp-id').value = exp.id;
+        document.getElementById('exp-title').value = exp.title;
+        document.getElementById('exp-category').value = exp.category;
+        document.getElementById('exp-date').value = exp.date;
+        document.getElementById('exp-amount').value = formatNominalStr(exp.amount);
+        document.getElementById('exp-note').value = exp.note || '';
+        document.getElementById('exp-source').value = exp.paymentSource || 'talangan';
+        onPaymentSourceChange();
+        if (exp.paymentSource !== 'kas_bersama') {
+          document.getElementById('exp-paidby').value = exp.paidBy;
+          setSplitMethod(exp.splitMethod);
+          if (exp.splitMethod === 'custom_pct' && exp.amount > 0) {
+            const pctA = Math.round((exp.partnerAShare / exp.amount) * 100);
+            document.getElementById('split-pct-a').value = pctA;
+            document.getElementById('split-pct-b').value = 100 - pctA;
+          } else if (exp.splitMethod === 'custom_amount') {
+            document.getElementById('split-amt-a').value = formatNominalStr(exp.partnerAShare);
+            document.getElementById('split-amt-b').value = formatNominalStr(exp.partnerBShare);
+          }
+        }
+      } else {
+        document.getElementById('expense-modal-title').textContent = state.lang === 'en' ? 'Add Expense' : 'Tambah Pengeluaran';
+        document.getElementById('exp-id').value = '';
+        document.getElementById('exp-date').value = state.selectedMonth + '-15';
+        document.getElementById('exp-source').value = 'talangan';
+        document.getElementById('exp-paidby').value = state.activeRole;
+        onPaymentSourceChange();
+        setSplitMethod('50_50');
+      }
+      updateSplitPreview();
+      document.getElementById('expense-modal').classList.remove('hidden');
+    }
+
+    function closeExpenseModal() {
+      document.getElementById('expense-modal').classList.add('hidden');
+    }
+
+    function openDepositModal(editId = null) {
+      document.getElementById('dep-opt-pa').textContent = state.couple.partnerA.name;
+      document.getElementById('dep-opt-pb').textContent = state.couple.partnerB.name;
+      if (editId) {
+        const d = state.poolDeposits.find(x => x.id === editId);
+        if (!d) return;
+        document.getElementById('dep-id').value = d.id;
+        document.getElementById('dep-partner').value = d.partner;
+        document.getElementById('dep-date').value = d.date;
+        document.getElementById('dep-amount').value = formatNominalStr(d.amount);
+        document.getElementById('dep-note').value = d.note || '';
+      } else {
+        document.getElementById('dep-id').value = '';
+        document.getElementById('dep-partner').value = state.activeRole;
+        document.getElementById('dep-date').value = state.selectedMonth + '-01';
+        document.getElementById('dep-amount').value = '';
+        document.getElementById('dep-note').value = '';
+      }
+      document.getElementById('deposit-modal').classList.remove('hidden');
+    }
+
+    function closeDepositModal() {
+      document.getElementById('deposit-modal').classList.add('hidden');
+    }
+
+    function deleteDeposit(id) {
+      openConfirm(state.lang === 'en' ? 'Delete Shared Pot Deposit' : 'Hapus Setoran Kas Bersama', state.lang === 'en' ? 'This deposit will be removed and the Shared Pot balance recalculated.' : 'Setoran ini akan dihapus dan Saldo Kas Bersama akan dihitung ulang.', () => {
+        state.poolDeposits = state.poolDeposits.filter(d => d.id !== id);
+        saveState();
+        render();
+        showToast('Setoran Kas Bersama dihapus.');
+      });
+    }
+
+    function submitDeposit(e) {
+      e.preventDefault();
+      const id = document.getElementById('dep-id').value;
+      const partner = document.getElementById('dep-partner').value;
+      const amount = parseNominal(document.getElementById('dep-amount').value);
+      const date = document.getElementById('dep-date').value;
+      const note = document.getElementById('dep-note').value.trim() || 'Setoran Kas Bersama';
+      if (amount <= 0 || !date) return;
+
+      if (id) {
+        const idx = state.poolDeposits.findIndex(x => x.id === id);
+        if (idx >= 0) state.poolDeposits[idx] = { id, partner, amount, date, note };
+        showToast('Setoran Kas Bersama diperbarui.');
+      } else {
+        state.poolDeposits.unshift({ id: 'dep-' + Date.now(), partner, amount, date, note });
+        showToast(`Setoran ${formatIDR(amount)} masuk ke Saldo Kas Bersama (tidak dihitung sebagai pengeluaran).`);
+      }
+      state.selectedMonth = date.slice(0, 7);
+      saveState();
+      closeDepositModal();
+      render();
+    }
+
+    function setSplitMethod(method) {
+      currentSplitMethod = method;
+      document.querySelectorAll('.split-tab').forEach(btn => {
+        const active = btn.getAttribute('data-split') === method;
+        btn.classList.toggle('bg-[#0E4D38]', active);
+        btn.classList.toggle('text-white', active);
+        btn.classList.toggle('border-[#0E4D38]', active);
+        btn.classList.toggle('border-[#EAE7DF]', !active);
+        btn.classList.toggle('text-[#5E6D7E]', !active);
+      });
+      const box = document.getElementById('split-custom-inputs');
+      const pctBox = document.getElementById('split-pct-box');
+      const amtBox = document.getElementById('split-amt-box');
+      if (method === '50_50') {
+        box.classList.add('hidden');
+      } else if (method === 'custom_pct') {
+        box.classList.remove('hidden');
+        pctBox.classList.remove('hidden');
+        amtBox.classList.add('hidden');
+      } else {
+        box.classList.remove('hidden');
+        pctBox.classList.add('hidden');
+        amtBox.classList.remove('hidden');
+        const total = parseNominal(document.getElementById('exp-amount').value);
+        if (!document.getElementById('split-amt-a').value) {
+          document.getElementById('split-amt-a').value = formatNominalStr(Math.round(total / 2));
+          document.getElementById('split-amt-b').value = formatNominalStr(total - Math.round(total / 2));
+        }
+      }
+      updateSplitPreview();
+    }
+
+    function syncPct(which) {
+      const aEl = document.getElementById('split-pct-a');
+      const bEl = document.getElementById('split-pct-b');
+      if (which === 'a') {
+        const v = Math.min(100, Math.max(0, Number(aEl.value || 0)));
+        bEl.value = 100 - v;
+      } else {
+        const v = Math.min(100, Math.max(0, Number(bEl.value || 0)));
+        aEl.value = 100 - v;
+      }
+      updateSplitPreview();
+    }
+
+    function syncAmt(which) {
+      const total = parseNominal(document.getElementById('exp-amount').value);
+      const aEl = document.getElementById('split-amt-a');
+      const bEl = document.getElementById('split-amt-b');
+      if (which === 'a' && total > 0) {
+        const v = Math.min(total, Math.max(0, parseNominal(aEl.value)));
+        bEl.value = formatNominalStr(total - v);
+      } else if (which === 'b' && total > 0) {
+        const v = Math.min(total, Math.max(0, parseNominal(bEl.value)));
+        aEl.value = formatNominalStr(total - v);
+      }
+      updateSplitPreview();
+    }
+
+    function computeShares() {
+      const total = parseNominal(document.getElementById('exp-amount').value);
+      if (currentSplitMethod === '50_50') {
+        const a = Math.round(total / 2);
+        return { a, b: total - a };
+      }
+      if (currentSplitMethod === 'custom_pct') {
+        const pctA = Number(document.getElementById('split-pct-a').value || 0);
+        const a = Math.round((total * pctA) / 100);
+        return { a, b: total - a };
+      }
+      const a = parseNominal(document.getElementById('split-amt-a').value);
+      const b = parseNominal(document.getElementById('split-amt-b').value);
+      return { a, b };
+    }
+
+    function updateSplitPreview() {
+      const { a, b } = computeShares();
+      const paidBy = document.getElementById('exp-paidby') ? document.getElementById('exp-paidby').value : 'partner_a';
+      const pA = state.couple.partnerA.name;
+      const pB = state.couple.partnerB.name;
+      document.getElementById('split-summary-text').textContent = `${pA} ${formatIDR(a)} • ${pB} ${formatIDR(b)}`;
+      const settleEl = document.getElementById('split-settle-preview');
+      if (settleEl) {
+        if (paidBy === 'partner_a' && b > 0) {
+          settleEl.textContent = `→ ${pB} mengganti ${formatIDR(b)} ke ${pA}`;
+        } else if (paidBy === 'partner_b' && a > 0) {
+          settleEl.textContent = `→ ${pA} mengganti ${formatIDR(a)} ke ${pB}`;
+        } else {
+          settleEl.textContent = '';
+        }
+      }
+      const srcVal = document.getElementById('exp-source').value;
+      const amt = parseNominal(document.getElementById('exp-amount').value);
+      const warnEl = document.getElementById('kas-bersama-warn');
+      if (warnEl) {
+        const kas = calculateKasBersama();
+        if (srcVal === 'kas_bersama' && amt > kas.saldoTotal) {
+          warnEl.textContent = state.lang === 'en' ? `Warning: Amount (${formatIDR(amt)}) exceeds current Shared Pot balance (${formatIDR(kas.saldoTotal)}).` : `Perhatian: Nominal (${formatIDR(amt)}) melebihi Saldo Kas Bersama saat ini (${formatIDR(kas.saldoTotal)}).`;
+          warnEl.classList.remove('hidden');
+        } else {
+          warnEl.classList.add('hidden');
+        }
+      }
+    }
+
+    document.getElementById('expense-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const errEl = document.getElementById('expense-form-error');
+      const id = document.getElementById('exp-id').value;
+      const title = document.getElementById('exp-title').value.trim();
+      const category = document.getElementById('exp-category').value;
+      const date = document.getElementById('exp-date').value;
+      const amount = parseNominal(document.getElementById('exp-amount').value);
+      const paymentSource = document.getElementById('exp-source').value;
+
+      if (!title || amount <= 0 || !date) {
+        errEl.textContent = state.lang === 'en' ? 'Please enter a valid description, date, and amount.' : 'Mohon isi nama transaksi, tanggal, dan jumlah yang valid.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      let paidBy = 'kas_bersama';
+      let splitMethod = '50_50';
+      let a = Math.round(amount / 2);
+      let b = amount - a;
+
+      if (paymentSource === 'talangan') {
+        paidBy = document.getElementById('exp-paidby').value;
+        splitMethod = currentSplitMethod;
+        const shares = computeShares();
+        a = shares.a;
+        b = shares.b;
+        if (Math.round(a + b) !== Math.round(amount)) {
+          errEl.textContent = `Total porsi (${formatIDR(a + b)}) harus sama dengan jumlah (${formatIDR(amount)}).`;
+          errEl.classList.remove('hidden');
+          return;
+        }
+      }
+
+      const note = document.getElementById('exp-note').value.trim();
+      const record = {
+        id: id || 'exp-' + Date.now(),
+        title, category, amount, date, paymentSource, paidBy,
+        splitMethod, partnerAShare: a, partnerBShare: b, note
+      };
+
+      if (id) {
+        const idx = state.expenses.findIndex(x => x.id === id);
+        if (idx >= 0) state.expenses[idx] = record;
+        showToast('Pengeluaran berhasil diperbarui.');
+      } else {
+        state.expenses.unshift(record);
+        showToast('Pengeluaran tercatat pada ' + formatMonthLabel(date.slice(0, 7)) + '.');
+      }
+      state.selectedMonth = date.slice(0, 7);
+      saveState();
+      closeExpenseModal();
+      render();
+    });
+
+    function deleteExpense(id) {
+      openConfirm(state.lang === 'en' ? 'Delete Expense' : 'Hapus Pengeluaran', state.lang === 'en' ? 'This expense will be removed and balances recalculated.' : 'Pengeluaran ini akan dihapus dan saldo akan dihitung ulang.', () => {
+        if (id.startsWith('exp-bill-')) {
+          const rest = id.slice('exp-bill-'.length);
+          const ym = rest.slice(-7);
+          const billId = rest.slice(0, -8);
+          const bill = state.bills.find(b => b.id === billId);
+          if (bill && bill.paidMonths && bill.paidMonths[ym]) {
+            delete bill.paidMonths[ym];
+          }
+        }
+        state.expenses = state.expenses.filter(x => x.id !== id);
+        saveState();
+        render();
+        showToast('Pengeluaran dihapus.');
+      });
+    }
+
+    function markSettlementPaid() {
+      const s = calculateSettlement(state.selectedMonth);
+      if (s.amount <= 0) return;
+      openConfirm(
+        state.lang === 'en' ? 'Mark Settlement Paid' : 'Tandai Penyelesaian Lunas',
+        state.lang === 'en' ? `Record settlement for ${formatMonthLabel(state.selectedMonth)} of ${formatIDR(s.amount)} from ${partnerName(s.owesFrom)} to ${partnerName(s.owesTo)}?` : `Catat pelunasan talangan ${formatMonthLabel(state.selectedMonth)} sebesar ${formatIDR(s.amount)} dari ${partnerName(s.owesFrom)} kepada ${partnerName(s.owesTo)}?`,
+        () => {
+          state.settlements.unshift({
+            id: 'set-' + Date.now(),
+            from: s.owesFrom,
+            to: s.owesTo,
+            amount: s.amount,
+            date: state.selectedMonth + '-28'
+          });
+          saveState();
+          render();
+          showToast('Penyelesaian bulan ini telah ditandai lunas!');
+        }
+      );
+    }
+
+    function mapBillCategoryToExpense(cat) {
+      if (cat === 'Sewa Rumah' || cat === 'Sewa') return 'Sewa Rumah';
+      if (cat === 'Listrik' || cat === 'Internet' || cat === 'Air') return 'Utilitas';
+      if (cat === 'Langganan') return 'Hiburan';
+      return 'Lainnya';
+    }
+
+    function isBillPaid(bill, ym = state.selectedMonth) {
+      if (bill.paidMonths) return Boolean(bill.paidMonths[ym]);
+      return Boolean(bill.isPaid);
+    }
+
+    function closeBillPayModal() {
+      document.getElementById('bill-pay-modal').classList.add('hidden');
+    }
+
+    function toggleBillPaid(id) {
+      const b = state.bills.find(x => x.id === id);
+      if (!b) return;
+      if (!b.paidMonths) b.paidMonths = {};
+      const ym = state.selectedMonth;
+      const linkedExpId = `exp-bill-${b.id}-${ym}`;
+
+      if (isBillPaid(b, ym)) {
+        delete b.paidMonths[ym];
+        b.isPaid = false;
+        state.expenses = state.expenses.filter(e => e.id !== linkedExpId);
+        saveState();
+        render();
+        showToast(`Status tagihan "${b.title}" (${formatMonthLabel(ym)}) dikembalikan & dihapus dari Pengeluaran.`);
+      } else {
+        document.getElementById('bp-bill-id').value = b.id;
+        document.getElementById('bill-pay-subtitle').textContent = `${b.title} • ${formatIDR(b.amount)} (${formatMonthLabel(ym)})`;
+        document.getElementById('bp-opt-a').textContent = `${state.lang === 'en' ? 'Personal Advance' : 'Talangan Pribadi'} — ${state.couple.partnerA.name}`;
+        document.getElementById('bp-opt-b').textContent = `${state.lang === 'en' ? 'Personal Advance' : 'Talangan Pribadi'} — ${state.couple.partnerB.name}`;
+        document.getElementById('bill-pay-modal').classList.remove('hidden');
+      }
+    }
+
+    function confirmBillPay(e) {
+      e.preventDefault();
+      const id = document.getElementById('bp-bill-id').value;
+      const choice = document.getElementById('bp-source').value;
+      const b = state.bills.find(x => x.id === id);
+      if (!b) return;
+      if (!b.paidMonths) b.paidMonths = {};
+      const ym = state.selectedMonth;
+      const linkedExpId = `exp-bill-${b.id}-${ym}`;
+
+      const isKas = choice === 'kas_bersama';
+      const paidBy = isKas ? 'kas_bersama' : (choice === 'talangan_a' ? 'partner_a' : 'partner_b');
+      b.paidMonths[ym] = { source: isKas ? 'kas_bersama' : 'talangan', paidBy };
+
+      if (!state.expenses.some(ex => ex.id === linkedExpId)) {
+        const shareA = Math.round(b.amount / 2);
+        state.expenses.unshift({
+          id: linkedExpId,
+          title: 'Tagihan: ' + b.title,
+          category: mapBillCategoryToExpense(b.category),
+          amount: b.amount,
+          date: ym + '-20',
+          paymentSource: isKas ? 'kas_bersama' : 'talangan',
+          paidBy,
+          splitMethod: '50_50',
+          partnerAShare: shareA,
+          partnerBShare: b.amount - shareA,
+          note: isKas ? 'Dibayar dari Kas Bersama' : `Talangan ${partnerName(paidBy)}`
+        });
+      }
+      saveState();
+      closeBillPayModal();
+      render();
+      showToast(`Tagihan "${b.title}" lunas (${isKas ? 'Kas Bersama' : 'Talangan'}) & masuk ke Pengeluaran!`);
+    }
+
+    function openWrapupModal() {
+      const ym = state.selectedMonth;
+      const exps = getMonthExpenses(ym);
+      const budget = getMonthBudget(ym);
+      const total = exps.reduce((s, e) => s + e.amount, 0);
+      const kas = calculateKasBersama(ym);
+      const settle = calculateSettlement(ym);
+      const body = document.getElementById('wrapup-body');
+      body.innerHTML = `
+        <div class="p-3.5 rounded-xl bg-[#F7F6F2] border border-[#EAE7DF] space-y-1.5 text-xs">
+          <div class="font-bold text-sm text-[#101D2B] mb-2">${state.lang === 'en' ? 'Report for' : 'Laporan'} ${formatMonthLabel(ym)}</div>
+          <div class="flex justify-between"><span>${state.lang === 'en' ? 'Total Expenses:' : 'Total Pengeluaran:'}</span><strong class="tabular-nums">${formatIDR(total)}</strong></div>
+          <div class="flex justify-between"><span>${state.lang === 'en' ? 'Monthly Budget:' : 'Anggaran Bulan Ini:'}</span><strong class="tabular-nums">${formatIDR(budget)}</strong></div>
+          <div class="flex justify-between"><span>${state.lang === 'en' ? 'Remaining Budget:' : 'Sisa Anggaran:'}</span><strong class="tabular-nums ${budget - total < 0 ? 'text-red-600' : 'text-[#16A37B]'}">${formatIDR(budget - total)}</strong></div>
+          <div class="flex justify-between"><span>${state.lang === 'en' ? 'Shared Pot Balance:' : 'Saldo Kas Bersama:'}</span><strong class="tabular-nums">${formatIDR(kas.saldoTotal)}</strong></div>
+          <div class="flex justify-between pt-1.5 border-t border-[#EAE7DF]"><span>${state.lang === 'en' ? 'Settlement Status:' : 'Status Talangan:'}</span><strong>${settle.amount > 0 ? partnerName(settle.owesFrom) + ' → ' + partnerName(settle.owesTo) + ' ' + formatIDR(settle.amount) : (state.lang === 'en' ? 'Settled ✓' : 'Seimbang ✓')}</strong></div>
+        </div>
+      `;
+      document.getElementById('wrapup-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeWrapupModal() {
+      document.getElementById('wrapup-modal').classList.add('hidden');
+    }
+
+    function copyWrapupText() {
+      const ym = state.selectedMonth;
+      const total = getMonthExpenses(ym).reduce((s, e) => s + e.amount, 0);
+      const budget = getMonthBudget(ym);
+      const kas = calculateKasBersama(ym);
+      const settle = calculateSettlement(ym);
+      const isEn = state.lang === 'en';
+      const text = isEn
+        ? `NESTA Monthly Wrap-Up (${formatMonthLabel(ym)})\n• Total Expenses: ${formatIDR(total)}\n• Remaining Budget: ${formatIDR(budget - total)}\n• Shared Pot Balance: ${formatIDR(kas.saldoTotal)}\n• Settlement: ${settle.amount > 0 ? partnerName(settle.owesFrom) + ' owes ' + formatIDR(settle.amount) + ' to ' + partnerName(settle.owesTo) : 'Settled'}`
+        : `Ringkasan NESTA (${formatMonthLabel(ym)})\n• Total Pengeluaran: ${formatIDR(total)}\n• Sisa Anggaran: ${formatIDR(budget - total)}\n• Saldo Kas Bersama: ${formatIDR(kas.saldoTotal)}\n• Penyelesaian Talangan: ${settle.amount > 0 ? partnerName(settle.owesFrom) + ' bayar ' + formatIDR(settle.amount) + ' ke ' + partnerName(settle.owesTo) : 'Seimbang'}`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => {});
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+      showToast('Ringkasan bulanan disalin! Siap dibagikan ke pasangan.');
+    }
+
+
+    function exportCSV() {
+      const ym = state.selectedMonth;
+      const exps = getMonthExpenses(ym);
+      const isEn = state.lang === 'en';
+      const pA = state.couple.partnerA.name;
+      const pB = state.couple.partnerB.name;
+
+      const headers = isEn
+        ? ['Date', 'Description', 'Category', 'Payment Model', 'Paid By', 'Amount (IDR)', pA + ' Share', pB + ' Share', 'Note']
+        : ['Tanggal', 'Deskripsi', 'Kategori', 'Model Pembayaran', 'Ditalangi Oleh', 'Nominal (IDR)', 'Porsi ' + pA, 'Porsi ' + pB, 'Catatan'];
+
+      const rows = exps.map(e => [
+        e.date,
+        '"' + String(e.title || '').replace(/"/g, '""') + '"',
+        '"' + String(displayCat(e.category) || '').replace(/"/g, '""') + '"',
+        e.paymentSource === 'kas_bersama' ? (isEn ? 'Shared Pot' : 'Kas Bersama') : (isEn ? 'Personal Advance' : 'Talangan Pribadi'),
+        e.paymentSource === 'kas_bersama' ? '-' : partnerName(e.paidBy),
+        e.amount,
+        e.partnerAShare,
+        e.partnerBShare,
+        '"' + String(e.note || '').replace(/"/g, '""') + '"'
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `NESTA-Report-${ym}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(isEn ? `Exported CSV for ${formatMonthLabel(ym)}.` : `Laporan CSV ${formatMonthLabel(ym)} berhasil diunduh.`);
+    }
+
+    function exportPDF() {
+      const ym = state.selectedMonth;
+      const exps = getMonthExpenses(ym);
+      const budget = getMonthBudget(ym);
+      const total = exps.reduce((s, e) => s + e.amount, 0);
+      const kas = calculateKasBersama(ym);
+      const settle = calculateSettlement(ym);
+      const isEn = state.lang === 'en';
+
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        window.print();
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+      let y = 48;
+
+      doc.setFillColor(15, 30, 40);
+      doc.rect(0, 0, 595, 86, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(20);
+      doc.text('NESTA', 40, 42);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text('Separate Money. Shared Life.', 40, 60);
+      doc.text(`${state.couple.name} | ${formatMonthLabel(ym)}`, 555, 50, { align: 'right' });
+
+      y = 115;
+      doc.setTextColor(16, 29, 43);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.text(isEn ? 'Monthly Financial Summary' : 'Ringkasan Keuangan Bulanan', 40, y);
+      y += 22;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      const summaryLines = [
+        [isEn ? 'Total Expenses:' : 'Total Pengeluaran:', formatIDR(total)],
+        [isEn ? 'Monthly Budget:' : 'Anggaran Bulan Ini:', formatIDR(budget)],
+        [isEn ? 'Remaining Budget:' : 'Sisa Anggaran:', formatIDR(budget - total)],
+        [isEn ? 'Shared Pot Balance:' : 'Saldo Kas Bersama:', formatIDR(kas.saldoTotal)],
+        [isEn ? 'Settlement Status:' : 'Status Talangan:', settle.amount > 0
+          ? `${partnerName(settle.owesFrom)} -> ${partnerName(settle.owesTo)} (${formatIDR(settle.amount)})`
+          : (isEn ? 'Settled' : 'Seimbang')]
+      ];
+      summaryLines.forEach(([k, v]) => {
+        doc.setTextColor(94, 109, 126);
+        doc.text(k, 40, y);
+        doc.setTextColor(16, 29, 43);
+        doc.setFont('helvetica', 'bold');
+        doc.text(v, 220, y);
+        doc.setFont('helvetica', 'normal');
+        y += 18;
+      });
+
+      y += 14;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text(isEn ? `Transactions (${exps.length})` : `Daftar Transaksi (${exps.length})`, 40, y);
+      y += 18;
+
+      doc.setFontSize(9);
+      doc.setTextColor(94, 109, 126);
+      doc.text(isEn ? 'Date' : 'Tanggal', 40, y);
+      doc.text(isEn ? 'Description' : 'Deskripsi', 110, y);
+      doc.text(isEn ? 'Category' : 'Kategori', 290, y);
+      doc.text(isEn ? 'Model' : 'Model', 385, y);
+      doc.text(isEn ? 'Amount' : 'Nominal', 555, y, { align: 'right' });
+      y += 8;
+      doc.setDrawColor(234, 231, 223);
+      doc.line(40, y, 555, y);
+      y += 14;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(16, 29, 43);
+      if (exps.length === 0) {
+        doc.text(isEn ? 'No transactions recorded this month.' : 'Belum ada transaksi pada bulan ini.', 40, y);
+      } else {
+        exps.forEach(e => {
+          if (y > 780) {
+            doc.addPage();
+            y = 48;
+          }
+          doc.text(String(e.date || ''), 40, y);
+          doc.text(String(e.title || '').slice(0, 32), 110, y);
+          doc.text(String(displayCat(e.category) || '').slice(0, 16), 290, y);
+          doc.text(e.paymentSource === 'kas_bersama' ? (isEn ? 'Shared Pot' : 'Kas Bersama') : (isEn ? 'Advance' : 'Talangan'), 385, y);
+          doc.text(formatIDR(e.amount), 555, y, { align: 'right' });
+          y += 18;
+        });
+      }
+
+      doc.save(`NESTA-Report-${ym}.pdf`);
+      showToast(isEn ? `Exported PDF for ${formatMonthLabel(ym)}.` : `Laporan PDF ${formatMonthLabel(ym)} berhasil diunduh.`);
+    }
+
+    function openOnboardingModal() {
+      document.getElementById('ob-pa').value = state.couple.partnerA.name;
+      document.getElementById('ob-pb').value = state.couple.partnerB.name;
+      document.getElementById('ob-budget').value = formatNominalStr(getMonthBudget() || 12000000);
+      document.getElementById('onboarding-modal').classList.remove('hidden');
+    }
+
+    function closeOnboardingModal() {
+      document.getElementById('onboarding-modal').classList.add('hidden');
+    }
+
+    function submitOnboarding(e) {
+      e.preventDefault();
+      const stage = document.getElementById('ob-stage').value;
+      const pa = document.getElementById('ob-pa').value.trim();
+      const pb = document.getElementById('ob-pb').value.trim();
+      const budget = parseNominal(document.getElementById('ob-budget').value);
+      if (pa) state.couple.partnerA.name = pa;
+      if (pb) state.couple.partnerB.name = pb;
+      state.couple.name = `Ruang ${stage} (${pa} & ${pb})`;
+      if (!state.monthlyBudgets) state.monthlyBudgets = {};
+      state.monthlyBudgets[state.selectedMonth] = budget;
+      saveState();
+      closeOnboardingModal();
+      navigate('dashboard');
+      showToast('Ruang pasangan berhasil disesuaikan!');
+    }
+
+    function deleteBill(id) {
+      state.bills = state.bills.filter(x => x.id !== id);
+      saveState();
+      render();
+      showToast('Tagihan dihapus.');
+    }
+
+    function addBill(e) {
+      e.preventDefault();
+      const title = document.getElementById('bill-title').value.trim();
+      const category = document.getElementById('bill-cat').value;
+      const amount = parseNominal(document.getElementById('bill-amount').value);
+      const dueDate = document.getElementById('bill-due').value;
+      const frequency = document.getElementById('bill-freq').value;
+      if (!title || amount <= 0) return;
+      state.bills.push({
+        id: 'bill-' + Date.now(),
+        title, category, amount, dueDate, frequency, isPaid: false
+      });
+      saveState();
+      render();
+      showToast('Tagihan rutin baru ditambahkan.');
+    }
+
+    function updateMonthlyBudget(e) {
+      e.preventDefault();
+      const val = parseNominal(document.getElementById('total-budget-input').value);
+      if (val >= 0) {
+        if (!state.monthlyBudgets) state.monthlyBudgets = {};
+        state.monthlyBudgets[state.selectedMonth] = val;
+        saveState();
+        render();
+        showToast(`Anggaran ${formatMonthLabel(state.selectedMonth)} diperbarui.`);
+      }
+    }
+
+    function toggleInlineCat(boxId, inputId) {
+      const box = document.getElementById(boxId);
+      if (box) {
+        box.classList.toggle('hidden');
+        if (!box.classList.contains('hidden')) document.getElementById(inputId).focus();
+      }
+    }
+
+    function addCustomCatFor(type, inputId, selectId, boxId) {
+      const inp = document.getElementById(inputId);
+      const val = (inp.value || '').trim();
+      if (!val) return;
+      const list = type === 'bill' ? getBillCategories() : (type === 'goal' ? getGoalCategories() : getCategories());
+      if (!list.some(c => c.toLowerCase() === val.toLowerCase())) {
+        list.push(val);
+        saveState();
+      }
+      if (selectId) {
+        const sel = document.getElementById(selectId);
+        if (sel) {
+          sel.innerHTML = list.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(displayCat(c))}</option>`).join('');
+          sel.value = val;
+        }
+      }
+      inp.value = '';
+      if (boxId) document.getElementById(boxId).classList.add('hidden');
+      if (type !== 'exp') render();
+      showToast(`Kategori "${val}" ditambahkan.`);
+    }
+
+    function addCatFromSettingsByType(type, inputId, e) {
+      e.preventDefault();
+      const inp = document.getElementById(inputId);
+      const val = (inp.value || '').trim();
+      if (!val) return;
+      const list = type === 'bill' ? getBillCategories() : (type === 'goal' ? getGoalCategories() : getCategories());
+      if (list.some(c => c.toLowerCase() === val.toLowerCase())) {
+        showToast('Kategori tersebut sudah ada.');
+        return;
+      }
+      list.push(val);
+      saveState();
+      render();
+      showToast(`Kategori "${val}" ditambahkan.`);
+    }
+
+    function deleteCategoryByType(type, catName) {
+      const list = type === 'bill' ? getBillCategories() : (type === 'goal' ? getGoalCategories() : getCategories());
+      if (list.length <= 1) {
+        showToast('Minimal harus ada 1 kategori.');
+        return;
+      }
+      const filtered = list.filter(c => c !== catName);
+      if (type === 'bill') state.billCategories = filtered;
+      else if (type === 'goal') state.goalCategories = filtered;
+      else state.categories = filtered;
+      saveState();
+      render();
+      showToast(`Kategori "${catName}" dihapus.`);
+    }
+
+    function toggleQuickAddCat() {
+      const box = document.getElementById('quick-cat-box');
+      if (box) {
+        box.classList.toggle('hidden');
+        if (!box.classList.contains('hidden')) {
+          document.getElementById('quick-cat-input').focus();
+        }
+      }
+    }
+
+    function addQuickCategory() {
+      const inp = document.getElementById('quick-cat-input');
+      const val = (inp.value || '').trim();
+      if (!val) return;
+      const cats = getCategories();
+      if (!cats.some(c => c.toLowerCase() === val.toLowerCase())) {
+        cats.push(val);
+        saveState();
+      }
+      const catSel = document.getElementById('exp-category');
+      catSel.innerHTML = getCategories().map(c => `<option value="${escapeHTML(c)}">${escapeHTML(displayCat(c))}</option>`).join('');
+      catSel.value = val;
+      inp.value = '';
+      document.getElementById('quick-cat-box').classList.add('hidden');
+      showToast(`Kategori "${val}" ditambahkan.`);
+    }
+
+    function addCategoryFromSettings(e) {
+      e.preventDefault();
+      const inp = document.getElementById('set-new-cat');
+      const val = (inp.value || '').trim();
+      if (!val) return;
+      const cats = getCategories();
+      if (cats.some(c => c.toLowerCase() === val.toLowerCase())) {
+        showToast('Kategori tersebut sudah ada.');
+        return;
+      }
+      cats.push(val);
+      saveState();
+      render();
+      showToast(`Kategori "${val}" ditambahkan.`);
+    }
+
+    function deleteCategory(catName) {
+      const cats = getCategories();
+      if (cats.length <= 1) {
+        showToast('Minimal harus ada 1 kategori.');
+        return;
+      }
+      state.categories = cats.filter(c => c !== catName);
+      saveState();
+      render();
+      showToast(`Kategori "${catName}" dihapus.`);
+    }
+
+    function updateCategoryBudget(cat, val) {
+      state.categoryBudgets[cat] = Math.max(0, parseNominal(val));
+      saveState();
+      render();
+      showToast(`Batas kategori ${cat} diperbarui.`);
+    }
+
+    function addCustomBudget(e) {
+      e.preventDefault();
+      const name = document.getElementById('cb-name').value.trim();
+      const category = document.getElementById('cb-cat').value;
+      const limit = parseNominal(document.getElementById('cb-limit').value);
+      if (!name || limit <= 0) return;
+      if (!state.customBudgets) state.customBudgets = [];
+      state.customBudgets.push({
+        id: 'cb-' + Date.now(),
+        name,
+        category,
+        limit
+      });
+      saveState();
+      render();
+      showToast(`Pos anggaran "${name}" ditambahkan.`);
+    }
+
+    function updateCustomBudgetLimit(id, val) {
+      if (!state.customBudgets) return;
+      const item = state.customBudgets.find(b => b.id === id);
+      if (!item) return;
+      item.limit = Math.max(0, parseNominal(val));
+      saveState();
+      render();
+      showToast(`Batas "${item.name}" diperbarui.`);
+    }
+
+    function deleteCustomBudget(id) {
+      if (!state.customBudgets) return;
+      state.customBudgets = state.customBudgets.filter(b => b.id !== id);
+      saveState();
+      render();
+      showToast('Pos anggaran dihapus.');
+    }
+
+    function addGoal(e) {
+      e.preventDefault();
+      const title = document.getElementById('goal-title').value.trim();
+      const category = document.getElementById('goal-cat').value;
+      const targetAmount = parseNominal(document.getElementById('goal-target').value);
+      const targetDate = document.getElementById('goal-date').value;
+      if (!title || targetAmount <= 0) return;
+      state.goals.unshift({
+        id: 'goal-' + Date.now(),
+        title, category, targetAmount, targetDate, contributions: []
+      });
+      saveState();
+      render();
+      showToast('Target tabungan baru dibuat.');
+    }
+
+    function contributeGoal(goalId, e) {
+      e.preventDefault();
+      const amtInput = document.getElementById('contrib-amt-' + goalId);
+      const partnerInput = document.getElementById('contrib-partner-' + goalId);
+      const amount = parseNominal(amtInput.value);
+      if (amount <= 0) return;
+      const goal = state.goals.find(g => g.id === goalId);
+      if (!goal) return;
+      goal.contributions.push({
+        id: 'c-' + Date.now(),
+        partner: partnerInput.value,
+        amount,
+        date: new Date().toISOString().slice(0, 10)
+      });
+      saveState();
+      render();
+      showToast(`Setoran ${formatIDR(amount)} berhasil dicatat.`);
+    }
+
+    function deleteGoal(id) {
+      openConfirm(state.lang === 'en' ? 'Delete Savings Goal' : 'Hapus Target Tabungan', state.lang === 'en' ? 'This goal and its contribution history will be deleted.' : 'Target tabungan dan riwayat setorannya akan dihapus.', () => {
+        state.goals = state.goals.filter(g => g.id !== id);
+        saveState();
+        render();
+        showToast('Target tabungan dihapus.');
+      });
+    }
+
+    function updateCoupleSettings(e) {
+      e.preventDefault();
+      const wsName = document.getElementById('ws-name').value.trim();
+      const pA = document.getElementById('ws-pa').value.trim();
+      const pB = document.getElementById('ws-pb').value.trim();
+      if (wsName) state.couple.name = wsName;
+      if (pA) state.couple.partnerA.name = pA;
+      if (pB) state.couple.partnerB.name = pB;
+      saveState();
+      render();
+      showToast('Profil ruang pasangan diperbarui.');
+    }
+
+    function copyInviteCode() {
+      const code = state.couple.inviteCode;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).catch(() => {});
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = code;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+      showToast('Tautan undangan disalin.');
+    }
+
+
+
+    function clearAllSpaceData() {
+      openConfirm(state.lang === 'en' ? 'Clear All Space Data' : 'Hapus Semua Data Ruang', state.lang === 'en' ? 'All transactions, bills, budgets, and goals in this space will be cleared.' : 'Seluruh transaksi, tagihan, anggaran, dan target tabungan di ruang ini akan dikosongkan.', () => {
+        state = getDefaultState();
+        saveState();
+        render();
+        state.activePage = 'dashboard'; state.isAuthenticated = true; saveState(); render(); showToast('Data ruang berhasil dikosongkan.');
+      });
+    }
+
+    // ==========================================
+    // PAGE RENDERERS
+    // ==========================================
+    function getTutorialSteps() {
+      const isEn = state.lang === 'en';
+      if (isEn) {
+        return [
+          {
+            icon: 'shield-check',
+            title: 'Welcome to NESTA!',
+            desc: 'NESTA helps you and your partner manage monthly shared finances without merging personal bank accounts.',
+            points: [
+              '• Personal balances stay 100% private.',
+              '• Only shared expenses, budgets, bills, and goals are visible to both of you.',
+              '• Switch between Indonesian & English anytime in Settings.'
+            ]
+          },
+          {
+            icon: 'users',
+            title: '1. Invite Your Partner (Couple Space)',
+            desc: 'Start by connecting your partner to the same Shared Space so both of you can record and view updates.',
+            points: [
+              '• Open "Couple Space" in the left menu.',
+              '• Copy your unique invite link and send it to your partner.',
+              '• Your partner registers via "Join Partner Invite" using that link.'
+            ]
+          },
+          {
+            icon: 'wallet',
+            title: '2. Two Ways to Record Expenses',
+            desc: 'NESTA supports how real couples actually pay for things each month.',
+            points: [
+              '• Personal Advance: One partner pays first, and NESTA calculates fair split (50:50, %, or custom) and who owes whom.',
+              '• Shared Pot: Deposit money into a shared pool first, then spend from it with zero personal debt.',
+              '• Use the Month Switcher at the top to view past or current months cleanly.'
+            ]
+          },
+          {
+            icon: 'calendar-clock',
+            title: '3. Monthly Budgets & Recurring Bills',
+            desc: 'Keep monthly household spending under control and never miss a due date.',
+            points: [
+              '• Set your total monthly budget and category limits in "Budgets".',
+              '• Add rent, electricity, internet, or subscriptions in "Bills".',
+              '• Clicking "Mark Paid" on a bill automatically logs it into Expenses.'
+            ]
+          },
+          {
+            icon: 'target',
+            title: '4. Shared Savings Goals',
+            desc: 'Save together for big life milestones while tracking each partner’s contributions.',
+            points: [
+              '• Create goals for Wedding, Honeymoon, Emergency Fund, or House Down Payment.',
+              '• Record deposits from each partner and watch your progress bar grow.'
+            ]
+          }
+        ];
+      }
+      return [
+        {
+          icon: 'shield-check',
+          title: 'Selamat Datang di NESTA!',
+          desc: 'NESTA membantu Anda dan pasangan mengatur keuangan bersama setiap bulan tanpa harus menggabungkan rekening pribadi.',
+          points: [
+            '• Saldo dan rekening pribadi tetap 100% rahasia.',
+            '• Hanya pengeluaran, anggaran, tagihan, dan target bersama yang terlihat berdua.',
+            '• Gunakan tombol Menu di kiri atas untuk berpindah halaman.'
+          ]
+        },
+        {
+          icon: 'users',
+          title: '1. Undang Pasangan (Ruang Pasangan)',
+          desc: 'Hubungkan akun pasangan Anda ke ruang yang sama agar pencatatan bisa dilakukan bersama.',
+          points: [
+            '• Buka menu "Ruang Pasangan" di sisi kiri.',
+            '• Salin tautan undangan unik Anda lalu kirim ke WhatsApp pasangan.',
+            '• Pasangan cukup mendaftar lewat "Gabung Undangan Pasangan" dengan tautan tersebut.'
+          ]
+        },
+        {
+          icon: 'wallet',
+          title: '2. Dua Model Catat Pengeluaran',
+          desc: 'Sesuaikan cara mencatat dengan kebiasaan keuangan Anda dan pasangan.',
+          points: [
+            '• Talangan Pribadi: Salah satu bayar dulu, NESTA hitung porsi (50:50, %, atau nominal) dan saldo penyelesaian.',
+            '• Kas Bersama: Setor patungan ke Kas Bersama, lalu bayar pengeluaran dari kas tanpa utang pribadi.',
+            '• Gunakan pemilih bulan di kanan atas untuk memantau histori tiap bulan.'
+          ]
+        },
+        {
+          icon: 'calendar-clock',
+          title: '3. Anggaran & Tagihan Rutin',
+          desc: 'Jaga pengeluaran bulanan tetap sesuai batas dan hindari telat bayar tagihan.',
+          points: [
+            '• Atur batas anggaran bulanan & per kategori di menu "Anggaran".',
+            '• Catat sewa rumah, listrik, internet, atau langganan di menu "Tagihan".',
+            '• Menekan "Tandai Lunas" pada tagihan otomatis mencatatnya ke Pengeluaran.'
+          ]
+        },
+        {
+          icon: 'target',
+          title: '4. Target Tabungan Masa Depan',
+          desc: 'Wujudkan rencana besar bersama dengan progres yang transparan.',
+          points: [
+            '• Buat target seperti Dana Pernikahan, Bulan Madu, Dana Darurat, atau DP Rumah.',
+            '• Catat setiap setoran dari masing-masing pasangan dan pantau progresnya.'
+          ]
+        }
+      ];
+    }
+
+    function openTutorial(step = 0) {
+      state.tutorialStep = step;
+      renderTutorialStep();
+      document.getElementById('tutorial-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderTutorialStep() {
+      const steps = getTutorialSteps();
+      const idx = Math.max(0, Math.min(steps.length - 1, state.tutorialStep || 0));
+      const s = steps[idx];
+      const isEn = state.lang === 'en';
+
+      document.getElementById('tut-badge').textContent = isEn ? `Step ${idx + 1} of ${steps.length}` : `Langkah ${idx + 1} dari ${steps.length}`;
+      document.getElementById('tut-skip-btn').textContent = isEn ? 'Skip' : 'Lewati';
+      document.getElementById('tut-icon-box').innerHTML = `<i data-lucide="${s.icon}" class="w-6 h-6"></i>`;
+      document.getElementById('tut-title').textContent = s.title;
+      document.getElementById('tut-desc').textContent = s.desc;
+      document.getElementById('tut-points').innerHTML = s.points.map(p => `<div>${escapeHTML(p)}</div>`).join('');
+
+      document.getElementById('tut-dots').innerHTML = steps.map((_, i) =>
+        `<span class="h-1.5 rounded-full transition-all ${i === idx ? 'w-5 bg-[#16A37B]' : 'w-1.5 bg-[#EAE7DF]'}"></span>`
+      ).join('');
+
+      const prevBtn = document.getElementById('tut-prev-btn');
+      prevBtn.textContent = isEn ? 'Back' : 'Sebelumnya';
+      prevBtn.classList.toggle('invisible', idx === 0);
+
+      const nextBtn = document.getElementById('tut-next-btn');
+      nextBtn.textContent = idx === steps.length - 1 ? (isEn ? 'Start Using NESTA' : 'Mulai Pakai NESTA') : (isEn ? 'Next →' : 'Lanjut →');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function nextTutorialStep() {
+      const steps = getTutorialSteps();
+      if (state.tutorialStep < steps.length - 1) {
+        state.tutorialStep += 1;
+        renderTutorialStep();
+      } else {
+        finishTutorial();
+      }
+    }
+
+    function prevTutorialStep() {
+      if (state.tutorialStep > 0) {
+        state.tutorialStep -= 1;
+        renderTutorialStep();
+      }
+    }
+
+    function finishTutorial() {
+      state.hasSeenTutorial = true;
+      saveState();
+      document.getElementById('tutorial-modal').classList.add('hidden');
+    }
+
+    function logoutUser() {
+      state.isAuthenticated = false;
+      state.currentUser = null;
+      state.activePage = 'landing';
+      saveState();
+      render();
+      showToast(state.lang === 'en' ? 'Signed out successfully.' : 'Anda telah keluar dari akun.');
+    }
+
+    function setAuthTab(tab) {
+      state.authTab = tab;
+      render();
+    }
+
+    function toggleInviteInput() {
+      const roleEl = document.getElementById('auth-role');
+      const wrap = document.getElementById('auth-invite-wrap');
+      if (roleEl && wrap) {
+        wrap.classList.toggle('hidden', roleEl.value !== 'partner_b');
+      }
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim().toLowerCase();
+      const pass = document.getElementById('auth-password').value;
+      const errEl = document.getElementById('auth-error');
+      const isEn = state.lang === 'en';
+      if (!email || pass.length < 6) {
+        errEl.textContent = isEn ? 'Enter a valid email and password (min 6 characters).' : 'Masukkan email yang valid dan kata sandi minimal 6 karakter.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+      if (!state.registeredUsers) state.registeredUsers = [];
+
+      if (state.authTab === 'register') {
+        if (state.registeredUsers.some(u => u.email === email)) {
+          errEl.textContent = isEn ? 'Email already registered. Please sign in.' : 'Email sudah terdaftar. Silakan masuk.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        const name = document.getElementById('auth-name').value.trim() || email.split('@')[0];
+        const roleChoice = document.getElementById('auth-role').value;
+        if (roleChoice === 'partner_b') {
+          const entered = (document.getElementById('auth-invite-code').value || '').trim();
+          const expectedShort = state.couple.inviteCode.split('/').pop();
+          if (!entered || (!entered.includes(expectedShort) && entered !== state.couple.inviteCode)) {
+            errEl.textContent = isEn ? `Invalid invite link/code. Use "${expectedShort}".` : `Kode/tautan undangan tidak cocok. Gunakan "${expectedShort}".`;
+            errEl.classList.remove('hidden');
+            return;
+          }
+          state.couple.partnerJoined = true;
+          state.couple.partnerB.name = name;
+        } else {
+          const randCode = Math.random().toString(36).substring(2, 8);
+          state.couple = {
+            name: (isEn ? 'Shared Space ' : 'Ruang Bersama ') + name,
+            inviteCode: 'https://nesta.id/couple/' + randCode,
+            partnerJoined: false,
+            monthlyBudget: 0,
+            partnerA: { id: 'partner_a', name },
+            partnerB: { id: 'partner_b', name: isEn ? 'Partner' : 'Pasangan' }
+          };
+          state.expenses = [];
+          state.poolDeposits = [];
+          state.settlements = [];
+          state.bills = [];
+          state.goals = [];
+          state.customBudgets = [];
+        }
+        const userObj = { name, email, pass, role: roleChoice };
+        state.registeredUsers.push(userObj);
+        state.activeRole = roleChoice;
+        state.currentUser = { name, email, role: roleChoice };
+      } else {
+        const found = state.registeredUsers.find(u => u.email === email && u.pass === pass);
+        if (!found) {
+          errEl.textContent = isEn ? 'Account not found or wrong password. Please register first.' : 'Akun tidak ditemukan atau kata sandi salah. Silakan daftar akun terlebih dahulu.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        state.activeRole = found.role;
+        state.currentUser = { name: found.name, email: found.email, role: found.role };
+      }
+
+      const isNewUser = state.authTab === 'register';
+      state.isAuthenticated = true;
+      state.activePage = 'dashboard';
+      saveState();
+      render();
+      showToast((isEn ? 'Welcome, ' : 'Selamat datang, ') + state.currentUser.name + '!');
+      if (isNewUser || !state.hasSeenTutorial) {
+        setTimeout(() => openTutorial(0), 250);
+      }
+    }
+
+    function handleGoogleLogin() {
+      const isEn = state.lang === 'en';
+      if (!state.registeredUsers) state.registeredUsers = [];
+      const gEmail = 'clayrens@gmail.com';
+      let user = state.registeredUsers.find(u => u.email === gEmail);
+      if (!user) {
+        user = { name: state.couple.partnerA.name || 'Clayrens', email: gEmail, pass: 'google-oauth', role: 'partner_a', provider: 'google' };
+        state.registeredUsers.push(user);
+      }
+      state.activeRole = user.role;
+      state.currentUser = { name: user.name, email: user.email, role: user.role, avatar: user.avatar || '' };
+      state.isAuthenticated = true;
+      state.activePage = 'dashboard';
+      saveState();
+      render();
+      showToast((isEn ? 'Signed in with Google as ' : 'Berhasil masuk dengan Google sebagai ') + user.name + '!');
+    }
+
+    function openForgotMode() {
+      state.authTab = 'forgot';
+      render();
+    }
+
+    function handleForgotSubmit(e) {
+      e.preventDefault();
+      const isEn = state.lang === 'en';
+      const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+      const newPass = document.getElementById('forgot-newpass').value;
+      const errEl = document.getElementById('auth-error');
+      if (!state.registeredUsers) state.registeredUsers = [];
+      const user = state.registeredUsers.find(u => u.email === email);
+      if (!user) {
+        errEl.textContent = isEn ? 'Email not registered.' : 'Email belum terdaftar.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+      if (newPass.length < 6) {
+        errEl.textContent = isEn ? 'New password must be at least 6 characters.' : 'Kata sandi baru minimal 6 karakter.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+      user.pass = newPass;
+      state.authTab = 'login';
+      saveState();
+      render();
+      showToast(isEn ? 'Password reset! Please sign in with your new password.' : 'Kata sandi berhasil diperbarui! Silakan masuk.');
+    }
+
+    function handleAvatarUpload(input) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        const dataUrl = ev.target.result;
+        if (state.currentUser) {
+          state.currentUser.avatar = dataUrl;
+          const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
+          if (reg) reg.avatar = dataUrl;
+          saveState();
+          render();
+          showToast(state.lang === 'en' ? 'Profile picture updated.' : 'Foto profil berhasil diperbarui.');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeAvatar() {
+      if (state.currentUser) {
+        delete state.currentUser.avatar;
+        const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
+        if (reg) delete reg.avatar;
+        saveState();
+        render();
+        showToast(state.lang === 'en' ? 'Profile picture removed.' : 'Foto profil dihapus.');
+      }
+    }
+
+    function updateAccountProfile(e) {
+      e.preventDefault();
+      const newName = document.getElementById('acc-name').value.trim();
+      if (!newName || !state.currentUser) return;
+      state.currentUser.name = newName;
+      if (state.currentUser.role === 'partner_a') state.couple.partnerA.name = newName;
+      else state.couple.partnerB.name = newName;
+      const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
+      if (reg) reg.name = newName;
+      saveState();
+      render();
+      showToast(state.lang === 'en' ? 'Account profile updated.' : 'Profil akun diperbarui.');
+    }
+
+    function changeAccountPassword(e) {
+      e.preventDefault();
+      const isEn = state.lang === 'en';
+      const oldP = document.getElementById('acc-old-pass').value;
+      const newP = document.getElementById('acc-new-pass').value;
+      const confP = document.getElementById('acc-conf-pass').value;
+      if (!state.currentUser) return;
+      const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
+      if (reg && reg.pass !== 'google-oauth' && reg.pass !== oldP) {
+        showToast(isEn ? 'Current password is incorrect.' : 'Kata sandi saat ini salah.');
+        return;
+      }
+      if (newP.length < 6) {
+        showToast(isEn ? 'New password must be at least 6 characters.' : 'Kata sandi baru minimal 6 karakter.');
+        return;
+      }
+      if (newP !== confP) {
+        showToast(isEn ? 'Password confirmation does not match.' : 'Konfirmasi kata sandi tidak cocok.');
+        return;
+      }
+      if (reg) reg.pass = newP;
+      saveState();
+      document.getElementById('acc-old-pass').value = '';
+      document.getElementById('acc-new-pass').value = '';
+      document.getElementById('acc-conf-pass').value = '';
+      showToast(isEn ? 'Password changed successfully.' : 'Kata sandi berhasil diubah.');
+    }
+
+    function renderLanding() {
+      const isReg = state.authTab === 'register';
+      const isForgot = state.authTab === 'forgot';
+      const isEn = state.lang === 'en';
+      return `
+        <div class="max-w-5xl mx-auto py-4">
+          <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+              <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 32V18C8 11.3726 13.3726 6 20 6C26.6274 6 32 11.3726 32 18V32H25V19C25 16.2386 22.7614 14 20 14C17.2386 14 15 16.2386 15 19V32H8Z" fill="#0E4D38"/>
+                <path d="M20 6C26.6274 6 32 11.3726 32 18V32H25V19C25 16.2386 22.7614 14 20 14V6Z" fill="#16A37B"/>
+              </svg>
+              <div>
+                <div class="text-2xl font-bold tracking-tight text-[#101D2B]">NESTA</div>
+                <div class="text-xs text-[#5E6D7E]">Separate Money. Shared Life.</div>
+              </div>
+            </div>
+            <div class="inline-flex bg-white border border-[#EAE7DF] rounded-xl p-0.5 text-xs font-semibold">
+              <button type="button" onclick="setLanguage('id')" class="px-2.5 py-1.5 rounded-lg ${!isEn ? 'bg-[#0F1E28] text-white' : 'text-[#5E6D7E]'}">ID</button>
+              <button type="button" onclick="setLanguage('en')" class="px-2.5 py-1.5 rounded-lg ${isEn ? 'bg-[#0F1E28] text-white' : 'text-[#5E6D7E]'}">EN</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <div class="lg:col-span-6 rounded-3xl bg-gradient-to-br from-[#0F1E28] via-[#152B38] to-[#0E4D38] text-white p-8 flex flex-col justify-between shadow-lg">
+              <div>
+                <span class="inline-block px-3 py-1 rounded-full bg-white/10 text-xs font-medium text-[#34D399] mb-4">${isEn ? 'Couple & Family Finance' : 'Keuangan Pasangan & Keluarga'}</span>
+                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight leading-tight mb-4">Separate Money.<br/>Shared Life.</h1>
+                <p class="text-sm text-[#CBD5E1] leading-relaxed mb-6">${isEn ? 'Manage monthly shared expenses, shared pots, recurring bills, and future goals without merging your personal bank accounts.' : 'Kelola pengeluaran bulanan, kas bersama, tagihan rutin, dan target masa depan tanpa harus menggabungkan rekening pribadi.'}</p>
+                <ul class="space-y-2.5 text-xs text-[#E2E8F0]">
+                  <li class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-[#34D399]"></i> ${isEn ? 'Private individual accounts — never expose personal balances' : 'Akun privat per individu — saldo pribadi tetap terlindungi'}</li>
+                  <li class="flex items-center gap-2"><i data-lucide="landmark" class="w-4 h-4 text-[#34D399]"></i> ${isEn ? 'Supports Personal Advances & Monthly Shared Pot' : 'Dukungan Talangan Pribadi & Kas Bersama bulanan'}</li>
+                  <li class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-[#34D399]"></i> ${isEn ? 'Monthly cycle tracking & clear couple settlement' : 'Pencatatan & anggaran terpisah per siklus bulan'}</li>
+                </ul>
+              </div>
+              <div class="pt-6 mt-8 border-t border-white/15 flex items-center justify-between text-xs text-[#9FB0BE]">
+                <span>NESTA Couple Finance</span>
+                <span>IDR (Rp)</span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 card-nesta p-7 sm:p-8 flex flex-col justify-center">
+              ${isForgot ? `
+                <button type="button" onclick="setAuthTab('login')" class="text-xs font-semibold text-[#16A37B] hover:underline self-start mb-4">← ${isEn ? 'Back to Sign In' : 'Kembali ke Masuk'}</button>
+                <h2 class="text-xl font-bold text-[#101D2B]">${isEn ? 'Reset Password' : 'Atur Ulang Kata Sandi'}</h2>
+                <p class="text-xs text-[#5E6D7E] mt-1 mb-5">${isEn ? 'Enter your registered email and choose a new password.' : 'Masukkan email terdaftar Anda dan buat kata sandi baru.'}</p>
+                <form onsubmit="handleForgotSubmit(event)" class="space-y-3.5">
+                  <div>
+                    <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Email</label>
+                    <input type="email" id="forgot-email" required placeholder="nama@email.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'New Password' : 'Kata Sandi Baru'}</label>
+                    <input type="password" id="forgot-newpass" required minlength="6" placeholder="${isEn ? 'Min 6 characters' : 'Minimal 6 karakter'}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                  </div>
+                  <div id="auth-error" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg"></div>
+                  <button type="submit" class="btn-primary w-full py-3 rounded-xl text-sm font-semibold">${isEn ? 'Reset Password' : 'Simpan Kata Sandi Baru'}</button>
+                </form>
+              ` : `
+                <div class="flex gap-2 p-1 bg-[#F7F6F2] rounded-xl mb-5">
+                  <button type="button" onclick="setAuthTab('login')" class="flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${!isReg ? 'bg-white text-[#101D2B] shadow-sm' : 'text-[#5E6D7E]'}">${isEn ? 'Sign In' : 'Masuk'}</button>
+                  <button type="button" onclick="setAuthTab('register')" class="flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${isReg ? 'bg-white text-[#101D2B] shadow-sm' : 'text-[#5E6D7E]'}">${isEn ? 'Create Account' : 'Daftar Akun Baru'}</button>
+                </div>
+
+                <h2 class="text-xl font-bold text-[#101D2B]">${isReg ? (isEn ? 'Create Your NESTA Account' : 'Buat Akun NESTA') : (isEn ? 'Sign In to Couple Space' : 'Masuk ke Ruang Bersama')}</h2>
+                <p class="text-xs text-[#5E6D7E] mt-1 mb-5">${isReg ? (isEn ? 'Register with your personal email, then create or join a space.' : 'Daftar dengan email pribadi Anda, lalu buat atau gabung ruang.') : (isEn ? 'Sign in using your registered account or Google.' : 'Masuk menggunakan akun terdaftar atau akun Google.')}</p>
+
+                <button type="button" onclick="handleGoogleLogin()" class="w-full py-2.5 px-4 rounded-xl border border-[#EAE7DF] bg-white hover:bg-[#F7F6F2] text-sm font-semibold text-[#101D2B] flex items-center justify-center gap-2.5 mb-4 transition-colors">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96z"/>
+                  </svg>
+                  <span>${isEn ? 'Continue with Google' : 'Masuk dengan Google'}</span>
+                </button>
+
+                <div class="relative mb-4 text-center">
+                  <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-[#EAE7DF]"></div></div>
+                  <span class="relative bg-white px-3 text-[11px] text-[#5E6D7E]">${isEn ? 'or with email' : 'atau dengan email'}</span>
+                </div>
+
+                <form onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
+                  ${isReg ? `
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Display Name' : 'Nama Panggilan'}</label>
+                        <input type="text" id="auth-name" required placeholder="${isEn ? 'Your name' : 'Nama Anda'}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Space Option' : 'Pilihan Ruang'}</label>
+                        <select id="auth-role" onchange="toggleInviteInput()" class="w-full px-3 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+                          <option value="partner_a">${isEn ? 'Create New Space' : 'Buat Ruang Baru'}</option>
+                          <option value="partner_b">${isEn ? 'Join Partner Invite' : 'Gabung Undangan Pasangan'}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div id="auth-invite-wrap" class="hidden">
+                      <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Paste Invite Link / Code from Partner' : 'Tempel Kode / Tautan Undangan dari Pasangan'}</label>
+                      <input type="text" id="auth-invite-code" placeholder="https://nesta.id/couple/..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                    </div>
+                  ` : ''}
+                  <div>
+                    <label class="block text-xs font-medium text-[#5E6D7E] mb-1">Email</label>
+                    <input type="email" id="auth-email" required placeholder="nama@email.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                  </div>
+                  <div>
+                    <div class="flex items-center justify-between mb-1">
+                      <label class="block text-xs font-medium text-[#5E6D7E]">${isEn ? 'Password' : 'Kata Sandi'}</label>
+                      ${!isReg ? `<button type="button" onclick="openForgotMode()" class="text-[11px] font-semibold text-[#16A37B] hover:underline">${isEn ? 'Forgot password?' : 'Lupa kata sandi?'}</button>` : ''}
+                    </div>
+                    <input type="password" id="auth-password" required minlength="6" placeholder="${isEn ? 'Min 6 characters' : 'Minimal 6 karakter'}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                  </div>
+                  <div id="auth-error" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg"></div>
+                  <button type="submit" class="btn-primary w-full py-3 rounded-xl text-sm font-semibold">${isReg ? (isEn ? 'Create Account & Enter' : 'Daftar & Masuk') : (isEn ? 'Sign In' : 'Masuk')}</button>
+                </form>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const monthExps = getMonthExpenses();
+      const monthBudget = getMonthBudget();
+      const totalSpent = monthExps.reduce((s, e) => s + e.amount, 0);
+      const remainingBudget = monthBudget - totalSpent;
+      const budgetPct = monthBudget > 0 ? Math.min(100, Math.round((totalSpent / monthBudget) * 100)) : 0;
+      const unpaidBills = state.bills.filter(b => !isBillPaid(b));
+      const totalUnpaid = unpaidBills.reduce((s, b) => s + b.amount, 0);
+      const settle = calculateSettlement();
+      const kas = calculateKasBersama();
+
+      const recentExpenses = monthExps.slice(0, 5);
+      const upcomingBills = state.bills.slice().sort((a, b) => a.dueDate.localeCompare(b.dueDate)).slice(0, 4);
+      const totalPaidTalangan = Math.max(1, settle.paidA + settle.paidB);
+      const shareBarA = (settle.paidA + settle.paidB) > 0 ? Math.round((settle.paidA / totalPaidTalangan) * 100) : 50;
+
+      return `
+        <!-- Header with Month Switcher -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B] tracking-tight">${t('hello')}, ${escapeHTML(state.couple.partnerA.name)} & ${escapeHTML(state.couple.partnerB.name)}!</h1>
+            <p class="text-sm text-[#5E6D7E] mt-0.5">${t('period_sub')} <strong>${formatMonthLabel(state.selectedMonth)}</strong></p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            ${renderMonthSelector()}
+            <button onclick="openTutorial(0)" class="px-3 py-2 rounded-xl border border-[#EAE7DF] bg-white text-xs sm:text-sm font-medium text-[#101D2B] hover:bg-[#FAF9F6] inline-flex items-center gap-1.5" title="Panduan">
+              <i data-lucide="help-circle" class="w-4 h-4 text-[#16A37B]"></i> ${state.lang === 'en' ? 'Guide' : 'Panduan'}
+            </button>
+            <button id="btn-wrapup-main" onclick="openWrapupModal()" class="px-3.5 py-2 rounded-xl border border-[#EAE7DF] bg-white text-xs sm:text-sm font-medium text-[#101D2B] hover:bg-[#FAF9F6] inline-flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-4 h-4 text-[#0E4D38]"></i> ${t('btn_wrapup')}
+            </button>
+            <button id="btn-add-exp-main" onclick="openExpenseModal()" class="btn-primary px-4 py-2 rounded-xl text-xs sm:text-sm font-medium inline-flex items-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i> ${t('btn_add_exp')}
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Featured Gradient Card -->
+        <div class="lg:hidden rounded-2xl bg-gradient-to-br from-[#0E4D38] to-[#16A37B] text-white p-5 mb-5 shadow-md flex items-center justify-between">
+          <div>
+            <div class="text-xs text-white/80 font-medium">${state.lang === 'en' ? 'Remaining Budget' : 'Sisa Anggaran'} (${formatMonthLabel(state.selectedMonth)})</div>
+            <div class="text-2xl font-bold tabular-nums mt-0.5">${formatIDR(remainingBudget)}</div>
+            <div class="text-[11px] text-white/75 mt-1">${state.lang === 'en' ? 'Out of' : 'Dari batas'} ${formatIDR(monthBudget)}</div>
+          </div>
+          <div class="w-16 h-16 rounded-full border-4 border-white/25 flex items-center justify-center bg-white/10">
+            <span class="text-sm font-bold tabular-nums">${budgetPct}%</span>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards (Including Saldo Kas Bersama) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div class="rounded-2xl p-5 bg-[#EEF7F3] border border-[#D8ECE3]">
+            <div class="w-9 h-9 rounded-xl bg-[#D8EFE5] text-[#0E4D38] flex items-center justify-center mb-3">
+              <i data-lucide="wallet" class="w-4 h-4"></i>
+            </div>
+            <div class="text-2xl font-bold text-[#101D2B] tabular-nums">${formatIDR(totalSpent)}</div>
+            <div class="text-xs text-[#5E6D7E] mt-0.5">${t('kpi_total_exp')} (${monthExps.length})</div>
+          </div>
+
+          <div class="rounded-2xl p-5 bg-[#F2F8F4] border border-[#DCECE0]">
+            <div class="w-9 h-9 rounded-xl bg-[#DCF0E2] text-[#16A37B] flex items-center justify-center mb-3">
+              <i data-lucide="piggy-bank" class="w-4 h-4"></i>
+            </div>
+            <div class="text-2xl font-bold ${remainingBudget < 0 ? 'text-red-600' : 'text-[#101D2B]'} tabular-nums">${formatIDR(remainingBudget)}</div>
+            <div class="text-xs text-[#5E6D7E] mt-0.5">${t('kpi_rem_budget')}</div>
+          </div>
+
+          <div class="rounded-2xl p-5 bg-[#F4F7FA] border border-[#DCE6F0]">
+            <div class="w-9 h-9 rounded-xl bg-[#E1ECF7] text-[#0F1E28] flex items-center justify-center mb-3">
+              <i data-lucide="landmark" class="w-4 h-4"></i>
+            </div>
+            <div class="text-2xl font-bold text-[#101D2B] tabular-nums">${formatIDR(kas.saldoTotal)}</div>
+            <div class="text-xs text-[#5E6D7E] mt-0.5">${t('kpi_kas')}</div>
+          </div>
+
+          <div class="rounded-2xl p-5 bg-[#FDF2F2] border border-[#F8DFDF]">
+            <div class="w-9 h-9 rounded-xl bg-[#FADCDC] text-[#DC2626] flex items-center justify-center mb-3">
+              <i data-lucide="receipt" class="w-4 h-4"></i>
+            </div>
+            <div class="text-2xl font-bold text-[#101D2B] tabular-nums">${formatIDR(totalUnpaid)}</div>
+            <div class="text-xs text-[#5E6D7E] mt-0.5">${t('kpi_unpaid')} (${unpaidBills.length})</div>
+          </div>
+        </div>
+
+        <!-- Kontribusi Talangan + Kas Bersama + Progres Anggaran -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          <div class="lg:col-span-7 card-nesta p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-bold text-[#101D2B]">${t('talangan_title')}</h2>
+                <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F7F6F2] text-[#5E6D7E] font-medium">${formatMonthLabel(state.selectedMonth)}</span>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-[#0F1E28] text-white flex items-center justify-center font-bold text-sm shrink-0">${escapeHTML(state.couple.partnerA.name[0])}</div>
+                  <div>
+                    <div class="text-xs text-[#5E6D7E]">${escapeHTML(state.couple.partnerA.name)} (${state.lang === 'en' ? 'Paid' : 'Dibayar'})</div>
+                    <div class="text-base font-bold text-[#101D2B] tabular-nums">${formatIDR(settle.paidA)}</div>
+                    <div class="text-[11px] text-[#5E6D7E] tabular-nums">${state.lang === 'en' ? 'Share:' : 'Porsi:'} ${formatIDR(settle.shouldA)}</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-[#16A37B] text-white flex items-center justify-center font-bold text-sm shrink-0">${escapeHTML(state.couple.partnerB.name[0])}</div>
+                  <div>
+                    <div class="text-xs text-[#5E6D7E]">${escapeHTML(state.couple.partnerB.name)} (${state.lang === 'en' ? 'Paid' : 'Dibayar'})</div>
+                    <div class="text-base font-bold text-[#101D2B] tabular-nums">${formatIDR(settle.paidB)}</div>
+                    <div class="text-[11px] text-[#5E6D7E] tabular-nums">${state.lang === 'en' ? 'Share:' : 'Porsi:'} ${formatIDR(settle.shouldB)}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="w-full h-2.5 bg-[#EAE7DF] rounded-full overflow-hidden flex mb-3">
+                <div class="h-full bg-[#0E4D38]" style="width:${shareBarA}%"></div>
+                <div class="h-full bg-[#16A37B]" style="width:${100 - shareBarA}%"></div>
+              </div>
+            </div>
+
+            ${settle.amount > 0 ? `
+              <div class="mt-2 p-3.5 rounded-xl bg-[#FDF6EB] border border-[#F5E4C8] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 text-xs text-[#101D2B]">
+                  <i data-lucide="scale" class="w-4 h-4 text-[#D97706] shrink-0"></i>
+                  <span><strong>${escapeHTML(partnerName(settle.owesFrom))}</strong> ${state.lang === 'en' ? 'owes' : 'perlu membayar'} <strong class="text-[#0E4D38] tabular-nums">${formatIDR(settle.amount)}</strong> ${state.lang === 'en' ? 'to' : 'ke'} <strong>${escapeHTML(partnerName(settle.owesTo))}</strong></span>
+                </div>
+                <button onclick="markSettlementPaid()" class="btn-primary px-3.5 py-2 rounded-xl text-xs font-medium shrink-0">${t('settle_btn')}</button>
+              </div>
+            ` : `
+              <div class="mt-2 p-3.5 rounded-xl bg-[#EEF7F3] border border-[#D8ECE3] flex items-center gap-2.5 text-xs text-[#0E4D38] font-medium">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-[#16A37B] shrink-0"></i>
+                <span>${t('balanced_msg')}</span>
+              </div>
+            `}
+          </div>
+
+          <div class="lg:col-span-5 card-nesta p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-base font-bold text-[#101D2B]">${t('budget_prog')}</h2>
+              <button onclick="navigate('budgets')" class="text-xs font-medium text-[#16A37B] hover:underline">${t('detail')}</button>
+            </div>
+            <div class="flex items-center gap-6 my-auto py-2">
+              <div class="relative w-32 h-32 shrink-0">
+                <canvas id="dashboard-donut-chart"></canvas>
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <span class="text-xl font-bold text-[#101D2B] tabular-nums">${budgetPct}%</span>
+                </div>
+              </div>
+              <div class="min-w-0">
+                <div class="text-lg font-bold text-[#101D2B] tabular-nums">${formatIDR(totalSpent)}</div>
+                <div class="text-xs text-[#5E6D7E] mt-0.5 tabular-nums">${state.lang === 'en' ? 'of' : 'dari'} ${formatIDR(monthBudget)}</div>
+                <div class="mt-3 text-[11px] font-medium ${remainingBudget < 0 ? 'text-red-600' : 'text-[#16A37B]'}">
+                  ${remainingBudget < 0 ? (state.lang === 'en' ? 'Over budget!' : 'Melebihi anggaran!') : (state.lang === 'en' ? 'Within budget' : 'Anggaran masih aman')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kas Bersama Summary Strip -->
+        <div class="card-nesta p-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-xl bg-[#EEF7F3] text-[#0E4D38] flex items-center justify-center shrink-0">
+              <i data-lucide="landmark" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-[#101D2B]">${state.lang === 'en' ? 'Shared Pot:' : 'Kas Bersama:'} <span class="text-[#16A37B] tabular-nums">${formatIDR(kas.saldoTotal)}</span></div>
+              <div class="text-xs text-[#5E6D7E] tabular-nums">
+                ${state.lang === 'en' ? 'Deposits this month:' : 'Setoran bulan ini:'} ${escapeHTML(state.couple.partnerA.name)} ${formatIDR(kas.monthDepA)} • ${escapeHTML(state.couple.partnerB.name)} ${formatIDR(kas.monthDepB)} • ${state.lang === 'en' ? 'Spent:' : 'Terpakai:'} ${formatIDR(kas.monthPoolSpent)}
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button id="btn-setor-kas-main" onclick="openDepositModal()" class="btn-emerald px-4 py-2 rounded-xl text-xs font-medium">${t('setor_kas')}</button>
+            <button onclick="navigate('couple')" class="px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs font-medium hover:bg-[#F7F6F2]">${t('riwayat')}</button>
+          </div>
+        </div>
+
+        <!-- Transaksi Terbaru & Tagihan Mendatang -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="card-nesta p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-base font-bold text-[#101D2B]">${t('recent_tx')} (${formatMonthLabel(state.selectedMonth)})</h2>
+              <button onclick="navigate('expenses')" class="text-xs font-medium text-[#16A37B] hover:underline">${t('view_all')}</button>
+            </div>
+            ${recentExpenses.length === 0 ? `
+              <div class="text-center py-8 text-sm text-[#5E6D7E]">${state.lang === 'en' ? 'No expenses recorded this month.' : 'Belum ada pengeluaran pada bulan ini.'}</div>
+            ` : `
+              <div class="divide-y divide-[#F0EDE5]">
+                ${recentExpenses.map(e => `
+                  <div class="py-3 flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="text-sm font-semibold text-[#101D2B] truncate">${escapeHTML(e.title)}</div>
+                      <div class="text-xs text-[#5E6D7E]">${escapeHTML(displayCat(e.category))} • ${formatDateID(e.date)} • ${e.paymentSource === 'kas_bersama' ? (state.lang === 'en' ? 'Shared Pot' : 'Kas Bersama') : (state.lang === 'en' ? 'Paid by ' : 'Talangan ') + escapeHTML(partnerName(e.paidBy))}</div>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <div class="text-sm font-bold text-[#101D2B] tabular-nums">${formatIDR(e.amount)}</div>
+                      <div class="text-[11px] text-[#5E6D7E]">${e.paymentSource === 'kas_bersama' ? (state.lang === 'en' ? 'Shared Pot' : 'Kas Bersama') : (e.splitMethod === '50_50' ? '50:50' : (state.lang === 'en' ? 'Custom' : 'Kustom'))}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+          </div>
+
+          <div class="card-nesta p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-base font-bold text-[#101D2B]">${t('upcoming_bills')}</h2>
+              <button onclick="navigate('bills')" class="text-xs font-medium text-[#16A37B] hover:underline">${t('view_all')}</button>
+            </div>
+            <div class="divide-y divide-[#F0EDE5]">
+              ${upcomingBills.map(b => `
+                <div class="py-3 flex items-center justify-between gap-3">
+                  <div class="min-w-0">
+                    <div class="text-sm font-semibold text-[#101D2B] truncate">${escapeHTML(b.title)}</div>
+                    <div class="text-xs text-[#5E6D7E]">${formatDateID(b.dueDate)} • ${escapeHTML(b.frequency)}</div>
+                  </div>
+                  <div class="flex items-center gap-2.5 shrink-0">
+                    <span class="text-sm font-bold tabular-nums">${formatIDR(b.amount)}</span>
+                    <button onclick="toggleBillPaid('${b.id}')" class="px-2.5 py-1 rounded-full text-[11px] font-medium ${isBillPaid(b) ? 'bg-[#EEF7F3] text-[#16A37B]' : 'bg-[#FDF6EB] text-[#D97706] border border-[#F5E4C8]'}">
+                      ${isBillPaid(b) ? (state.lang === 'en' ? 'Paid' : 'Lunas') : (state.lang === 'en' ? 'Pay' : 'Bayar')}
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCoupleSpace() {
+      const kas = calculateKasBersama();
+
+      return `
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('couple_title')}</h1>
+            <p class="text-sm text-[#5E6D7E] mt-0.5">${t('couple_sub')}</p>
+          </div>
+          <button onclick="openDepositModal()" class="btn-emerald px-4 py-2.5 rounded-xl text-sm font-medium inline-flex items-center gap-2 self-start">
+            <i data-lucide="plus" class="w-4 h-4"></i> ${state.lang === 'en' ? 'Deposit to Shared Pot' : 'Setor ke Kas Bersama'}
+          </button>
+        </div>
+
+        <!-- Kas Bersama Panel -->
+        <div class="card-nesta p-6 mb-6 bg-[#FAFDFB] border-[#D8ECE3]">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#16A37B]">${state.lang === 'en' ? 'Shared Pot Balance' : 'Model Kas Bersama'}</span>
+              <div class="text-3xl font-bold text-[#101D2B] tabular-nums mt-1">${formatIDR(kas.saldoTotal)}</div>
+              <div class="text-xs text-[#5E6D7E] mt-0.5">${state.lang === 'en' ? 'Total deposits:' : 'Total setoran:'} ${formatIDR(kas.totalDepositsAll)} • ${state.lang === 'en' ? 'Total spent:' : 'Total terpakai dari kas:'} ${formatIDR(kas.totalPoolSpentAll)}</div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              <div class="p-3.5 rounded-xl bg-white border border-[#EAE7DF]">
+                <div class="text-xs text-[#5E6D7E]">${state.lang === 'en' ? 'Total Deposits — ' : 'Total Setoran '}${escapeHTML(state.couple.partnerA.name)}</div>
+                <div class="font-bold tabular-nums mt-0.5">${formatIDR(kas.allDepA)}</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-white border border-[#EAE7DF]">
+                <div class="text-xs text-[#5E6D7E]">${state.lang === 'en' ? 'Total Deposits — ' : 'Total Setoran '}${escapeHTML(state.couple.partnerB.name)}</div>
+                <div class="font-bold tabular-nums mt-0.5">${formatIDR(kas.allDepB)}</div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="text-xs font-bold uppercase tracking-wider text-[#5E6D7E] mb-2.5">${state.lang === 'en' ? 'Shared Pot Deposit History' : 'Riwayat Setoran Kas Bersama'}</h3>
+          <div class="divide-y divide-[#EAE7DF] bg-white rounded-xl border border-[#EAE7DF]">
+            ${state.poolDeposits.length === 0 ? `
+              <div class="p-4 text-xs text-[#5E6D7E] text-center">${state.lang === 'en' ? 'No deposits to Shared Pot yet.' : 'Belum ada setoran ke Kas Bersama.'}</div>
+            ` : state.poolDeposits.slice(0, 6).map(d => `
+              <div class="px-4 py-3 flex items-center justify-between gap-3 text-xs">
+                <div>
+                  <span class="font-bold text-[#101D2B]">${escapeHTML(partnerName(d.partner))}</span>
+                  <span class="text-[#5E6D7E]"> • ${formatDateID(d.date)} • ${escapeHTML(d.note)}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-[#16A37B] tabular-nums">+ ${formatIDR(d.amount)}</span>
+                  <button onclick="openDepositModal('${d.id}')" class="p-1 rounded hover:bg-[#EAE7DF] text-[#5E6D7E]" title="Edit"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                  <button onclick="deleteDeposit('${d.id}')" class="p-1 rounded hover:bg-red-50 text-red-600" title="Hapus"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          <div class="lg:col-span-5 card-nesta p-6 text-center flex flex-col justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-[#101D2B]">${escapeHTML(state.couple.name)}</h2>
+              <p class="text-xs text-[#5E6D7E] mt-1 mb-5">${state.lang === 'en' ? 'Manage all your shared finances together here.' : 'Di sini kalian mengelola semua keuangan bersama.'}</p>
+              <div class="flex items-center justify-center gap-3 mb-5">
+                <div class="w-12 h-12 rounded-full bg-[#0F1E28] text-white flex items-center justify-center font-bold text-lg">${escapeHTML(state.couple.partnerA.name[0])}</div>
+                <span class="text-[#5E6D7E] font-bold">+</span>
+                <div class="w-12 h-12 rounded-full bg-[#16A37B] text-white flex items-center justify-center font-bold text-lg">${escapeHTML(state.couple.partnerB.name[0])}</div>
+              </div>
+              <button id="btn-copy-invite" onclick="copyInviteCode()" class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium mb-3">${state.lang === 'en' ? 'Share Invite Link' : 'Bagikan Tautan Undangan'}</button>
+              <div class="flex items-center gap-2 bg-[#F7F6F2] border border-[#EAE7DF] rounded-xl px-3 py-2 text-xs text-[#5E6D7E] mb-3">
+                <span class="truncate flex-1 text-left">${escapeHTML(state.couple.inviteCode)}</span>
+                <button onclick="copyInviteCode()" class="text-[#0E4D38] font-semibold">${state.lang === 'en' ? 'Copy' : 'Salin'}</button>
+              </div>
+              <div class="text-left text-[11px] text-[#5E6D7E] bg-[#EEF7F3]/60 rounded-xl p-3 border border-[#D8ECE3] space-y-1">
+                <div class="font-semibold text-[#0E4D38]">${state.lang === 'en' ? 'How Your Partner Joins:' : 'Cara Pasangan Bergabung:'}</div>
+                <div>${state.lang === 'en' ? '1. Send the invite link above to your partner.' : '1. Kirim tautan di atas ke WhatsApp pasangan.'}</div>
+                <div>${state.lang === 'en' ? '2. Partner opens NESTA → selects Create Account.' : '2. Pasangan buka NESTA → pilih Daftar Akun Baru.'}</div>
+                <div>${state.lang === 'en' ? '3. Select Join Partner Invite & paste the invite link.' : '3. Pilih Gabung Undangan Pasangan & tempel tautan undangan.'}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 card-nesta p-6">
+            <h2 class="text-lg font-bold text-[#101D2B] mb-4">${state.lang === 'en' ? 'Couple Space Settings' : 'Pengaturan Ruang Pasangan'}</h2>
+            <form onsubmit="updateCoupleSettings(event)" class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Couple Space Name' : 'Nama Ruang Pasangan'}</label>
+                <input type="text" id="ws-name" value="${escapeHTML(state.couple.name)}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Partner A Name' : 'Nama Partner A'}</label>
+                  <input type="text" id="ws-pa" value="${escapeHTML(state.couple.partnerA.name)}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Partner B Name' : 'Nama Partner B'}</label>
+                  <input type="text" id="ws-pb" value="${escapeHTML(state.couple.partnerB.name)}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                </div>
+              </div>
+              <button type="submit" class="btn-emerald px-5 py-2.5 rounded-xl text-sm font-medium">${state.lang === 'en' ? 'Save Changes' : 'Simpan Perubahan'}</button>
+            </form>
+          </div>
+        </div>
+
+
+      `;
+    }
+
+    function renderExpenses() {
+      const monthExps = getMonthExpenses();
+      const filtered = monthExps.filter(e => {
+        const matchCat = expenseFilterCat === 'Semua' || e.category === expenseFilterCat;
+        const matchSrc = expenseFilterSource === 'Semua' || (e.paymentSource || 'talangan') === expenseFilterSource;
+        const matchSearch = !expenseSearch || e.title.toLowerCase().includes(expenseSearch.toLowerCase());
+        return matchCat && matchSrc && matchSearch;
+      });
+      const settle = calculateSettlement();
+
+      return `
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('exp_title')}</h1>
+            <p class="text-sm text-[#5E6D7E] mt-0.5">${t('exp_sub')} <strong>${formatMonthLabel(state.selectedMonth)}</strong>.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            ${renderMonthSelector()}
+            <button onclick="exportCSV()" class="px-3 py-2 rounded-xl border border-[#EAE7DF] bg-white hover:bg-[#FAF9F6] text-xs font-semibold text-[#101D2B] inline-flex items-center gap-1.5" title="Export CSV">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-[#0E4D38]"></i> CSV
+            </button>
+            <button onclick="exportPDF()" class="px-3 py-2 rounded-xl border border-[#EAE7DF] bg-white hover:bg-[#FAF9F6] text-xs font-semibold text-[#101D2B] inline-flex items-center gap-1.5" title="Export PDF">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#0E4D38]"></i> PDF
+            </button>
+            <button onclick="openExpenseModal()" class="btn-primary px-4 py-2 rounded-xl text-xs sm:text-sm font-medium inline-flex items-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i> ${t('btn_add_exp')}
+            </button>
+          </div>
+        </div>
+
+        <div class="card-nesta p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${settle.amount > 0 ? 'bg-[#FDF6EB] border-[#F5E4C8]' : 'bg-[#EEF7F3] border-[#D8ECE3]'}">
+          <div class="flex items-center gap-3 text-sm">
+            <i data-lucide="scale" class="w-4 h-4 ${settle.amount > 0 ? 'text-[#D97706]' : 'text-[#16A37B]'} shrink-0"></i>
+            ${settle.amount > 0 ? `
+              <span>${formatMonthLabel(state.selectedMonth)}: <strong>${escapeHTML(partnerName(settle.owesFrom))}</strong> ${state.lang === 'en' ? 'owes' : 'berutang'} <strong class="text-[#0E4D38] tabular-nums">${formatIDR(settle.amount)}</strong> ${state.lang === 'en' ? 'to' : 'ke'} <strong>${escapeHTML(partnerName(settle.owesTo))}</strong></span>
+            ` : `
+              <span class="font-medium text-[#0E4D38]">${state.lang === 'en' ? 'Settled ✓ — No advance balance owed in' : 'Seimbang ✓ — Tidak ada utang talangan pada'} ${formatMonthLabel(state.selectedMonth)}.</span>
+            `}
+          </div>
+          ${settle.amount > 0 ? `<button onclick="markSettlementPaid()" class="btn-primary px-4 py-2 rounded-xl text-xs font-medium shrink-0">${t('settle_btn')}</button>` : ''}
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 mb-5">
+          <input type="text" placeholder="${state.lang === 'en' ? 'Search transactions...' : 'Cari transaksi...'}" value="${escapeHTML(expenseSearch)}" oninput="expenseSearch=this.value; render();" class="flex-1 px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] bg-white text-sm" />
+          <select onchange="expenseFilterSource=this.value; render();" class="px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] bg-white text-sm">
+            <option value="Semua" ${expenseFilterSource === 'Semua' ? 'selected' : ''}>${state.lang === 'en' ? 'All Payment Models' : 'Semua Model'}</option>
+            <option value="talangan" ${expenseFilterSource === 'talangan' ? 'selected' : ''}>${state.lang === 'en' ? 'Personal Advance' : 'Talangan Pribadi'}</option>
+            <option value="kas_bersama" ${expenseFilterSource === 'kas_bersama' ? 'selected' : ''}>${state.lang === 'en' ? 'Shared Pot' : 'Kas Bersama'}</option>
+          </select>
+          <select onchange="expenseFilterCat=this.value; render();" class="px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] bg-white text-sm">
+            <option value="Semua" ${expenseFilterCat === 'Semua' ? 'selected' : ''}>${state.lang === 'en' ? 'All Categories' : 'Semua Kategori'}</option>
+            ${getCategories().map(c => `<option value="${escapeHTML(c)}" ${expenseFilterCat === c ? 'selected' : ''}>${escapeHTML(displayCat(c))}</option>`).join('')}
+          </select>
+        </div>
+
+        <div class="card-nesta overflow-hidden">
+          ${filtered.length === 0 ? `
+            <div class="p-10 text-center">
+              <div class="text-sm font-semibold text-[#101D2B] mb-1">${state.lang === 'en' ? 'No transactions found' : 'Belum ada transaksi ditemukan'}</div>
+              <div class="text-xs text-[#5E6D7E] mb-4">${state.lang === 'en' ? 'Adjust filters, switch month, or add a new expense.' : 'Ubah filter, ganti bulan, atau catat pengeluaran baru.'}</div>
+              <button onclick="openExpenseModal()" class="btn-primary px-4 py-2 rounded-xl text-xs font-medium">${t('btn_add_exp')}</button>
+            </div>
+          ` : `
+            <div class="divide-y divide-[#F0EDE5]">
+              ${filtered.map(e => `
+                <div class="p-4 sm:px-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-[#FAF9F6]">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="text-sm font-bold text-[#101D2B]">${escapeHTML(e.title)}</span>
+                      <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F7F6F2] text-[#5E6D7E] font-medium">${escapeHTML(displayCat(e.category))}</span>
+                      <span class="text-[11px] px-2.5 py-0.5 rounded-full ${e.paymentSource === 'kas_bersama' ? 'bg-[#EEF7F3] text-[#0E4D38]' : 'bg-[#FDF6EB] text-[#D97706]'} font-medium">
+                        ${e.paymentSource === 'kas_bersama' ? (state.lang === 'en' ? 'Shared Pot' : 'Kas Bersama') : (state.lang === 'en' ? 'Advance' : 'Talangan')}
+                      </span>
+                    </div>
+                    <div class="text-xs text-[#5E6D7E] mt-1">
+                      ${formatDateID(e.date)} • ${e.paymentSource === 'kas_bersama' ? (state.lang === 'en' ? 'Deducted from Shared Pot (no personal debt)' : 'Dipotong dari Kas Bersama (tanpa utang pribadi)') : `${state.lang === 'en' ? 'Paid in full by' : 'Dibayar penuh oleh'} <strong class="text-[#101D2B]">${escapeHTML(partnerName(e.paidBy))}</strong> • ${state.lang === 'en' ? 'Share:' : 'Porsi:'} ${escapeHTML(state.couple.partnerA.name)} ${formatIDR(e.partnerAShare)} / ${escapeHTML(state.couple.partnerB.name)} ${formatIDR(e.partnerBShare)}`}
+                      ${e.note ? ` • <em>${escapeHTML(e.note)}</em>` : ''}
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+                    <div class="text-base font-bold text-[#101D2B] tabular-nums">${formatIDR(e.amount)}</div>
+                    <div class="flex items-center gap-1">
+                      <button onclick="openExpenseModal('${e.id}')" class="p-2 rounded-lg hover:bg-[#EAE7DF] text-[#5E6D7E]" title="Edit">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                      </button>
+                      <button onclick="deleteExpense('${e.id}')" class="p-2 rounded-lg hover:bg-red-50 text-red-600" title="Hapus">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function renderBudgets() {
+      const catSpent = getCategorySpending();
+      const monthBudget = getMonthBudget();
+      const totalSpent = getMonthExpenses().reduce((s, e) => s + e.amount, 0);
+      const pctTotal = monthBudget > 0 ? Math.min(100, Math.round((totalSpent / monthBudget) * 100)) : 0;
+      const customList = state.customBudgets || [];
+      const isEn = state.lang === 'en';
+
+      return `
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('bud_title')}</h1>
+            <p class="text-sm text-[#5E6D7E] mt-0.5">${t('bud_sub')} <strong>${formatMonthLabel(state.selectedMonth)}</strong>.</p>
+          </div>
+          ${renderMonthSelector()}
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          <div id="budget-card-main" class="lg:col-span-5 card-nesta p-6">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-medium text-[#5E6D7E]">${isEn ? 'Monthly Budget' : 'Anggaran'} ${formatMonthLabel(state.selectedMonth)}</span>
+            </div>
+            <div class="text-3xl font-bold text-[#101D2B] tabular-nums mb-3">${formatIDR(monthBudget)}</div>
+            <div class="w-full h-2.5 bg-[#EAE7DF] rounded-full overflow-hidden mb-2">
+              <div class="h-full bg-[#16A37B] rounded-full" style="width:${pctTotal}%"></div>
+            </div>
+            <div class="flex justify-between text-xs text-[#5E6D7E] mb-5 tabular-nums">
+              <span>${formatIDR(totalSpent)} / ${formatIDR(monthBudget)}</span>
+              <span class="font-semibold text-[#101D2B]">${pctTotal}%</span>
+            </div>
+            <form onsubmit="updateMonthlyBudget(event)" class="flex gap-2">
+              <input type="text" inputmode="numeric" id="total-budget-input" value="${formatNominalStr(monthBudget) || ''}" placeholder="${isEn ? 'Set monthly budget' : 'Isi anggaran bulanan'}" oninput="onNominalInput(this)" class="flex-1 px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-sm tabular-nums" />
+              <button type="submit" class="btn-primary px-4 py-2 rounded-xl text-sm font-medium">${isEn ? 'Save' : 'Simpan'}</button>
+            </form>
+          </div>
+
+          <div class="lg:col-span-7 card-nesta p-6">
+            <h2 class="text-base font-bold text-[#101D2B] mb-3">${isEn ? 'Add Custom Budget Item' : 'Tambah Pos Anggaran Sendiri'}</h2>
+            <p class="text-xs text-[#5E6D7E] mb-4">${isEn ? 'Create budget items freely based on what you and your partner need this month.' : 'Buat pos anggaran sesuai kebutuhan kalian berdua bulan ini (mis. Belanja Dapur, Cicilan, Listrik).'}</p>
+            <form onsubmit="addCustomBudget(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <input type="text" id="cb-name" required placeholder="${isEn ? 'Budget name (e.g. Groceries)' : 'Nama anggaran (mis. Dapur)'}" class="px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+              <div>
+                <select id="cb-cat" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+                  ${getCategories().map(c => `<option value="${escapeHTML(c)}">${escapeHTML(displayCat(c))}</option>`).join('')}
+                </select>
+                <button type="button" onclick="toggleInlineCat('bud-cat-box', 'bud-cat-input')" class="mt-1 text-[11px] font-semibold text-[#16A37B] hover:underline">+ ${isEn ? 'New Category' : 'Kategori Baru'}</button>
+                <div id="bud-cat-box" class="hidden mt-1.5 flex gap-1">
+                  <input type="text" id="bud-cat-input" placeholder="${isEn ? 'Category...' : 'Kategori...'}" class="flex-1 min-w-0 px-2.5 py-1 rounded-lg border border-[#EAE7DF] text-xs" />
+                  <button type="button" onclick="addCustomCatFor('exp', 'bud-cat-input', 'cb-cat', 'bud-cat-box')" class="btn-emerald px-2.5 py-1 rounded-lg text-xs">+</button>
+                </div>
+              </div>
+              <div class="flex gap-2 items-start">
+                <input type="text" inputmode="numeric" id="cb-limit" required placeholder="Rp" oninput="onNominalInput(this)" class="flex-1 min-w-0 px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm tabular-nums" />
+                <button type="submit" class="btn-emerald px-4 py-2.5 rounded-xl text-sm font-medium shrink-0">+</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        ${customList.length === 0 ? `
+          <div class="card-nesta p-10 text-center">
+            <div class="text-sm font-semibold text-[#101D2B] mb-1">${isEn ? 'No budget items yet' : 'Belum ada pos anggaran'}</div>
+            <div class="text-xs text-[#5E6D7E]">${isEn ? 'Use the form above to add your own monthly budget items.' : 'Silakan isi form di atas untuk membuat anggaran sesuai kebutuhan kalian.'}</div>
+          </div>
+        ` : `
+          <div class="card-nesta p-6 mb-6">
+            <h2 class="text-base font-bold text-[#101D2B] mb-3">${isEn ? 'Actual vs Budget' : 'Aktual vs Anggaran'} (${formatMonthLabel(state.selectedMonth)})</h2>
+            <div class="relative h-52">
+              <canvas id="budget-detail-chart"></canvas>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${customList.map(item => {
+              const spent = catSpent[item.category] || 0;
+              const pct = item.limit > 0 ? Math.min(100, Math.round((spent / item.limit) * 100)) : (spent > 0 ? 100 : 0);
+              const over = spent > item.limit;
+              return `
+                <div class="card-nesta p-5">
+                  <div class="flex items-center justify-between gap-2 mb-2">
+                    <div>
+                      <span class="font-bold text-sm text-[#101D2B]">${escapeHTML(item.name)}</span>
+                      <span class="ml-1.5 text-[11px] px-2 py-0.5 rounded-full bg-[#F7F6F2] text-[#5E6D7E]">${escapeHTML(displayCat(item.category))}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs font-medium ${over ? 'text-red-600' : 'text-[#16A37B]'} tabular-nums">
+                        ${over ? (isEn ? 'Over ' : 'Lebih ') + formatIDR(spent - item.limit) : (isEn ? 'Left ' : 'Sisa ') + formatIDR(item.limit - spent)}
+                      </span>
+                      <button onclick="deleteCustomBudget('${item.id}')" class="p-1 rounded-lg text-red-600 hover:bg-red-50" title="Hapus">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="w-full h-2 bg-[#EAE7DF] rounded-full overflow-hidden mb-2.5">
+                    <div class="h-full rounded-full ${over ? 'bg-red-500' : pct >= 80 ? 'bg-amber-500' : 'bg-[#16A37B]'}" style="width:${pct}%"></div>
+                  </div>
+                  <div class="flex items-center justify-between gap-3 text-xs text-[#5E6D7E]">
+                    <span class="tabular-nums">${isEn ? 'Spent:' : 'Terpakai:'} <strong class="text-[#101D2B]">${formatIDR(spent)}</strong></span>
+                    <div class="flex items-center gap-1.5">
+                      <span>${isEn ? 'Limit:' : 'Batas:'}</span>
+                      <input type="text" inputmode="numeric" value="${formatNominalStr(item.limit) || '0'}" oninput="onNominalInput(this)" onchange="updateCustomBudgetLimit('${item.id}', this.value)" class="w-28 px-2 py-1 rounded-lg border border-[#EAE7DF] text-xs text-right tabular-nums text-[#101D2B]" />
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `}
+      `;
+    }
+
+    function renderBills() {
+      const filtered = state.bills.filter(b => {
+        const paid = isBillPaid(b);
+        if (billFilter === 'Belum Dibayar') return !paid;
+        if (billFilter === 'Sudah Dibayar') return paid;
+        return true;
+      });
+      const totalUnpaid = state.bills.filter(b => !isBillPaid(b)).reduce((s, b) => s + b.amount, 0);
+
+      return `
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('bills_title')}</h1>
+            <p class="text-sm text-[#5E6D7E] mt-0.5">${state.lang === 'en' ? 'Status for' : 'Status bulan'} <strong>${formatMonthLabel(state.selectedMonth)}</strong> • ${state.lang === 'en' ? 'Unpaid:' : 'Belum bayar:'} <strong class="text-[#101D2B] tabular-nums">${formatIDR(totalUnpaid)}</strong></p>
+          </div>
+          ${renderMonthSelector()}
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-4 card-nesta p-5 self-start">
+            <h2 class="text-base font-bold text-[#101D2B] mb-4">${state.lang === 'en' ? 'Add Recurring Bill' : 'Tambah Tagihan Rutin'}</h2>
+            <form onsubmit="addBill(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Bill Name' : 'Nama Tagihan'}</label>
+                <input type="text" id="bill-title" required placeholder="${state.lang === 'en' ? 'e.g. Electricity Bill' : 'Listrik PLN'}" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
+              </div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="block text-xs font-medium text-[#5E6D7E]">${state.lang === 'en' ? 'Category' : 'Kategori'}</label>
+                    <button type="button" onclick="toggleInlineCat('bill-cat-box', 'bill-cat-input')" class="text-[11px] font-semibold text-[#16A37B] hover:underline">${state.lang === 'en' ? '+ New' : '+ Baru'}</button>
+                  </div>
+                  <select id="bill-cat" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+                    ${getBillCategories().map(c => `<option value="${escapeHTML(c)}">${escapeHTML(displayCat(c))}</option>`).join('')}
+                  </select>
+                  <div id="bill-cat-box" class="hidden mt-1.5 flex gap-1">
+                    <input type="text" id="bill-cat-input" placeholder="${state.lang === 'en' ? 'New category' : 'Kategori baru'}" class="flex-1 min-w-0 px-2.5 py-1 rounded-lg border border-[#EAE7DF] text-xs" />
+                    <button type="button" onclick="addCustomCatFor('bill', 'bill-cat-input', 'bill-cat', 'bill-cat-box')" class="btn-emerald px-2.5 py-1 rounded-lg text-xs">+</button>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Frequency' : 'Frekuensi'}</label>
+                  <select id="bill-freq" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+                    <option value="Bulanan">${state.lang === 'en' ? 'Monthly' : 'Bulanan'}</option>
+                    <option value="Tahunan">${state.lang === 'en' ? 'Yearly' : 'Tahunan'}</option>
+                    <option value="Mingguan">${state.lang === 'en' ? 'Weekly' : 'Mingguan'}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Amount (Rp)' : 'Nominal (Rp)'}</label>
+                  <input type="text" inputmode="numeric" id="bill-amount" required placeholder="750.000" oninput="onNominalInput(this)" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm tabular-nums" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Due Date' : 'Jatuh Tempo'}</label>
+                  <input type="date" id="bill-due" required value="2026-12-05" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
+                </div>
+              </div>
+              <button type="submit" class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium">${state.lang === 'en' ? 'Save Bill' : 'Simpan Tagihan'}</button>
+            </form>
+          </div>
+
+          <div class="lg:col-span-8">
+            <div class="flex gap-2 mb-4">
+              ${['Semua', 'Belum Dibayar', 'Sudah Dibayar'].map(f => `
+                <button onclick="billFilter='${f}'; render();" class="px-3.5 py-1.5 rounded-xl text-xs font-medium border ${billFilter === f ? 'bg-[#0F1E28] text-white border-[#0F1E28]' : 'bg-white text-[#5E6D7E] border-[#EAE7DF]'}">${state.lang === 'en' ? (f === 'Semua' ? 'All' : (f === 'Belum Dibayar' ? 'Unpaid' : 'Paid')) : f}</button>
+              `).join('')}
+            </div>
+            <div class="card-nesta divide-y divide-[#F0EDE5]">
+              ${filtered.length === 0 ? `
+                <div class="p-8 text-center text-sm text-[#5E6D7E]">${state.lang === 'en' ? 'No bills found for this filter.' : 'Tidak ada tagihan pada filter ini.'}</div>
+              ` : filtered.map(b => `
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#F7F6F2] text-[#0E4D38] flex items-center justify-center shrink-0">
+                      <i data-lucide="${b.category === 'Listrik' ? 'zap' : b.category === 'Internet' ? 'wifi' : b.category === 'Sewa Rumah' ? 'home' : 'file-text'}" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-sm text-[#101D2B]">${escapeHTML(b.title)}</div>
+                      <div class="text-xs text-[#5E6D7E]">${formatIDR(b.amount)} • ${formatDateID(b.dueDate)}</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between sm:justify-end gap-2.5">
+                    <button onclick="toggleBillPaid('${b.id}')" class="px-3 py-1.5 rounded-full text-xs font-medium ${isBillPaid(b) ? 'bg-[#EEF7F3] text-[#16A37B]' : 'bg-[#FDF6EB] text-[#D97706] border border-[#F5E4C8]'}">
+                      ${isBillPaid(b) ? (state.lang === 'en' ? 'Paid ✓' : 'Lunas ✓') : (state.lang === 'en' ? 'Mark Paid' : 'Tandai Lunas')}
+                    </button>
+                    <button onclick="deleteBill('${b.id}')" class="p-1.5 rounded-lg text-red-600 hover:bg-red-50">
+                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGoals() {
+      return `
+        <div class="mb-6">
+          <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('goals_title')}</h1>
+          <p class="text-sm text-[#5E6D7E] mt-0.5">${t('goals_sub')}</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div id="goal-card-main" class="lg:col-span-4 card-nesta p-5 self-start">
+            <h2 class="text-base font-bold text-[#101D2B] mb-4">${state.lang === 'en' ? '+ Add Goal' : '+ Tambah Target'}</h2>
+            <form onsubmit="addGoal(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Goal Name' : 'Nama Target'}</label>
+                <input type="text" id="goal-title" required placeholder="${state.lang === 'en' ? 'Honeymoon in Japan' : 'Bulan Madu ke Jepang'}" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="block text-xs font-medium text-[#5E6D7E]">${state.lang === 'en' ? 'Category' : 'Kategori'}</label>
+                  <button type="button" onclick="toggleInlineCat('goal-cat-box', 'goal-cat-input')" class="text-[11px] font-semibold text-[#16A37B] hover:underline">${state.lang === 'en' ? '+ New' : '+ Baru'}</button>
+                </div>
+                <select id="goal-cat" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+                  ${getGoalCategories().map(c => `<option value="${escapeHTML(c)}">${escapeHTML(displayCat(c))}</option>`).join('')}
+                </select>
+                <div id="goal-cat-box" class="hidden mt-1.5 flex gap-1">
+                  <input type="text" id="goal-cat-input" placeholder="${state.lang === 'en' ? 'New goal category' : 'Kategori target baru'}" class="flex-1 min-w-0 px-2.5 py-1 rounded-lg border border-[#EAE7DF] text-xs" />
+                  <button type="button" onclick="addCustomCatFor('goal', 'goal-cat-input', 'goal-cat', 'goal-cat-box')" class="btn-emerald px-2.5 py-1 rounded-lg text-xs">+</button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Target Amount (Rp)' : 'Target Nominal (Rp)'}</label>
+                <input type="text" inputmode="numeric" id="goal-target" required placeholder="35.000.000" oninput="onNominalInput(this)" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm tabular-nums" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Target Date' : 'Target Tanggal'}</label>
+                <input type="date" id="goal-date" required value="2027-12-31" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
+              </div>
+              <button type="submit" class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium">${state.lang === 'en' ? 'Save Goal' : 'Simpan Target'}</button>
+            </form>
+          </div>
+
+          <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${state.goals.map(g => {
+              const totalA = g.contributions.filter(c => c.partner === 'partner_a').reduce((s, c) => s + c.amount, 0);
+              const totalB = g.contributions.filter(c => c.partner === 'partner_b').reduce((s, c) => s + c.amount, 0);
+              const collected = totalA + totalB;
+              const pct = g.targetAmount > 0 ? Math.min(100, Math.round((collected / g.targetAmount) * 100)) : 0;
+              return `
+                <div class="card-nesta overflow-hidden flex flex-col justify-between">
+                  <div class="h-20 bg-gradient-to-r from-[#0F1E28] to-[#16A37B] p-4 flex items-end justify-between text-white">
+                    <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/15 font-medium">${escapeHTML(displayCat(g.category))}</span>
+                    <button onclick="deleteGoal('${g.id}')" class="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 class="text-base font-bold text-[#101D2B]">${escapeHTML(g.title)}</h3>
+                      <div class="text-xs font-medium text-[#101D2B] mt-1 tabular-nums">${formatIDR(collected)} / ${formatIDR(g.targetAmount)}</div>
+                      <div class="flex items-center gap-2 mt-2.5 mb-2">
+                        <div class="flex-1 h-2 bg-[#EAE7DF] rounded-full overflow-hidden">
+                          <div class="h-full bg-[#16A37B] rounded-full" style="width:${pct}%"></div>
+                        </div>
+                        <span class="text-xs font-bold text-[#101D2B] tabular-nums">${pct}%</span>
+                      </div>
+                      <div class="text-[11px] text-[#5E6D7E] mb-4">
+                        Target: ${formatDateID(g.targetDate)} • ${escapeHTML(state.couple.partnerA.name)} ${formatIDR(totalA)} • ${escapeHTML(state.couple.partnerB.name)} ${formatIDR(totalB)}
+                      </div>
+                    </div>
+
+                    <form onsubmit="contributeGoal('${g.id}', event)" class="flex gap-2 pt-3 border-t border-[#F0EDE5]">
+                      <select id="contrib-partner-${g.id}" class="px-2.5 py-1.5 rounded-xl border border-[#EAE7DF] text-xs bg-white">
+                        <option value="partner_a" ${state.activeRole === 'partner_a' ? 'selected' : ''}>${escapeHTML(state.couple.partnerA.name)}</option>
+                        <option value="partner_b" ${state.activeRole === 'partner_b' ? 'selected' : ''}>${escapeHTML(state.couple.partnerB.name)}</option>
+                      </select>
+                      <input type="text" inputmode="numeric" id="contrib-amt-${g.id}" required placeholder="Setoran (Rp)" oninput="onNominalInput(this)" class="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl border border-[#EAE7DF] text-xs tabular-nums" />
+                      <button type="submit" class="btn-emerald px-3 py-1.5 rounded-xl text-xs font-medium">${state.lang === 'en' ? '+ Deposit' : '+ Setor'}</button>
+                    </form>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSettings() {
+      const uName = (state.currentUser && state.currentUser.name) || partnerName(state.activeRole);
+      const uEmail = (state.currentUser && state.currentUser.email) || 'clay@nesta.id';
+      const isEn = state.lang === 'en';
+      const notif = state.notifications || { billReminder: true, monthlyWrapup: true };
+
+      return `
+        <div class="mb-6">
+          <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('set_title')}</h1>
+          <p class="text-sm text-[#5E6D7E] mt-0.5">${t('set_sub')}</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- 1. Akun Saya (Foto Profil, Edit Nama, Ubah Kata Sandi) -->
+          <div class="card-nesta p-6 space-y-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0E4D38]">
+                <i data-lucide="user-check" class="w-4 h-4"></i> ${t('set_account')}
+              </div>
+              <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#EEF7F3] text-[#16A37B] font-medium">${isEn ? 'Authenticated' : 'Terautentikasi'}</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-full bg-[#0F1E28] text-white flex items-center justify-center text-xl font-bold overflow-hidden shrink-0">
+                ${(state.currentUser && state.currentUser.avatar) ? `<img src="${state.currentUser.avatar}" alt="Avatar" class="w-full h-full object-cover" />` : escapeHTML(uName ? uName[0].toUpperCase() : 'N')}
+              </div>
+              <div class="space-y-1.5">
+                <div class="text-sm font-bold text-[#101D2B]">${escapeHTML(uName)} <span class="text-xs font-normal text-[#5E6D7E]">(${escapeHTML(uEmail)})</span></div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-[#EEF7F3] hover:bg-[#D8ECE3] text-xs font-semibold text-[#0E4D38]">
+                    ${isEn ? 'Upload Photo' : 'Unggah Foto'}
+                    <input type="file" accept="image/*" onchange="handleAvatarUpload(this)" class="hidden" />
+                  </label>
+                  ${(state.currentUser && state.currentUser.avatar) ? `<button type="button" onclick="removeAvatar()" class="px-3 py-1.5 rounded-xl border border-[#EAE7DF] text-xs text-red-600 hover:bg-red-50">${isEn ? 'Remove' : 'Hapus'}</button>` : ''}
+                </div>
+              </div>
+            </div>
+
+            <form onsubmit="updateAccountProfile(event)" class="flex gap-2">
+              <input type="text" id="acc-name" value="${escapeHTML(uName)}" required placeholder="${isEn ? 'Display name' : 'Nama panggilan'}" class="flex-1 px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
+              <button type="submit" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold">${isEn ? 'Save Name' : 'Simpan Nama'}</button>
+            </form>
+
+            <form onsubmit="changeAccountPassword(event)" class="pt-4 border-t border-[#F0EDE5] space-y-2.5">
+              <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Change Password' : 'Ubah Kata Sandi'}</div>
+              <input type="password" id="acc-old-pass" required placeholder="${isEn ? 'Current password' : 'Kata sandi saat ini'}" class="w-full px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
+              <div class="grid grid-cols-2 gap-2">
+                <input type="password" id="acc-new-pass" required minlength="6" placeholder="${isEn ? 'New password' : 'Kata sandi baru'}" class="w-full px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
+                <input type="password" id="acc-conf-pass" required minlength="6" placeholder="${isEn ? 'Confirm new' : 'Konfirmasi baru'}" class="w-full px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
+              </div>
+              <div class="flex items-center justify-between pt-1">
+                <button type="submit" class="btn-emerald px-4 py-2 rounded-xl text-xs font-semibold">${isEn ? 'Update Password' : 'Perbarui Kata Sandi'}</button>
+                <button type="button" onclick="logoutUser()" class="px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs font-medium text-[#101D2B] hover:bg-[#F7F6F2]">${isEn ? 'Sign Out' : 'Keluar Akun'}</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- 2. Preferensi Bahasa & Mata Uang -->
+          <div class="card-nesta p-6">
+            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0E4D38] mb-3">
+              <i data-lucide="languages" class="w-4 h-4"></i> ${t('set_lang')}
+            </div>
+            <p class="text-xs text-[#5E6D7E] mb-4">${isEn ? 'Choose your preferred interface language. Your choice is saved automatically.' : 'Pilih bahasa antarmuka yang paling nyaman untuk Anda dan pasangan.'}</p>
+            <div class="grid grid-cols-2 gap-2.5 mb-5">
+              <button onclick="setLanguage('id')" class="py-3 px-4 rounded-xl border text-sm font-semibold transition-all ${!isEn ? 'bg-[#0F1E28] text-white border-[#0F1E28]' : 'bg-white text-[#101D2B] border-[#EAE7DF] hover:bg-[#F7F6F2]'}">🇮🇩 Bahasa Indonesia</button>
+              <button onclick="setLanguage('en')" class="py-3 px-4 rounded-xl border text-sm font-semibold transition-all ${isEn ? 'bg-[#0F1E28] text-white border-[#0F1E28]' : 'bg-white text-[#101D2B] border-[#EAE7DF] hover:bg-[#F7F6F2]'}">🇬🇧 English</button>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#F7F6F2] border border-[#EAE7DF] flex justify-between items-center text-xs">
+              <span class="text-[#5E6D7E]">${isEn ? 'Default Currency' : 'Mata Uang Default'}</span>
+              <strong class="text-[#101D2B]">Indonesian Rupiah (IDR / Rp)</strong>
+            </div>
+          </div>
+
+          <!-- 3. Pengingat & Notifikasi -->
+          <div class="card-nesta p-6">
+            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0E4D38] mb-4">
+              <i data-lucide="bell" class="w-4 h-4"></i> ${t('set_notif')}
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#F7F6F2] border border-[#EAE7DF]">
+                <div>
+                  <div class="text-sm font-semibold text-[#101D2B]">${isEn ? 'Bill Due Reminder (H-3)' : 'Pengingat Tagihan (H-3)'}</div>
+                  <div class="text-xs text-[#5E6D7E]">${isEn ? 'Notify before shared bills are due' : 'Ingatkan sebelum tagihan rutin jatuh tempo'}</div>
+                </div>
+                <button onclick="toggleNotif('billReminder')" class="px-3 py-1.5 rounded-full text-xs font-semibold ${notif.billReminder ? 'bg-[#16A37B] text-white' : 'bg-[#EAE7DF] text-[#5E6D7E]'}">${notif.billReminder ? (isEn ? 'On' : 'Aktif') : (isEn ? 'Off' : 'Nonaktif')}</button>
+              </div>
+              <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#F7F6F2] border border-[#EAE7DF]">
+                <div>
+                  <div class="text-sm font-semibold text-[#101D2B]">${isEn ? 'Monthly Wrap-Up Digest' : 'Ringkasan Tutup Buku Bulanan'}</div>
+                  <div class="text-xs text-[#5E6D7E]">${isEn ? 'End-of-month couple review prompt' : 'Pengingat evaluasi keuangan tiap akhir bulan'}</div>
+                </div>
+                <button onclick="toggleNotif('monthlyWrapup')" class="px-3 py-1.5 rounded-full text-xs font-semibold ${notif.monthlyWrapup ? 'bg-[#16A37B] text-white' : 'bg-[#EAE7DF] text-[#5E6D7E]'}">${notif.monthlyWrapup ? (isEn ? 'On' : 'Aktif') : (isEn ? 'Off' : 'Nonaktif')}</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Privasi & Data -->
+          <div class="card-nesta p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0E4D38] mb-3">
+                <i data-lucide="shield-check" class="w-4 h-4"></i> ${t('set_privacy')}
+              </div>
+              <p class="text-xs text-[#5E6D7E] mb-4">${isEn ? 'NESTA never asks for or stores your personal bank balance. Only shared expenses, budgets, bills, and goals in your Couple Space are visible to your partner.' : 'NESTA tidak pernah meminta atau menyimpan saldo rekening pribadi Anda. Hanya pengeluaran, anggaran, tagihan, dan target di Ruang Bersama yang dibagikan.'}</p>
+            </div>
+            <div class="pt-4 border-t border-[#EAE7DF] flex items-center justify-between gap-3">
+              <span class="text-xs text-[#5E6D7E]">${isEn ? 'Clear all transactions, bills, and goals' : 'Kosongkan seluruh transaksi, tagihan, dan target'}</span>
+              <button onclick="clearAllSpaceData()" class="px-4 py-2 rounded-xl border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 shrink-0">${isEn ? 'Clear Space Data' : 'Kosongkan Data Ruang'}</button>
+            </div>
+          </div>
+
+          <!-- 5. Kelola Semua Kategori Kustom (Pengeluaran/Anggaran, Tagihan, Target Tabungan) -->
+          <div class="card-nesta p-6 lg:col-span-2 space-y-6">
+            <div>
+              <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0E4D38] mb-1">
+                <i data-lucide="tags" class="w-4 h-4"></i> ${isEn ? 'Custom Categories' : 'Kelola Kategori Kustom'}
+              </div>
+              <p class="text-xs text-[#5E6D7E]">${isEn ? 'Add or remove categories freely across Expenses, Budgets, Bills, and Savings Goals.' : 'Tambah atau hapus kategori secara bebas untuk Pengeluaran, Anggaran, Tagihan, dan Target Tabungan.'}</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div class="p-4 rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF]">
+                <div class="text-xs font-bold text-[#101D2B] mb-2">${isEn ? 'Expenses & Budgets' : 'Pengeluaran & Anggaran'}</div>
+                <form onsubmit="addCatFromSettingsByType('exp', 'set-new-cat', event)" class="flex gap-1.5 mb-3">
+                  <input type="text" id="set-new-cat" required placeholder="${isEn ? 'Add...' : 'Tambah...'}" class="flex-1 min-w-0 px-3 py-1.5 rounded-xl border border-[#EAE7DF] bg-white text-xs" />
+                  <button type="submit" class="btn-emerald px-3 py-1.5 rounded-xl text-xs font-medium">+</button>
+                </form>
+                <div class="flex flex-wrap gap-1.5">
+                  ${getCategories().map(c => `
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-[#EAE7DF] text-[11px] font-medium text-[#101D2B]">
+                      ${escapeHTML(displayCat(c))}
+                      <button type="button" onclick="deleteCategoryByType('exp', '${escapeHTML(c)}')" class="text-[#5E6D7E] hover:text-red-600 font-bold">&times;</button>
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF]">
+                <div class="text-xs font-bold text-[#101D2B] mb-2">${isEn ? 'Recurring Bills' : 'Tagihan Rutin'}</div>
+                <form onsubmit="addCatFromSettingsByType('bill', 'set-new-bill-cat', event)" class="flex gap-1.5 mb-3">
+                  <input type="text" id="set-new-bill-cat" required placeholder="${isEn ? 'Add...' : 'Tambah...'}" class="flex-1 min-w-0 px-3 py-1.5 rounded-xl border border-[#EAE7DF] bg-white text-xs" />
+                  <button type="submit" class="btn-emerald px-3 py-1.5 rounded-xl text-xs font-medium">+</button>
+                </form>
+                <div class="flex flex-wrap gap-1.5">
+                  ${getBillCategories().map(c => `
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-[#EAE7DF] text-[11px] font-medium text-[#101D2B]">
+                      ${escapeHTML(displayCat(c))}
+                      <button type="button" onclick="deleteCategoryByType('bill', '${escapeHTML(c)}')" class="text-[#5E6D7E] hover:text-red-600 font-bold">&times;</button>
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF]">
+                <div class="text-xs font-bold text-[#101D2B] mb-2">${isEn ? 'Savings Goals' : 'Target Tabungan'}</div>
+                <form onsubmit="addCatFromSettingsByType('goal', 'set-new-goal-cat', event)" class="flex gap-1.5 mb-3">
+                  <input type="text" id="set-new-goal-cat" required placeholder="${isEn ? 'Add...' : 'Tambah...'}" class="flex-1 min-w-0 px-3 py-1.5 rounded-xl border border-[#EAE7DF] bg-white text-xs" />
+                  <button type="submit" class="btn-emerald px-3 py-1.5 rounded-xl text-xs font-medium">+</button>
+                </form>
+                <div class="flex flex-wrap gap-1.5">
+                  ${getGoalCategories().map(c => `
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-[#EAE7DF] text-[11px] font-medium text-[#101D2B]">
+                      ${escapeHTML(displayCat(c))}
+                      <button type="button" onclick="deleteCategoryByType('goal', '${escapeHTML(c)}')" class="text-[#5E6D7E] hover:text-red-600 font-bold">&times;</button>
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCharts() {
+      if (donutChart) { donutChart.destroy(); donutChart = null; }
+      if (budgetChart) { budgetChart.destroy(); budgetChart = null; }
+
+      const monthBudget = getMonthBudget();
+      const totalSpent = getMonthExpenses().reduce((s, e) => s + e.amount, 0);
+      const remaining = Math.max(0, monthBudget - totalSpent);
+
+      const donutEl = document.getElementById('dashboard-donut-chart');
+      if (donutEl && window.Chart) {
+        donutChart = new Chart(donutEl, {
+          type: 'doughnut',
+          data: {
+            labels: ['Terpakai', 'Sisa'],
+            datasets: [{
+              data: [totalSpent, remaining],
+              backgroundColor: ['#0E4D38', '#EAE7DF'],
+              borderWidth: 0,
+              hoverOffset: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '76%',
+            plugins: { legend: { display: false }, tooltip: { enabled: true } }
+          }
+        });
+      }
+
+      const budEl = document.getElementById('budget-detail-chart');
+      const customList = state.customBudgets || [];
+      if (budEl && window.Chart && customList.length > 0) {
+        const catSpent = getCategorySpending();
+        budgetChart = new Chart(budEl, {
+          type: 'bar',
+          data: {
+            labels: customList.map(i => i.name),
+            datasets: [
+              { label: state.lang === 'en' ? 'Actual' : 'Aktual', data: customList.map(i => catSpent[i.category] || 0), backgroundColor: '#0E4D38', borderRadius: 6 },
+              { label: state.lang === 'en' ? 'Limit' : 'Batas', data: customList.map(i => i.limit || 0), backgroundColor: '#D8ECE3', borderRadius: 6 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
+            scales: {
+              y: { ticks: { callback: v => 'Rp' + (v / 1000000).toFixed(1) + 'jt', font: { size: 10 } }, grid: { color: '#F0EDE5' } },
+              x: { ticks: { font: { size: 10 } }, grid: { display: false } }
+            }
+          }
+        });
+      }
+    }
+
+    function render() {
+      const container = document.getElementById('app-content');
+      if (state.activePage === 'landing') container.innerHTML = renderLanding();
+      else if (state.activePage === 'dashboard') container.innerHTML = renderDashboard();
+      else if (state.activePage === 'couple') container.innerHTML = renderCoupleSpace();
+      else if (state.activePage === 'expenses') container.innerHTML = renderExpenses();
+      else if (state.activePage === 'budgets') container.innerHTML = renderBudgets();
+      else if (state.activePage === 'bills') container.innerHTML = renderBills();
+      else if (state.activePage === 'goals') container.innerHTML = renderGoals();
+      else if (state.activePage === 'settings') container.innerHTML = renderSettings();
+
+      updateNavHighlight();
+      if (window.lucide) lucide.createIcons();
+      renderCharts();
+    }
+
+    document.querySelectorAll('[data-nav]').forEach(btn => {
+      btn.addEventListener('click', () => navigate(btn.getAttribute('data-nav')));
+    });
+
+
+    window.addEventListener('DOMContentLoaded', render);
+  </script>
+</body>
+</html>
