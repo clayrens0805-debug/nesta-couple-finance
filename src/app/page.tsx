@@ -9,8 +9,8 @@ import {
   type RecurringBill,
   type SavingsGoal,
   type PartnerId,
-} from '@/lib/nesta-core';
-import { isSupabaseConfigured } from '@/lib/supabase';
+} from '../lib/nesta-core';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 export default function NestaApp() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'expenses' | 'bills' | 'goals'>('dashboard');
