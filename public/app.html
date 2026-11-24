@@ -569,7 +569,10 @@
           name: (user.user_metadata && user.user_metadata.full_name) || (role === 'partner_a' ? state.couple.partnerA.name : state.couple.partnerB.name),
           email: user.email,
           role,
-          avatar: (state.currentUser && state.currentUser.avatar) || ''
+          avatar: (state.currentUser && state.currentUser.avatar) || '',
+          birthDate: (user.user_metadata && user.user_metadata.birth_date) || '',
+          relStage: (user.user_metadata && user.user_metadata.relationship_stage) || '',
+          city: (user.user_metadata && user.user_metadata.city) || ''
         };
         state.isAuthenticated = true;
         state.activePage = 'dashboard';
@@ -2418,10 +2421,13 @@
           }
           const name = document.getElementById('auth-name').value.trim() || email.split('@')[0];
           const roleChoice = document.getElementById('auth-role').value;
+          const birthDate = (document.getElementById('auth-birthdate') && document.getElementById('auth-birthdate').value) || '';
+          const relStage = (document.getElementById('auth-stage') && document.getElementById('auth-stage').value) || '';
+          const city = (document.getElementById('auth-city') && document.getElementById('auth-city').value.trim()) || '';
           const { data: signUpData, error: signUpErr } = await sbClient.auth.signUp({
             email,
             password: pass,
-            options: { data: { full_name: name } }
+            options: { data: { full_name: name, birth_date: birthDate, relationship_stage: relStage, city: city } }
           });
           if (signUpErr) {
             errEl.textContent = signUpErr.message;
@@ -2574,15 +2580,26 @@
       }
     }
 
-    function updateAccountProfile(e) {
+    async function updateAccountProfile(e) {
       e.preventDefault();
       const newName = document.getElementById('acc-name').value.trim();
+      const birthDate = (document.getElementById('acc-birthdate') && document.getElementById('acc-birthdate').value) || '';
+      const relStage = (document.getElementById('acc-stage') && document.getElementById('acc-stage').value) || '';
+      const city = (document.getElementById('acc-city') && document.getElementById('acc-city').value.trim()) || '';
       if (!newName || !state.currentUser) return;
       state.currentUser.name = newName;
+      state.currentUser.birthDate = birthDate;
+      state.currentUser.relStage = relStage;
+      state.currentUser.city = city;
       if (state.currentUser.role === 'partner_a') state.couple.partnerA.name = newName;
       else state.couple.partnerB.name = newName;
-      const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
-      if (reg) reg.name = newName;
+      if (sbClient) {
+        try {
+          await sbClient.auth.updateUser({
+            data: { full_name: newName, birth_date: birthDate, relationship_stage: relStage, city }
+          });
+        } catch (err) {}
+      }
       saveState();
       render();
       showToast(state.lang === 'en' ? 'Account profile updated.' : 'Profil akun diperbarui.');
@@ -2711,6 +2728,25 @@
                           <option value="partner_a" ${!pendingInviteCode ? 'selected' : ''}>${isEn ? 'Create New Space' : 'Buat Ruang Baru'}</option>
                           <option value="partner_b" ${pendingInviteCode ? 'selected' : ''}>${isEn ? 'Join Partner Invite' : 'Gabung Undangan Pasangan'}</option>
                         </select>
+                      </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      <div>
+                        <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Birth Date' : 'Tanggal Lahir'}</label>
+                        <input type="date" id="auth-birthdate" required class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white" />
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Relationship Stage' : 'Status Hubungan'}</label>
+                        <select id="auth-stage" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white">
+                          <option value="Pacaran">${isEn ? 'Dating' : 'Pacaran'}</option>
+                          <option value="Persiapan Menikah">${isEn ? 'Engaged / Wedding Prep' : 'Persiapan Menikah'}</option>
+                          <option value="Baru Menikah (< 2 thn)">${isEn ? 'Newlywed (< 2 yrs)' : 'Baru Menikah (< 2 thn)'}</option>
+                          <option value="Menikah (> 2 thn)">${isEn ? 'Married (> 2 yrs)' : 'Menikah (> 2 thn)'}</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'City (Optional)' : 'Kota (Opsional)'}</label>
+                        <input type="text" id="auth-city" placeholder="${isEn ? 'e.g. Jakarta' : 'Contoh: Jakarta'}" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
                       </div>
                     </div>
                     <div id="auth-invite-wrap" class="${pendingInviteCode ? '' : 'hidden'}">
@@ -3564,9 +3600,21 @@
               </div>
             </div>
 
-            <form onsubmit="updateAccountProfile(event)" class="flex gap-2">
-              <input type="text" id="acc-name" value="${escapeHTML(uName)}" required placeholder="${isEn ? 'Display name' : 'Nama panggilan'}" class="flex-1 px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
-              <button type="submit" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold">${isEn ? 'Save Name' : 'Simpan Nama'}</button>
+            <form onsubmit="updateAccountProfile(event)" class="space-y-2.5">
+              <div class="flex gap-2">
+                <input type="text" id="acc-name" value="${escapeHTML(uName)}" required placeholder="${isEn ? 'Display name' : 'Nama panggilan'}" class="flex-1 px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
+                <button type="submit" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold">${isEn ? 'Save' : 'Simpan'}</button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <input type="date" id="acc-birthdate" value="${escapeHTML((state.currentUser && state.currentUser.birthDate) || '')}" title="${isEn ? 'Birth Date' : 'Tanggal Lahir'}" class="px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white" />
+                <select id="acc-stage" class="px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white">
+                  <option value="Pacaran" ${(state.currentUser && state.currentUser.relStage === 'Pacaran') ? 'selected' : ''}>${isEn ? 'Dating' : 'Pacaran'}</option>
+                  <option value="Persiapan Menikah" ${(state.currentUser && state.currentUser.relStage === 'Persiapan Menikah') ? 'selected' : ''}>${isEn ? 'Wedding Prep' : 'Persiapan Menikah'}</option>
+                  <option value="Baru Menikah (< 2 thn)" ${(state.currentUser && state.currentUser.relStage === 'Baru Menikah (< 2 thn)') ? 'selected' : ''}>${isEn ? 'Newlywed (< 2 yrs)' : 'Baru Menikah (< 2 thn)'}</option>
+                  <option value="Menikah (> 2 thn)" ${(state.currentUser && state.currentUser.relStage === 'Menikah (> 2 thn)') ? 'selected' : ''}>${isEn ? 'Married (> 2 yrs)' : 'Menikah (> 2 thn)'}</option>
+                </select>
+                <input type="text" id="acc-city" value="${escapeHTML((state.currentUser && state.currentUser.city) || '')}" placeholder="${isEn ? 'City' : 'Kota'}" class="px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
+              </div>
             </form>
 
             <form onsubmit="changeAccountPassword(event)" class="pt-4 border-t border-[#F0EDE5] space-y-2.5">
