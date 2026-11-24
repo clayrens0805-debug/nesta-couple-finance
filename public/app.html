@@ -555,7 +555,44 @@
         subscribeSpaceRealtime(sp.id);
         return true;
       }
-      return false;
+
+      // First-time Google / OAuth login: auto-create their new Couple Space!
+      const isEn = state.lang === 'en';
+      const uName = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || (user.email ? user.email.split('@')[0] : 'Partner A');
+      const uAvatar = (user.user_metadata && user.user_metadata.avatar_url) || '';
+      const randCode = Math.random().toString(36).substring(2, 8);
+      state.couple = {
+        name: (isEn ? 'Shared Space ' : 'Ruang Bersama ') + uName,
+        inviteCode: 'https://nesta.id/couple/' + randCode,
+        partnerJoined: false,
+        monthlyBudget: 0,
+        partnerA: { id: 'partner_a', name: uName },
+        partnerB: { id: 'partner_b', name: isEn ? 'Partner' : 'Pasangan' }
+      };
+      state.expenses = [];
+      state.poolDeposits = [];
+      state.settlements = [];
+      state.bills = [];
+      state.goals = [];
+      state.customBudgets = [];
+
+      const { data: inserted } = await sbClient.from('nesta_spaces').insert({
+        id: 'sp-' + Date.now(),
+        invite_code: randCode,
+        owner_id: user.id,
+        data: getSharedPayload()
+      }).select().single();
+
+      if (inserted) {
+        currentSpaceId = inserted.id;
+        subscribeSpaceRealtime(inserted.id);
+      }
+      state.activeRole = 'partner_a';
+      state.currentUser = { name: uName, email: user.email, role: 'partner_a', avatar: uAvatar };
+      state.isAuthenticated = true;
+      state.activePage = 'dashboard';
+      saveStateLocalOnly();
+      return true;
     }
 
     function subscribeSpaceRealtime(spaceId) {
@@ -2341,11 +2378,18 @@
 
     async function handleGoogleLogin() {
       if (sbClient) {
-        const { error } = await sbClient.auth.signInWithOAuth({
+        const { data, error } = await sbClient.auth.signInWithOAuth({
           provider: 'google',
-          options: { redirectTo: window.location.origin }
+          options: {
+            redirectTo: window.location.origin,
+            skipBrowserRedirect: true
+          }
         });
-        if (error) showToast(error.message);
+        if (error) { showToast(error.message); return; }
+        if (data && data.url) {
+          try { window.top.location.href = data.url; }
+          catch (e) { window.location.href = data.url; }
+        }
       }
     }
 
@@ -3543,6 +3587,12 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
       if (sbClient) {
+        sbClient.auth.onAuthStateChange(async (event, session) => {
+          if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && session.user && !state.isAuthenticated) {
+            await loadUserSpace(session.user);
+            render();
+          }
+        });
         try {
           const { data } = await sbClient.auth.getSession();
           if (data && data.session && data.session.user) {
