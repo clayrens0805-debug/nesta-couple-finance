@@ -2409,6 +2409,13 @@
 
       if (sbClient) {
         if (state.authTab === 'register') {
+          const confEl = document.getElementById('auth-confirm-password');
+          const confPass = confEl ? confEl.value : pass;
+          if (pass !== confPass) {
+            errEl.textContent = isEn ? 'Password confirmation does not match.' : 'Konfirmasi kata sandi tidak cocok.';
+            errEl.classList.remove('hidden');
+            return;
+          }
           const name = document.getElementById('auth-name').value.trim() || email.split('@')[0];
           const roleChoice = document.getElementById('auth-role').value;
           const { data: signUpData, error: signUpErr } = await sbClient.auth.signUp({
@@ -2722,6 +2729,12 @@
                     </div>
                     <input type="password" id="auth-password" required minlength="6" placeholder="${isEn ? 'Min 6 characters' : 'Minimal 6 karakter'}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
                   </div>
+                  ${isReg ? `
+                    <div>
+                      <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Confirm Password' : 'Konfirmasi Kata Sandi'}</label>
+                      <input type="password" id="auth-confirm-password" required minlength="6" placeholder="${isEn ? 'Re-enter password' : 'Ulangi kata sandi'}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                    </div>
+                  ` : ''}
                   <div id="auth-error" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg"></div>
                   <button type="submit" class="btn-primary w-full py-3 rounded-xl text-sm font-semibold">${isReg ? (isEn ? 'Create Account & Enter' : 'Daftar & Masuk') : (isEn ? 'Sign In' : 'Masuk')}</button>
                 </form>
