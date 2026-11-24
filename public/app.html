@@ -481,6 +481,36 @@
     </div>
   </div>
 
+  <!-- Post-Login Quick Profile Modal (For BOTH Email & Google new users) -->
+  <div id="quick-profile-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/60 backdrop-blur-sm"></div>
+    <div class="relative bg-white rounded-3xl border border-[#EAE7DF] w-full max-w-md p-6 sm:p-7 shadow-2xl">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF7F3] text-[#0E4D38] text-[11px] font-bold uppercase tracking-wider mb-3" id="qp-badge">Profil Singkat</div>
+      <h3 class="text-xl font-bold text-[#101D2B] mb-1" id="qp-title">Kenalan Sebentar, Yuk!</h3>
+      <p class="text-xs text-[#5E6D7E] mb-5" id="qp-desc">Lengkapi 3 info singkat ini agar NESTA sesuai dengan tahap hubungan kalian.</p>
+      <form onsubmit="submitQuickProfile(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1" id="qp-lbl-bd">Tanggal Lahir</label>
+          <input type="date" id="qp-birthdate" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1" id="qp-lbl-stage">Status Hubungan</label>
+          <select id="qp-stage" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+            <option value="Pacaran">Pacaran</option>
+            <option value="Persiapan Menikah">Persiapan Menikah (Tunangan)</option>
+            <option value="Baru Menikah (< 2 thn)">Baru Menikah (&lt; 2 tahun)</option>
+            <option value="Menikah (> 2 thn)">Menikah (&gt; 2 tahun)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-[#5E6D7E] mb-1" id="qp-lbl-city">Kota / Domisili (Opsional)</label>
+          <input type="text" id="qp-city" placeholder="Contoh: Jakarta" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+        </div>
+        <button type="submit" class="btn-emerald w-full py-3 rounded-xl text-sm font-semibold" id="qp-submit-btn">Simpan & Lanjutkan →</button>
+      </form>
+    </div>
+  </div>
+
   <!-- Generic Confirmation Modal -->
   <div id="confirm-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-[#0F1E28]/45 backdrop-blur-sm" onclick="closeConfirmModal()"></div>
@@ -2315,6 +2345,60 @@
       ];
     }
 
+    function openQuickProfileModal() {
+      const isEn = state.lang === 'en';
+      document.getElementById('qp-badge').textContent = isEn ? 'Quick Profile' : 'Profil Singkat';
+      document.getElementById('qp-title').textContent = isEn ? 'Tell Us a Bit About You' : 'Kenalan Sebentar, Yuk!';
+      document.getElementById('qp-desc').textContent = isEn ? 'Complete these 3 quick details so NESTA fits your couple stage.' : 'Lengkapi 3 info singkat ini agar NESTA sesuai dengan tahap hubungan kalian.';
+      document.getElementById('qp-lbl-bd').textContent = isEn ? 'Birth Date' : 'Tanggal Lahir';
+      document.getElementById('qp-lbl-stage').textContent = isEn ? 'Relationship Stage' : 'Status Hubungan';
+      document.getElementById('qp-lbl-city').textContent = isEn ? 'City (Optional)' : 'Kota / Domisili (Opsional)';
+      document.getElementById('qp-city').placeholder = isEn ? 'e.g. Jakarta' : 'Contoh: Jakarta';
+      document.getElementById('qp-submit-btn').textContent = isEn ? 'Save & Continue →' : 'Simpan & Lanjutkan →';
+      const st = document.getElementById('qp-stage');
+      if (st && st.options.length >= 4) {
+        st.options[0].text = isEn ? 'Dating' : 'Pacaran';
+        st.options[1].text = isEn ? 'Engaged / Wedding Prep' : 'Persiapan Menikah (Tunangan)';
+        st.options[2].text = isEn ? 'Newlywed (< 2 yrs)' : 'Baru Menikah (< 2 tahun)';
+        st.options[3].text = isEn ? 'Married (> 2 yrs)' : 'Menikah (> 2 tahun)';
+      }
+      document.getElementById('quick-profile-modal').classList.remove('hidden');
+    }
+
+    async function submitQuickProfile(e) {
+      e.preventDefault();
+      const birthDate = document.getElementById('qp-birthdate').value;
+      const relStage = document.getElementById('qp-stage').value;
+      const city = document.getElementById('qp-city').value.trim();
+      if (!birthDate || !state.currentUser) return;
+      state.currentUser.birthDate = birthDate;
+      state.currentUser.relStage = relStage;
+      state.currentUser.city = city;
+      if (sbClient) {
+        try {
+          await sbClient.auth.updateUser({
+            data: { birth_date: birthDate, relationship_stage: relStage, city }
+          });
+        } catch (err) {}
+      }
+      saveStateLocalOnly();
+      document.getElementById('quick-profile-modal').classList.add('hidden');
+      render();
+      showToast(state.lang === 'en' ? 'Profile saved!' : 'Profil tersimpan!');
+      if (!state.hasSeenTutorial) {
+        setTimeout(() => openTutorial(0), 250);
+      }
+    }
+
+    function maybeTriggerPostLoginFlow() {
+      if (!state.isAuthenticated || !state.currentUser) return;
+      if (!state.currentUser.birthDate || !state.currentUser.relStage) {
+        setTimeout(openQuickProfileModal, 200);
+      } else if (!state.hasSeenTutorial) {
+        setTimeout(() => openTutorial(0), 250);
+      }
+    }
+
     function openTutorial(step = 0) {
       state.tutorialStep = step;
       renderTutorialStep();
@@ -2421,13 +2505,10 @@
           }
           const name = document.getElementById('auth-name').value.trim() || email.split('@')[0];
           const roleChoice = document.getElementById('auth-role').value;
-          const birthDate = (document.getElementById('auth-birthdate') && document.getElementById('auth-birthdate').value) || '';
-          const relStage = (document.getElementById('auth-stage') && document.getElementById('auth-stage').value) || '';
-          const city = (document.getElementById('auth-city') && document.getElementById('auth-city').value.trim()) || '';
           const { data: signUpData, error: signUpErr } = await sbClient.auth.signUp({
             email,
             password: pass,
-            options: { data: { full_name: name, birth_date: birthDate, relationship_stage: relStage, city: city } }
+            options: { data: { full_name: name } }
           });
           if (signUpErr) {
             errEl.textContent = signUpErr.message;
@@ -2481,7 +2562,7 @@
           await loadUserSpace(user);
           render();
           showToast((isEn ? 'Welcome, ' : 'Selamat datang, ') + name + '!');
-          if (!state.hasSeenTutorial) setTimeout(() => openTutorial(0), 250);
+          maybeTriggerPostLoginFlow();
           return;
         } else {
           const { data: signInData, error: signInErr } = await sbClient.auth.signInWithPassword({ email, password: pass });
@@ -2728,25 +2809,6 @@
                           <option value="partner_a" ${!pendingInviteCode ? 'selected' : ''}>${isEn ? 'Create New Space' : 'Buat Ruang Baru'}</option>
                           <option value="partner_b" ${pendingInviteCode ? 'selected' : ''}>${isEn ? 'Join Partner Invite' : 'Gabung Undangan Pasangan'}</option>
                         </select>
-                      </div>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                      <div>
-                        <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Birth Date' : 'Tanggal Lahir'}</label>
-                        <input type="date" id="auth-birthdate" required class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white" />
-                      </div>
-                      <div>
-                        <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Relationship Stage' : 'Status Hubungan'}</label>
-                        <select id="auth-stage" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white">
-                          <option value="Pacaran">${isEn ? 'Dating' : 'Pacaran'}</option>
-                          <option value="Persiapan Menikah">${isEn ? 'Engaged / Wedding Prep' : 'Persiapan Menikah'}</option>
-                          <option value="Baru Menikah (< 2 thn)">${isEn ? 'Newlywed (< 2 yrs)' : 'Baru Menikah (< 2 thn)'}</option>
-                          <option value="Menikah (> 2 thn)">${isEn ? 'Married (> 2 yrs)' : 'Menikah (> 2 thn)'}</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'City (Optional)' : 'Kota (Opsional)'}</label>
-                        <input type="text" id="auth-city" placeholder="${isEn ? 'e.g. Jakarta' : 'Contoh: Jakarta'}" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
                       </div>
                     </div>
                     <div id="auth-invite-wrap" class="${pendingInviteCode ? '' : 'hidden'}">
@@ -3853,6 +3915,7 @@
         } catch (e) {}
       }
       render();
+      maybeTriggerPostLoginFlow();
     });
   </script>
 </body>
