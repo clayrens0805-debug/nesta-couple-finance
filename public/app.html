@@ -459,6 +459,28 @@
     </div>
   </div>
 
+  <!-- In-App Share Invite Modal (Works on all phones/tablets/browsers) -->
+  <div id="share-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/50 backdrop-blur-sm" onclick="closeShareModal()"></div>
+    <div class="relative bg-white rounded-2xl border border-[#EAE7DF] w-full max-w-sm p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-lg font-bold text-[#101D2B]" id="share-modal-title">Bagikan Undangan</h3>
+        <button onclick="closeShareModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2]"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-xs text-[#5E6D7E] mb-4" id="share-modal-desc">Pilih cara mengirim undangan ke pasangan Anda:</p>
+      <div class="grid grid-cols-2 gap-2.5 mb-4">
+        <button type="button" onclick="shareViaWhatsApp()" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#16A37B] hover:bg-[#128967] text-white text-xs font-semibold">WhatsApp</button>
+        <button type="button" onclick="shareViaTelegram()" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#0F1E28] hover:bg-[#1B2E42] text-white text-xs font-semibold">Telegram</button>
+        <button type="button" onclick="shareViaEmail()" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#EAE7DF] hover:bg-[#F7F6F2] text-xs font-semibold text-[#101D2B]">Email</button>
+        <button type="button" onclick="shareViaNative()" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#EAE7DF] hover:bg-[#F7F6F2] text-xs font-semibold text-[#101D2B]" id="share-more-btn">Lainnya...</button>
+      </div>
+      <div class="space-y-2 pt-3 border-t border-[#F0EDE5]">
+        <button type="button" onclick="copyInviteCode()" class="w-full py-2.5 px-3 rounded-xl bg-[#F7F6F2] hover:bg-[#EAE7DF] text-xs font-semibold text-[#0E4D38]" id="share-copy-link-btn">Salin Tautan Undangan</button>
+        <button type="button" onclick="copyShortCode()" class="w-full py-2.5 px-3 rounded-xl bg-[#F7F6F2] hover:bg-[#EAE7DF] text-xs font-semibold text-[#101D2B]" id="share-copy-code-btn">Salin Kode Undangan</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Generic Confirmation Modal -->
   <div id="confirm-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-[#0F1E28]/45 backdrop-blur-sm" onclick="closeConfirmModal()"></div>
@@ -556,9 +578,18 @@
         return true;
       }
 
-      // First-time Google / OAuth login: auto-create their new Couple Space!
       const isEn = state.lang === 'en';
       const uName = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || (user.email ? user.email.split('@')[0] : 'Partner A');
+      const invCode = pendingInviteCode || (function(){ try { return localStorage.getItem('nesta_pending_invite') || ''; } catch(e){ return ''; } })();
+      if (invCode) {
+        const { data: joined } = await sbClient.rpc('join_nesta_space', { p_invite: invCode, p_partner_name: uName });
+        try { localStorage.removeItem('nesta_pending_invite'); } catch (e) {}
+        pendingInviteCode = '';
+        if (joined) {
+          return await loadUserSpace(user);
+        }
+      }
+      // First-time Google / OAuth login without invite: auto-create their new Couple Space!
       const uAvatar = (user.user_metadata && user.user_metadata.avatar_url) || '';
       const randCode = Math.random().toString(36).substring(2, 8);
       state.couple = {
@@ -2053,8 +2084,84 @@
       showToast('Profil ruang pasangan diperbarui.');
     }
 
-    function copyInviteCode() {
-      const code = state.couple.inviteCode;
+    function getShortInviteCode() {
+      const raw = (state.couple && state.couple.inviteCode) || 'abc123';
+      if (raw.includes('?invite=')) return raw.split('?invite=').pop().split('&')[0];
+      return raw.split('/').pop();
+    }
+
+    function getLiveInviteUrl() {
+      const code = getShortInviteCode();
+      const base = (window.location.origin && window.location.origin.startsWith('http'))
+        ? window.location.origin + '/app.html'
+        : 'https://nesta-couple-finance.vercel.app/app.html';
+      return `${base}?invite=${code}`;
+    }
+
+    function shareInviteLink() {
+      const isEn = state.lang === 'en';
+      document.getElementById('share-modal-title').textContent = isEn ? 'Share Couple Invite' : 'Bagikan Undangan';
+      document.getElementById('share-modal-desc').textContent = isEn ? 'Choose how to invite your partner:' : 'Pilih cara mengirim undangan ke pasangan Anda:';
+      document.getElementById('share-more-btn').textContent = isEn ? 'More Apps...' : 'Aplikasi Lain...';
+      document.getElementById('share-copy-link-btn').textContent = isEn ? 'Copy Invite Link' : 'Salin Tautan Undangan';
+      document.getElementById('share-copy-code-btn').textContent = (isEn ? 'Copy Code: ' : 'Salin Kode: ') + getShortInviteCode();
+      document.getElementById('share-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeShareModal() {
+      document.getElementById('share-modal').classList.add('hidden');
+    }
+
+    function shareViaTelegram() {
+      const url = getLiveInviteUrl();
+      const code = getShortInviteCode();
+      const text = state.lang === 'en'
+        ? `Join my NESTA Couple Space! (Invite code: ${code})`
+        : `Yuk gabung ke Ruang Bersama NESTA kita! (Kode: ${code})`;
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function shareViaEmail() {
+      const url = getLiveInviteUrl();
+      const code = getShortInviteCode();
+      const isEn = state.lang === 'en';
+      const subject = isEn ? 'Join my NESTA Couple Space' : 'Undangan Ruang Bersama NESTA';
+      const body = isEn
+        ? `Join our NESTA Couple Space here: ${url}\nInvite code: ${code}`
+        : `Gabung ke Ruang Bersama NESTA kita di sini: ${url}\nKode undangan: ${code}`;
+      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+
+    async function shareViaNative() {
+      const url = getLiveInviteUrl();
+      const code = getShortInviteCode();
+      const text = state.lang === 'en'
+        ? `Join my NESTA Couple Space! (Code: ${code})`
+        : `Yuk gabung ke Ruang Bersama NESTA kita! (Kode: ${code})`;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'NESTA — Couple Space Invite', text, url });
+          return;
+        } catch (e) {
+          if (e && e.name === 'AbortError') return;
+        }
+      }
+      copyInviteCode();
+    }
+
+    function shareViaWhatsApp() {
+      const url = getLiveInviteUrl();
+      const code = getShortInviteCode();
+      const isEn = state.lang === 'en';
+      const msg = isEn
+        ? `Join my NESTA Couple Space! Open this link: ${url} (Invite code: ${code})`
+        : `Yuk gabung ke Ruang Bersama NESTA kita! Buka tautan ini: ${url} (Kode undangan: ${code})`;
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    function copyShortCode() {
+      const code = getShortInviteCode();
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(code).catch(() => {});
       } else {
@@ -2065,7 +2172,22 @@
         try { document.execCommand('copy'); } catch (e) {}
         document.body.removeChild(ta);
       }
-      showToast('Tautan undangan disalin.');
+      showToast((state.lang === 'en' ? 'Invite code copied: ' : 'Kode undangan disalin: ') + code);
+    }
+
+    function copyInviteCode() {
+      const url = getLiveInviteUrl();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).catch(() => {});
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+      showToast(state.lang === 'en' ? 'Invite link copied!' : 'Tautan undangan disalin!');
     }
 
 
@@ -2579,14 +2701,14 @@
                       <div>
                         <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Space Option' : 'Pilihan Ruang'}</label>
                         <select id="auth-role" onchange="toggleInviteInput()" class="w-full px-3 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white">
-                          <option value="partner_a">${isEn ? 'Create New Space' : 'Buat Ruang Baru'}</option>
-                          <option value="partner_b">${isEn ? 'Join Partner Invite' : 'Gabung Undangan Pasangan'}</option>
+                          <option value="partner_a" ${!pendingInviteCode ? 'selected' : ''}>${isEn ? 'Create New Space' : 'Buat Ruang Baru'}</option>
+                          <option value="partner_b" ${pendingInviteCode ? 'selected' : ''}>${isEn ? 'Join Partner Invite' : 'Gabung Undangan Pasangan'}</option>
                         </select>
                       </div>
                     </div>
-                    <div id="auth-invite-wrap" class="hidden">
+                    <div id="auth-invite-wrap" class="${pendingInviteCode ? '' : 'hidden'}">
                       <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Paste Invite Link / Code from Partner' : 'Tempel Kode / Tautan Undangan dari Pasangan'}</label>
-                      <input type="text" id="auth-invite-code" placeholder="https://nesta.id/couple/..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                      <input type="text" id="auth-invite-code" value="${escapeHTML(pendingInviteCode)}" placeholder="https://nesta-couple-finance.vercel.app/app.html?invite=..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
                     </div>
                   ` : ''}
                   <div>
@@ -2951,10 +3073,17 @@
                 <span class="text-[#5E6D7E] font-bold">+</span>
                 <div class="w-12 h-12 rounded-full bg-[#16A37B] text-white flex items-center justify-center font-bold text-lg">${escapeHTML(state.couple.partnerB.name[0])}</div>
               </div>
-              <button id="btn-copy-invite" onclick="copyInviteCode()" class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium mb-3">${state.lang === 'en' ? 'Share Invite Link' : 'Bagikan Tautan Undangan'}</button>
-              <div class="flex items-center gap-2 bg-[#F7F6F2] border border-[#EAE7DF] rounded-xl px-3 py-2 text-xs text-[#5E6D7E] mb-3">
-                <span class="truncate flex-1 text-left">${escapeHTML(state.couple.inviteCode)}</span>
-                <button onclick="copyInviteCode()" class="text-[#0E4D38] font-semibold">${state.lang === 'en' ? 'Copy' : 'Salin'}</button>
+              <div class="grid grid-cols-2 gap-2 mb-3">
+                <button id="btn-copy-invite" onclick="shareInviteLink()" class="btn-primary py-2.5 px-3 rounded-xl text-xs font-semibold">${state.lang === 'en' ? 'Share Link' : 'Bagikan Tautan'}</button>
+                <button onclick="shareViaWhatsApp()" class="btn-emerald py-2.5 px-3 rounded-xl text-xs font-semibold">WhatsApp</button>
+              </div>
+              <div class="flex items-center gap-2 bg-[#F7F6F2] border border-[#EAE7DF] rounded-xl px-3 py-2 text-xs text-[#5E6D7E] mb-2">
+                <span class="truncate flex-1 text-left">${escapeHTML(getLiveInviteUrl())}</span>
+                <button onclick="copyInviteCode()" class="text-[#0E4D38] font-semibold shrink-0">${state.lang === 'en' ? 'Copy Link' : 'Salin Link'}</button>
+              </div>
+              <div class="flex items-center justify-between bg-[#F7F6F2] border border-[#EAE7DF] rounded-xl px-3 py-2 text-xs text-[#5E6D7E] mb-3">
+                <span>${state.lang === 'en' ? 'Invite Code:' : 'Kode Undangan:'} <strong class="text-[#101D2B]">${escapeHTML(getShortInviteCode())}</strong></span>
+                <button onclick="copyShortCode()" class="text-[#0E4D38] font-semibold">${state.lang === 'en' ? 'Copy Code' : 'Salin Kode'}</button>
               </div>
               <div class="text-left text-[11px] text-[#5E6D7E] bg-[#EEF7F3]/60 rounded-xl p-3 border border-[#D8ECE3] space-y-1">
                 <div class="font-semibold text-[#0E4D38]">${state.lang === 'en' ? 'How Your Partner Joins:' : 'Cara Pasangan Bergabung:'}</div>
@@ -3634,7 +3763,20 @@
     });
 
 
+    let pendingInviteCode = '';
+
     window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const inv = (params.get('invite') || '').trim();
+        if (inv) {
+          pendingInviteCode = inv;
+          try { localStorage.setItem('nesta_pending_invite', inv); } catch (e) {}
+          state.authTab = 'register';
+        } else {
+          try { pendingInviteCode = localStorage.getItem('nesta_pending_invite') || ''; } catch (e) {}
+        }
+      } catch (e) {}
       if (sbClient) {
         sbClient.auth.onAuthStateChange(async (event, session) => {
           if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && session.user && !state.isAuthenticated) {
