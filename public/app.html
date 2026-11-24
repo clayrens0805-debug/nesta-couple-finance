@@ -2610,6 +2610,54 @@
       `;
     }
 
+    function getInAppAlertsHTML() {
+      const notif = state.notifications || { billReminder: true, monthlyWrapup: true };
+      const isEn = state.lang === 'en';
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const blocks = [];
+
+      if (notif.billReminder) {
+        const dueSoon = state.bills.filter(b => {
+          if (isBillPaid(b) || !b.dueDate) return false;
+          const d = new Date(b.dueDate + 'T00:00:00');
+          const diffDays = Math.round((d.getTime() - today.getTime()) / 86400000);
+          return diffDays <= 3;
+        });
+        if (dueSoon.length > 0) {
+          blocks.push(`
+            <div class="mb-4 rounded-2xl p-4 bg-[#FDF6EB] border border-[#F5E4C8] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-start gap-3">
+                <i data-lucide="bell-ring" class="w-5 h-5 text-[#D97706] shrink-0 mt-0.5"></i>
+                <div class="text-xs text-[#101D2B]">
+                  <div class="font-bold text-sm mb-0.5">${isEn ? `Bill Due Reminder (${dueSoon.length})` : `Pengingat Tagihan Jatuh Tempo (${dueSoon.length})`}</div>
+                  <div class="text-[#5E6D7E]">${dueSoon.map(b => `${escapeHTML(b.title)} (${formatIDR(b.amount)} • ${formatDateID(b.dueDate)})`).join(', ')}</div>
+                </div>
+              </div>
+              <button onclick="navigate('bills')" class="px-3.5 py-2 rounded-xl bg-[#0F1E28] text-white text-xs font-semibold shrink-0">${isEn ? 'Review Bills' : 'Cek Tagihan'}</button>
+            </div>
+          `);
+        }
+      }
+
+      if (notif.monthlyWrapup && today.getDate() >= 25 && getMonthExpenses().length > 0) {
+        blocks.push(`
+          <div class="mb-4 rounded-2xl p-4 bg-[#EEF7F3] border border-[#D8ECE3] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <i data-lucide="calendar-check" class="w-5 h-5 text-[#16A37B] shrink-0 mt-0.5"></i>
+              <div class="text-xs text-[#101D2B]">
+                <div class="font-bold text-sm mb-0.5">${isEn ? 'End-of-Month Review Ready' : 'Waktunya Evaluasi Tutup Buku Bulanan'}</div>
+                <div class="text-[#5E6D7E]">${isEn ? 'Review this month’s spending and settlement with your partner.' : 'Tinjau pengeluaran bulan ini dan status penyelesaian bersama pasangan.'}</div>
+              </div>
+            </div>
+            <button onclick="openWrapupModal()" class="btn-emerald px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0">${isEn ? 'Open Wrap-Up' : 'Buka Ringkasan'}</button>
+          </div>
+        `);
+      }
+
+      return blocks.join('');
+    }
+
     function renderDashboard() {
       const monthExps = getMonthExpenses();
       const monthBudget = getMonthBudget();
@@ -2647,6 +2695,7 @@
           </div>
         </div>
 
+        ${getInAppAlertsHTML()}
         <!-- Mobile Featured Gradient Card -->
         <div class="lg:hidden rounded-2xl bg-gradient-to-br from-[#0E4D38] to-[#16A37B] text-white p-5 mb-5 shadow-md flex items-center justify-between">
           <div>
