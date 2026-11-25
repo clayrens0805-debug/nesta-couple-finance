@@ -3281,10 +3281,10 @@
           <div class="lg:col-span-7 flex flex-col gap-6">
             <!-- Connect to Partner's Space (Already Have an Account) -->
             <div class="card-nesta p-6 border-[#D8ECE3] bg-[#FAFDFB]">
-              <h2 class="text-base font-bold text-[#101D2B]">${state.lang === 'en' ? 'Join Partner’s Space (Already Have an Account?)' : 'Gabung ke Ruang Pasangan (Sudah Punya Akun?)'}</h2>
-              <p class="text-xs text-[#5E6D7E] mt-1 mb-3.5">${state.lang === 'en' ? 'Already signed in separately? Enter your partner’s 6-character invite code (e.g. mb66tk) or full link to connect into one shared space.' : 'Sudah terlanjur punya akun masing-masing? Masukkan kode undangan 6 huruf milik pasangan (contoh: mb66tk) atau link undangannya untuk langsung terhubung.'}</p>
+              <h2 class="text-base font-bold text-[#101D2B]">${state.lang === 'en' ? 'Join Partner’s Space' : 'Gabung ke Ruang Pasangan'}</h2>
+              <p class="text-xs text-[#5E6D7E] mt-1 mb-3.5">${state.lang === 'en' ? 'Enter your partner’s 6-character invite code or full invite link to connect into one shared space.' : 'Masukkan kode undangan 6 huruf milik pasangan atau tautan undangannya untuk langsung terhubung dalam satu ruang bersama.'}</p>
               <form onsubmit="joinExistingSpace(event)" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                <input type="text" id="join-space-code" placeholder="${state.lang === 'en' ? 'Invite code or link (e.g. mb66tk)' : 'Kode atau link undangan (mis. mb66tk)'}" class="flex-1 px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] bg-white text-sm" />
+                <input type="text" id="join-space-code" placeholder="${state.lang === 'en' ? 'Invite code or link' : 'Kode atau link undangan'}" class="flex-1 px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] bg-white text-sm" />
                 <button type="submit" id="join-space-btn" class="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap">${state.lang === 'en' ? 'Connect Space' : 'Hubungkan Ruang'}</button>
               </form>
               <div id="join-space-msg" class="text-xs mt-2.5 hidden"></div>
