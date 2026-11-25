@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -111,6 +111,98 @@
     .nesta-pulse-dot {
       animation: nestaPulseSoft 2.6s ease-in-out infinite;
     }
+    @keyframes nestaFloatSlow {
+      0%, 100% { transform: translateY(0px) rotate(-2deg); }
+      50% { transform: translateY(-8px) rotate(-1deg); }
+    }
+    @keyframes nestaSceneSlide {
+      from { opacity: 0; transform: translateY(14px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes nestaBarGrow {
+      from { width: 12%; }
+      to { width: 78%; }
+    }
+    @keyframes nestaConnectLeft {
+      0% { transform: translateX(-22px); opacity: 0.4; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes nestaConnectRight {
+      0% { transform: translateX(22px); opacity: 0.4; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    .nesta-hero-float {
+      animation: nestaFloatSlow 5.5s ease-in-out infinite;
+    }
+    .nesta-motion-scene {
+      animation: nestaSceneSlide 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .nesta-bar-grow {
+      animation: nestaBarGrow 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .nesta-connect-l {
+      animation: nestaConnectLeft 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .nesta-connect-r {
+      animation: nestaConnectRight 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Reusable Premium Scroll Reveal System */
+    /* Apple-style scrollytelling chapter & sticky phone transitions */
+    .apple-chapter {
+      transition: opacity 850ms cubic-bezier(0.16, 1, 0.3, 1), transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .apple-chapter.is-dim {
+      opacity: 0.42;
+    }
+    .apple-chapter.is-active {
+      opacity: 1;
+    }
+    @keyframes appleScreenSwap {
+      from { opacity: 0; transform: translateY(10px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .apple-screen-swap {
+      animation: appleScreenSwap 880ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .sr-fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 950ms cubic-bezier(0.16, 1, 0.3, 1), transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .sr-fade-in {
+      opacity: 0;
+      transition: opacity 950ms cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity;
+    }
+    .sr-image-reveal {
+      opacity: 0;
+      transform: translateY(20px) scale(0.975);
+      transition: opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1), transform 1000ms cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .sr-fade-up.is-visible,
+    .sr-fade-in.is-visible,
+    .sr-image-reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+    .sr-d1 { transition-delay: 110ms; }
+    .sr-d2 { transition-delay: 220ms; }
+    .sr-d3 { transition-delay: 330ms; }
+    .sr-d4 { transition-delay: 440ms; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .sr-fade-up, .sr-fade-in, .sr-image-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
     .card-nesta {
       transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1);
     }
@@ -174,9 +266,9 @@
     <div class="px-5 pt-6 pb-5 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <svg class="w-9 h-9 shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="40" height="40" rx="10" fill="#16A37B" fill-opacity="0.14"/>
-          <path d="M9 31V18C9 11.9249 13.9249 7 20 7C26.0751 7 31 11.9249 31 18V31H24.5V19C24.5 16.5147 22.4853 14.5 20 14.5C17.5147 14.5 15.5 16.5147 15.5 19V31H9Z" fill="#16A37B"/>
-          <path d="M20 7C26.0751 7 31 11.9249 31 18V31H24.5V19C24.5 16.5147 22.4853 14.5 20 14.5V7Z" fill="#22C594"/>
+          <rect width="40" height="40" rx="10" fill="#0E4D38"/>
+          <path d="M9 31V18C9 11.9249 13.9249 7 20 7C26.0751 7 31 11.9249 31 18V31H24.5V19C24.5 16.5147 22.4853 14.5 20 14.5C17.5147 14.5 15.5 16.5147 15.5 19V31H9Z" fill="#FFFFFF"/>
+          <rect x="24.5" y="19" width="6.5" height="12" fill="#34D399"/>
         </svg>
         <div>
           <div class="text-xl font-bold tracking-tight text-white leading-none">NESTA</div>
@@ -242,9 +334,10 @@
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-2.5">
             <svg class="w-8 h-8 shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 32V18C8 11.3726 13.3726 6 20 6C26.6274 6 32 11.3726 32 18V32H25V19C25 16.2386 22.7614 14 20 14C17.2386 14 15 16.2386 15 19V32H8Z" fill="#16A37B"/>
-              <path d="M20 6C26.6274 6 32 11.3726 32 18V32H25V19C25 16.2386 22.7614 14 20 14V6Z" fill="#22C594"/>
-            </svg>
+          <rect width="40" height="40" rx="10" fill="#0E4D38"/>
+          <path d="M9 31V18C9 11.9249 13.9249 7 20 7C26.0751 7 31 11.9249 31 18V31H24.5V19C24.5 16.5147 22.4853 14.5 20 14.5C17.5147 14.5 15.5 16.5147 15.5 19V31H9Z" fill="#FFFFFF"/>
+          <rect x="24.5" y="19" width="6.5" height="12" fill="#34D399"/>
+        </svg>
             <span class="text-lg font-bold tracking-tight">NESTA</span>
           </div>
           <button onclick="toggleMobileDrawer(false)" class="p-1.5 rounded-lg bg-white/10 text-white">
@@ -629,7 +722,10 @@
       <form onsubmit="confirmUnbindSpace(event)" class="space-y-3">
         <div>
           <label id="unbind-pwd-label" class="block text-xs font-semibold text-[#101D2B] mb-1">Masukkan password NESTA untuk konfirmasi</label>
-          <input type="password" id="unbind-password" required placeholder="Password NESTA kamu" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+          <div class="relative">
+            <input type="password" id="unbind-password" required placeholder="Password NESTA kamu" class="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-[#EAE7DF] text-sm" />
+            <button type="button" onclick="togglePasswordVisibility('unbind-password', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#5E6D7E] hover:text-[#101D2B]" aria-label="Show password"><i data-lucide="eye" class="w-4 h-4"></i></button>
+          </div>
           <p id="unbind-pwd-hint" class="text-[11px] text-[#5E6D7E] mt-1">Login pakai Google dan belum pernah atur password? Atur dulu di Settings &amp; Privacy atau ketik UNBIND.</p>
         </div>
         <div id="unbind-error" class="text-xs text-red-600 hidden"></div>
@@ -668,6 +764,37 @@
       <div class="flex items-center justify-end gap-2">
         <button type="button" id="jc-cancel-btn" onclick="closeJoinConfirmModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-xs font-semibold text-[#5E6D7E]">Batal</button>
         <button type="button" id="jc-confirm-btn" onclick="executeConfirmedJoin()" class="btn-emerald px-4 py-2 rounded-xl text-xs font-semibold">Ya, Hubungkan Sekarang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS ANIMATED MOTION MODAL -->
+  <div id="how-motion-modal" class="fixed inset-0 z-[80] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/65 backdrop-blur-sm" onclick="closeHowItWorksMotion()"></div>
+    <div class="relative w-full max-w-md bg-white rounded-3xl border border-[#EAE7DF] shadow-2xl p-6 z-10 modal-panel-anim">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <span id="hm-badge" class="text-[10px] font-bold uppercase tracking-wider text-[#16A37B]">NESTA Preview Motion</span>
+          <h3 id="hm-title" class="text-base font-bold text-[#101D2B]">Cara Kerja NESTA dalam 10 Detik</h3>
+        </div>
+        <button type="button" onclick="closeHowItWorksMotion()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2] text-[#5E6D7E]"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <!-- Animated Phone Stage -->
+      <div class="rounded-2xl bg-gradient-to-br from-[#0F1E28] via-[#132936] to-[#0E4D38] p-5 text-white min-h-[250px] flex flex-col justify-between overflow-hidden relative">
+        <div id="hm-stage" class="my-auto"></div>
+        <!-- Step Progress Dots -->
+        <div class="flex items-center justify-center gap-2 pt-4">
+          <button type="button" onclick="setMotionScene(0)" id="hm-dot-0" class="h-1.5 w-6 rounded-full bg-[#34D399] transition-all"></button>
+          <button type="button" onclick="setMotionScene(1)" id="hm-dot-1" class="h-1.5 w-2 rounded-full bg-white/30 transition-all"></button>
+          <button type="button" onclick="setMotionScene(2)" id="hm-dot-2" class="h-1.5 w-2 rounded-full bg-white/30 transition-all"></button>
+        </div>
+      </div>
+
+      <div class="mt-4 flex items-center justify-between gap-3">
+        <button type="button" id="hm-prev-btn" onclick="prevMotionScene()" class="px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs font-semibold text-[#5E6D7E]">←</button>
+        <button type="button" id="hm-cta-btn" onclick="closeHowItWorksMotion(); openAuthModal('register');" class="flex-1 py-2.5 rounded-full bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs font-semibold">Mulai Gratis Sekarang</button>
+        <button type="button" id="hm-next-btn" onclick="nextMotionScene()" class="px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs font-semibold text-[#5E6D7E]">→</button>
       </div>
     </div>
   </div>
@@ -897,7 +1024,7 @@
       const ym = getCurrentMonthYM();
       return {
         activeRole: 'partner_a',
-        lang: 'id',
+        lang: 'en',
         notifications: { billReminder: true, monthlyWrapup: true },
         hasSeenTutorial: true,
         tutorialStep: 0,
@@ -909,12 +1036,12 @@
         selectedMonth: ym,
         sidebarOpen: true,
         couple: {
-          name: 'Ruang Finansial Bersama',
+          name: 'Shared Financial Space',
           inviteCode: 'https://nesta.id/couple/' + Math.random().toString(36).substring(2, 8),
           partnerJoined: false,
           monthlyBudget: 0,
           partnerA: { id: 'partner_a', name: 'Clayrens' },
-          partnerB: { id: 'partner_b', name: 'Pasangan' }
+          partnerB: { id: 'partner_b', name: 'Partner' }
         },
         monthlyBudgets: {},
         poolDeposits: [],
@@ -931,6 +1058,12 @@
     }
 
     let state = loadState();
+    try {
+      if (!localStorage.getItem('nesta_lang_v5_defaulted')) {
+        state.lang = 'en';
+        localStorage.setItem('nesta_lang_v5_defaulted', '1');
+      }
+    } catch (e) {}
     let currentSplitMethod = '50_50';
     let expenseFilterCat = 'Semua';
     let expenseFilterSource = 'Semua';
@@ -1423,7 +1556,11 @@
           return true;
         }
       }
-      if (state.activePage !== 'dashboard') {
+      if (state.activePage === 'auth') {
+        navigate('landing', true);
+        return true;
+      }
+      if (state.activePage !== 'dashboard' && state.activePage !== 'landing') {
         const prev = navHistory.pop() || 'dashboard';
         navigate(prev === state.activePage ? 'dashboard' : prev, true);
         return true;
@@ -2797,6 +2934,23 @@
       }
     }
 
+    function isStrongPassword(p) {
+      return typeof p === 'string' && p.length >= 6 && /[A-Z]/.test(p) && /[0-9]/.test(p);
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+      const el = document.getElementById(inputId);
+      if (!el) return;
+      const showing = el.type === 'text';
+      el.type = showing ? 'password' : 'text';
+      if (btn) {
+        btn.innerHTML = showing
+          ? '<i data-lucide="eye" class="w-4 h-4"></i>'
+          : '<i data-lucide="eye-off" class="w-4 h-4"></i>';
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
     async function handleAuthSubmit(e) {
       e.preventDefault();
       const email = document.getElementById('auth-email').value.trim().toLowerCase();
@@ -2812,6 +2966,13 @@
 
       if (sbClient) {
         if (state.authTab === 'register') {
+          if (!isStrongPassword(pass)) {
+            errEl.textContent = isEn
+              ? 'Password must be at least 6 characters with 1 uppercase letter and 1 number.'
+              : 'Kata sandi minimal 6 karakter dan wajib mengandung minimal 1 huruf kapital & 1 angka.';
+            errEl.classList.remove('hidden');
+            return;
+          }
           const confEl = document.getElementById('auth-confirm-password');
           const confPass = confEl ? confEl.value : pass;
           if (pass !== confPass) {
@@ -3049,8 +3210,8 @@
       const confP = document.getElementById('acc-conf-pass').value;
       if (!state.currentUser) return;
       const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
-      if (newP.length < 6) {
-        showToast(isEn ? 'New password must be at least 6 characters.' : 'Kata sandi baru minimal 6 karakter.');
+      if (!isStrongPassword(newP)) {
+        showToast(isEn ? 'Password must be at least 6 chars with 1 uppercase letter and 1 number.' : 'Kata sandi minimal 6 karakter, wajib ada 1 huruf kapital & 1 angka.');
         return;
       }
       if (newP !== confP) {
@@ -3069,39 +3230,441 @@
       showToast(isEn ? 'Password changed successfully.' : 'Kata sandi berhasil diubah.');
     }
 
+    function openAuthModal(tab) {
+      if (tab) state.authTab = tab;
+      navigate('auth');
+    }
+
+    function closeAuthModal() {
+      navigate('landing');
+    }
+
+    let motionSceneIdx = 0;
+    let motionTimer = null;
+
+    function renderMotionScene() {
+      const stage = document.getElementById('hm-stage');
+      if (!stage) return;
+      const isEn = state.lang === 'en';
+      [0, 1, 2].forEach(i => {
+        const d = document.getElementById('hm-dot-' + i);
+        if (d) {
+          d.className = i === motionSceneIdx
+            ? 'h-1.5 w-7 rounded-full bg-[#34D399] transition-all duration-300'
+            : 'h-1.5 w-2 rounded-full bg-white/30 transition-all duration-300';
+        }
+      });
+
+      if (motionSceneIdx === 0) {
+        stage.innerHTML = `
+          <div class="nesta-motion-scene text-center space-y-4">
+            <div class="text-[11px] font-semibold uppercase tracking-wider text-[#34D399]">${isEn ? 'Step 1 of 3 • Connect' : 'Langkah 1 dari 3 • Terhubung'}</div>
+            <div class="flex items-center justify-center gap-4">
+              <div class="nesta-connect-l w-12 h-12 rounded-full bg-white text-[#0F1E28] font-bold flex items-center justify-center shadow-lg">A</div>
+              <div class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-mono tracking-wider">mb66tk</div>
+              <div class="nesta-connect-r w-12 h-12 rounded-full bg-[#16A37B] text-white font-bold flex items-center justify-center shadow-lg">B</div>
+            </div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#16A37B]/25 border border-[#34D399]/40 text-xs font-semibold text-[#A7F3D0]">
+              <span class="w-2 h-2 rounded-full bg-[#34D399] nesta-pulse-dot"></span>
+              ${isEn ? '2 Partners Connected • Private & Locked' : '2 Pasangan Terhubung • Privat & Terkunci'}
+            </div>
+          </div>`;
+      } else if (motionSceneIdx === 1) {
+        stage.innerHTML = `
+          <div class="nesta-motion-scene space-y-3">
+            <div class="text-[11px] font-semibold uppercase tracking-wider text-[#34D399] text-center">${isEn ? 'Step 2 of 3 • Log & Split' : 'Langkah 2 dari 3 • Catat & Bagi'}</div>
+            <div class="bg-white text-[#101D2B] rounded-2xl p-3.5 shadow-lg space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold">${isEn ? 'Monthly Groceries' : 'Belanja Bulanan'}</span>
+                <span class="font-bold text-[#0E4D38] tabular-nums">Rp 420.000</span>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-[#5E6D7E]">
+                <span>${isEn ? 'Split 50:50 • Synced live' : 'Bagi 50:50 • Sinkron otomatis'}</span>
+                <span class="px-2 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] font-semibold">Rp 210.000 / org</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-[#EAE7DF] overflow-hidden pt-0">
+                <div class="h-full bg-[#16A37B] nesta-bar-grow rounded-full"></div>
+              </div>
+            </div>
+          </div>`;
+      } else {
+        stage.innerHTML = `
+          <div class="nesta-motion-scene space-y-3 text-center">
+            <div class="text-[11px] font-semibold uppercase tracking-wider text-[#34D399]">${isEn ? 'Step 3 of 3 • Settle & Grow' : 'Langkah 3 dari 3 • Lunas & Tumbuh'}</div>
+            <div class="bg-white/10 border border-white/15 rounded-2xl p-4 space-y-2">
+              <div class="text-xs text-[#CBD5E1]">${isEn ? 'Wedding & Home Goal' : 'Target Nikah & Rumah'}</div>
+              <div class="text-2xl font-bold tabular-nums text-white">Rp 34.000.000</div>
+              <div class="w-full h-2 rounded-full bg-white/15 overflow-hidden">
+                <div class="h-full bg-[#34D399] nesta-bar-grow rounded-full"></div>
+              </div>
+              <div class="text-[11px] text-[#A7F3D0] font-semibold pt-1">${isEn ? 'Monthly settlement balanced ✓' : 'Pelunasan bulanan seimbang ✓'}</div>
+            </div>
+          </div>`;
+      }
+    }
+
+    function setMotionScene(idx) {
+      motionSceneIdx = (idx + 3) % 3;
+      renderMotionScene();
+    }
+
+    function nextMotionScene() {
+      setMotionScene(motionSceneIdx + 1);
+    }
+
+    function prevMotionScene() {
+      setMotionScene(motionSceneIdx - 1);
+    }
+
+    function openHowItWorksMotion() {
+      const isEn = state.lang === 'en';
+      const m = document.getElementById('how-motion-modal');
+      if (!m) return;
+      document.getElementById('hm-title').textContent = isEn ? 'How NESTA Works in 10 Seconds' : 'Cara Kerja NESTA dalam 10 Detik';
+      document.getElementById('hm-cta-btn').textContent = isEn ? 'Get Started Free' : 'Mulai Gratis Sekarang';
+      motionSceneIdx = 0;
+      renderMotionScene();
+      if (motionTimer) clearInterval(motionTimer);
+      motionTimer = setInterval(() => {
+        motionSceneIdx = (motionSceneIdx + 1) % 3;
+        renderMotionScene();
+      }, 3400);
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeHowItWorksMotion() {
+      const m = document.getElementById('how-motion-modal');
+      if (motionTimer) { clearInterval(motionTimer); motionTimer = null; }
+      if (!m) return;
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
     function renderLanding() {
       const isReg = state.authTab === 'register';
       const isForgot = state.authTab === 'forgot';
       const isEn = state.lang === 'en';
       return `
-        <div class="max-w-5xl mx-auto py-4">
-          <div class="flex items-center justify-between mb-8">
-            <div class="flex items-center gap-3">
-              <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 32V18C8 11.3726 13.3726 6 20 6C26.6274 6 32 11.3726 32 18V32H25V19C25 16.2386 22.7614 14 20 14C17.2386 14 15 16.2386 15 19V32H8Z" fill="#0E4D38"/>
-                <path d="M20 6C26.6274 6 32 11.3726 32 18V32H25V19C25 16.2386 22.7614 14 20 14V6Z" fill="#16A37B"/>
-              </svg>
-              <div>
-                <div class="text-2xl font-bold tracking-tight text-[#101D2B]">NESTA</div>
-                <div class="text-xs text-[#5E6D7E]">Separate Money. Shared Life.</div>
+        <div class="max-w-6xl mx-auto py-3 sm:py-5">
+          <!-- 1. Clean Top Navigation -->
+          <header class="flex items-center justify-between gap-3 mb-6 sm:mb-10 pb-3">
+            <div class="flex items-center gap-7">
+              <div class="flex items-center gap-2.5">
+                <svg class="w-9 h-9 shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="10" fill="#0E4D38"/>
+          <path d="M9 31V18C9 11.9249 13.9249 7 20 7C26.0751 7 31 11.9249 31 18V31H24.5V19C24.5 16.5147 22.4853 14.5 20 14.5C17.5147 14.5 15.5 16.5147 15.5 19V31H9Z" fill="#FFFFFF"/>
+          <rect x="24.5" y="19" width="6.5" height="12" fill="#34D399"/>
+        </svg>
+                <span class="text-xl font-bold tracking-tight text-[#0F1E28]">NESTA</span>
+              </div>
+              <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-[#5E6D7E]">
+                <a href="#features" class="hover:text-[#0E4D38] transition-colors">${isEn ? 'Features' : 'Fitur'}</a>
+                <a href="#why-nesta" class="hover:text-[#0E4D38] transition-colors">${isEn ? 'Why Nesta' : 'Kenapa Nesta'}</a>
+                <a href="#security" class="hover:text-[#0E4D38] transition-colors">${isEn ? 'Privacy' : 'Privasi'}</a>
+              </nav>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="inline-flex bg-white border border-[#EAE7DF] rounded-full p-0.5 text-[11px] font-semibold">
+                <button type="button" onclick="setLanguage('id')" class="px-2.5 py-1 rounded-full ${!isEn ? 'bg-[#0F1E28] text-white' : 'text-[#5E6D7E]'}">ID</button>
+                <button type="button" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-full ${isEn ? 'bg-[#0F1E28] text-white' : 'text-[#5E6D7E]'}">EN</button>
+              </div>
+              <button type="button" onclick="openAuthModal('login')" class="px-3.5 py-2 rounded-full text-xs font-semibold text-[#101D2B] hover:bg-white transition-colors">${isEn ? 'Login' : 'Masuk'}</button>
+              <button type="button" onclick="openAuthModal('register')" class="px-4 py-2 rounded-full bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm">
+                <span>${isEn ? 'Get Started Free' : 'Mulai Gratis'}</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </header>
+
+          <!-- 2. Open Editorial Hero + Tilted Phone Mockup -->
+          <section class="relative py-6 sm:py-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div class="sr-fade-in lg:col-span-6 relative z-10">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5F0] border border-[#D4E9DF] text-[11px] font-semibold text-[#0E4D38] mb-5">
+                  <i data-lucide="heart" class="w-3.5 h-3.5 text-[#16A37B]"></i>
+                  ${isEn ? 'Couple & Family Finance' : 'Keuangan Pasangan & Keluarga'}
+                </span>
+                <h1 class="text-4xl sm:text-5xl lg:text-[52px] font-bold tracking-tight text-[#0F1E28] leading-[1.06] mb-5">
+                  ${isEn ? 'Plan together.<br/><span class="text-[#0E4D38]">Grow together.</span>' : 'Atur bersama.<br/><span class="text-[#0E4D38]">Tumbuh bersama.</span>'}
+                </h1>
+                <p class="text-sm sm:text-base text-[#5E6D7E] leading-relaxed mb-7 max-w-md">
+                  ${isEn
+                    ? 'Nesta helps couples plan, manage, and achieve their financial goals — together, without merging personal bank accounts.'
+                    : 'Nesta membantu pasangan merencanakan, mencatat, dan mencapai target keuangan berdua — tanpa menggabungkan rekening pribadi.'}
+                </p>
+                <div class="flex flex-wrap items-center gap-3">
+                  <button type="button" onclick="openAuthModal('register')" class="px-6 py-3 rounded-full bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs sm:text-sm font-semibold inline-flex items-center gap-2 shadow-md">
+                    <span>${isEn ? 'Get Started Free' : 'Mulai Gratis'}</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </button>
+                  <button type="button" onclick="openHowItWorksMotion()" class="px-5 py-3 rounded-full text-[#0F1E28] hover:bg-white/80 text-xs sm:text-sm font-semibold inline-flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-full bg-white border border-[#EAE7DF] flex items-center justify-center shadow-xs"><i data-lucide="play" class="w-3 h-3 text-[#0E4D38]"></i></span>
+                    <span>${isEn ? 'See How It Works' : 'Lihat Cara Kerja'}</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right: Tilted Phone Mockup with Soft Mint Blob -->
+              <div class="lg:col-span-6 relative flex justify-center lg:justify-end">
+                <div class="absolute -inset-2 sm:inset-2 rounded-[3rem] bg-gradient-to-br from-[#DDF0E7] via-[#EAF5F0] to-[#F7F6F2] -z-0 blur-[1px]"></div>
+                <div class="sr-image-reveal sr-d1 relative z-10 w-full max-w-[310px] rounded-[2.2rem] bg-[#0F1E28] p-2.5 shadow-2xl border border-[#1E3342] lg:-rotate-2 transition-transform duration-500 hover:rotate-0">
+                  <div class="rounded-[1.75rem] bg-[#F7F6F2] p-4 text-[#101D2B]">
+                    <div class="flex items-center justify-between text-[10px] text-[#5E6D7E] mb-2.5 px-1">
+                      <span class="font-semibold">nesta</span>
+                      <span class="inline-flex items-center gap-1 text-[#0E4D38] font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-[#16A37B] nesta-pulse-dot"></span> ${isEn ? 'Synced' : 'Sinkron'}</span>
+                    </div>
+                    <div class="text-sm font-bold text-[#101D2B]">${isEn ? 'Hi, Together!' : 'Halo, Berdua!'}</div>
+                    <div class="text-[10px] text-[#5E6D7E] mb-3">${isEn ? 'Your shared financial journey is on track.' : 'Keuangan bersama kalian rapi & terkendali.'}</div>
+                    <div class="rounded-2xl bg-gradient-to-br from-[#0E4D38] to-[#16A37B] text-white p-3.5 mb-3 shadow-sm">
+                      <div class="text-[10px] text-white/80">${isEn ? 'Shared Pot Balance' : 'Saldo Kas Bersama'}</div>
+                      <div class="text-xl font-bold tabular-nums mt-0.5">Rp 4.250.000</div>
+                      <div class="text-[10px] text-[#A7F3D0] mt-1">${isEn ? '2 partners connected' : '2 pasangan terhubung'}</div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-1.5 mb-3 text-center">
+                      <div class="bg-white rounded-xl p-2 border border-[#EAE7DF]"><i data-lucide="pie-chart" class="w-3.5 h-3.5 text-[#0E4D38] mx-auto mb-1"></i><div class="text-[9px] font-semibold">${isEn ? 'Budget' : 'Anggaran'}</div></div>
+                      <div class="bg-white rounded-xl p-2 border border-[#EAE7DF]"><i data-lucide="target" class="w-3.5 h-3.5 text-[#0E4D38] mx-auto mb-1"></i><div class="text-[9px] font-semibold">${isEn ? 'Goals' : 'Target'}</div></div>
+                      <div class="bg-white rounded-xl p-2 border border-[#EAE7DF]"><i data-lucide="bell" class="w-3.5 h-3.5 text-[#0E4D38] mx-auto mb-1"></i><div class="text-[9px] font-semibold">${isEn ? 'Bills' : 'Tagihan'}</div></div>
+                      <div class="bg-white rounded-xl p-2 border border-[#EAE7DF]"><i data-lucide="scale" class="w-3.5 h-3.5 text-[#0E4D38] mx-auto mb-1"></i><div class="text-[9px] font-semibold">${isEn ? 'Settle' : 'Talangan'}</div></div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-3 border border-[#EAE7DF]">
+                      <div class="flex items-center justify-between text-[11px] mb-1.5">
+                        <span class="font-semibold">${isEn ? 'This Month' : 'Bulan Ini'}</span>
+                        <span class="font-bold tabular-nums text-[#0E4D38]">68%</span>
+                      </div>
+                      <div class="w-full h-2 rounded-full bg-[#EAE7DF] overflow-hidden">
+                        <div class="h-full rounded-full bg-[#16A37B]" style="width:68%"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="inline-flex bg-white border border-[#EAE7DF] rounded-xl p-0.5 text-xs font-semibold">
-              <button type="button" onclick="setLanguage('id')" class="px-2.5 py-1.5 rounded-lg ${!isEn ? 'bg-[#0F1E28] text-white' : 'text-[#5E6D7E]'}">ID</button>
-              <button type="button" onclick="setLanguage('en')" class="px-2.5 py-1.5 rounded-lg ${isEn ? 'bg-[#0F1E28] text-white' : 'text-[#5E6D7E]'}">EN</button>
+          </section>
+
+          <!-- 3. Floating White 5-Column Feature Bar -->
+          <section class="sr-fade-up mt-6 sm:mt-10 bg-white rounded-3xl border border-[#EAE7DF] shadow-md grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y lg:divide-y-0 lg:divide-x divide-[#F0EDE5]">
+            <div class="p-5 text-center">
+              <div class="w-9 h-9 rounded-full bg-[#EAF5F0] text-[#0E4D38] flex items-center justify-center mx-auto mb-2.5"><i data-lucide="bar-chart-3" class="w-4 h-4"></i></div>
+              <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Plan Your Budget' : 'Atur Anggaran'}</div>
+              <p class="text-[11px] text-[#5E6D7E] mt-1">${isEn ? 'Set monthly budgets with ease' : 'Batas bulanan fleksibel & rapi'}</p>
+            </div>
+            <div class="p-5 text-center">
+              <div class="w-9 h-9 rounded-full bg-[#EAF5F0] text-[#0E4D38] flex items-center justify-center mx-auto mb-2.5"><i data-lucide="target" class="w-4 h-4"></i></div>
+              <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Reach Your Goals' : 'Capai Target'}</div>
+              <p class="text-[11px] text-[#5E6D7E] mt-1">${isEn ? 'Save for your dream together' : 'Tabungan nikah & DP rumah'}</p>
+            </div>
+            <div class="p-5 text-center">
+              <div class="w-9 h-9 rounded-full bg-[#EAF5F0] text-[#0E4D38] flex items-center justify-center mx-auto mb-2.5"><i data-lucide="refresh-cw" class="w-4 h-4"></i></div>
+              <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Stay in Sync' : 'Sinkron Real-Time'}</div>
+              <p class="text-[11px] text-[#5E6D7E] mt-1">${isEn ? 'Real-time updates for both' : 'Langsung update di kedua HP'}</p>
+            </div>
+            <div class="p-5 text-center">
+              <div class="w-9 h-9 rounded-full bg-[#EAF5F0] text-[#0E4D38] flex items-center justify-center mx-auto mb-2.5"><i data-lucide="bell-ring" class="w-4 h-4"></i></div>
+              <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Never Miss a Bill' : 'Ingat Tagihan'}</div>
+              <p class="text-[11px] text-[#5E6D7E] mt-1">${isEn ? 'Timely H-3 bill reminders' : 'Pengingat H-3 tagihan rutin'}</p>
+            </div>
+            <div class="p-5 text-center col-span-2 sm:col-span-1">
+              <div class="w-9 h-9 rounded-full bg-[#EAF5F0] text-[#0E4D38] flex items-center justify-center mx-auto mb-2.5"><i data-lucide="shield-check" class="w-4 h-4"></i></div>
+              <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Your Data, Private' : 'Data Privat'}</div>
+              <p class="text-[11px] text-[#5E6D7E] mt-1">${isEn ? 'Personal balances stay hidden' : 'Saldo pribadi tetap rahasia'}</p>
+            </div>
+          </section>
+
+          <!-- 4. Apple-Style Sticky iPhone Scrollytelling (Features Explained One by One) -->
+          <section id="features" class="mt-16 sm:mt-24 py-4">
+            <div class="sr-fade-in text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+              <span class="inline-block px-3 py-1 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[11px] font-semibold mb-3">${isEn ? 'Designed Like Your Favorite App' : 'Kenali Fitur NESTA Satu per Satu'}</span>
+              <h2 class="text-3xl sm:text-4xl font-bold text-[#0F1E28] leading-tight">
+                ${isEn ? 'Every detail built for two.' : 'Setiap detail dirancang untuk berdua.'}
+              </h2>
+              <p class="text-xs sm:text-sm text-[#5E6D7E] mt-3">${isEn ? 'Scroll gently to explore how NESTA keeps your shared life clear and calm.' : 'Scroll pelan ke bawah untuk melihat bagaimana NESTA merapikan keuangan bersama kalian.'}</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+              <!-- Left: 4 Scroll Chapters -->
+              <div class="lg:col-span-6 space-y-20 sm:space-y-32 lg:space-y-44 lg:py-16">
+                <div class="apple-chapter is-active sr-fade-up p-6 sm:p-8 rounded-3xl bg-white border border-[#EAE7DF] shadow-xs" data-story-step="0">
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-[#16A37B]">01 • ${isEn ? 'Monthly Budget & Shared Pot' : 'Anggaran & Kas Bersama'}</span>
+                  <h3 class="text-2xl font-bold text-[#0F1E28] mt-2 mb-3">${isEn ? 'See where every expense goes.' : 'Setiap transaksi terpantau jelas.'}</h3>
+                  <p class="text-xs sm:text-sm text-[#5E6D7E] leading-relaxed">${isEn ? 'Pool monthly household funds into a Shared Pot without touching your personal bank account, and watch spending progress stay on track.' : 'Kumpulkan dana bulanan ke Kas Bersama tanpa mencampur rekening pribadi, dan pantau progres pengeluaran agar tetap aman.'}</p>
+                </div>
+
+                <div class="apple-chapter sr-fade-up p-6 sm:p-8 rounded-3xl bg-white border border-[#EAE7DF] shadow-xs" data-story-step="1">
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-[#16A37B]">02 • ${isEn ? 'Personal Advance & Smart Split' : 'Talangan Pribadi & Bagi Adil'}</span>
+                  <h3 class="text-2xl font-bold text-[#0F1E28] mt-2 mb-3">${isEn ? 'Pay in turns, settle effortlessly.' : 'Bayar gantian, hitung otomatis.'}</h3>
+                  <p class="text-xs sm:text-sm text-[#5E6D7E] leading-relaxed">${isEn ? 'Split 50:50, by percentage, or custom amounts. NESTA automatically calculates who owes whom at the end of the month.' : 'Pilih bagi rata 50:50, persentase, atau nominal khusus. Di akhir bulan, NESTA otomatis menghitung selisih pelunasannya.'}</p>
+                </div>
+
+                <div class="apple-chapter sr-fade-up p-6 sm:p-8 rounded-3xl bg-white border border-[#EAE7DF] shadow-xs" data-story-step="2">
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-[#16A37B]">03 • ${isEn ? 'Shared Savings Goals' : 'Target Tabungan Bersama'}</span>
+                  <h3 class="text-2xl font-bold text-[#0F1E28] mt-2 mb-3">${isEn ? 'Turn shared dreams into milestones.' : 'Wujudkan rencana masa depan berdua.'}</h3>
+                  <p class="text-xs sm:text-sm text-[#5E6D7E] leading-relaxed">${isEn ? 'Track your Wedding Fund, Dream House DP, Vacation, and Emergency Fund side by side with clear monthly targets.' : 'Pantau tabungan nikah, DP rumah impian, liburan, dan dana darurat dalam satu tampilan progres yang memotivasi.'}</p>
+                </div>
+
+                <div class="apple-chapter sr-fade-up p-6 sm:p-8 rounded-3xl bg-white border border-[#EAE7DF] shadow-xs" data-story-step="3">
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-[#16A37B]">04 • ${isEn ? 'Bill Reminders & Live Sync' : 'Pengingat Tagihan & Sinkronisasi'}</span>
+                  <h3 class="text-2xl font-bold text-[#0F1E28] mt-2 mb-3">${isEn ? 'Two phones, always in sync.' : 'Dua HP, selalu sinkron real-time.'}</h3>
+                  <p class="text-xs sm:text-sm text-[#5E6D7E] leading-relaxed mb-5">${isEn ? 'Get H-3 reminders for recurring bills and export monthly PDF or CSV summaries anytime.' : 'Dapatkan pengingat H-3 untuk tagihan rutin bulanan, lengkap dengan export laporan PDF & CSV kapan saja.'}</p>
+                  <button type="button" onclick="openAuthModal('register')" class="px-5 py-2.5 rounded-full bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs font-semibold inline-flex items-center gap-2">
+                    <span>${isEn ? 'Try NESTA Free' : 'Coba NESTA Gratis'}</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right: Sticky iPhone Mockup that updates as you scroll -->
+              <div class="lg:col-span-6 lg:sticky lg:top-16 flex justify-center">
+                <div class="sr-image-reveal w-full max-w-[330px] rounded-[2.4rem] bg-[#0F1E28] p-3 shadow-2xl border border-[#1E3342]">
+                  <div id="apple-sticky-screen" class="rounded-[1.85rem] bg-[#F7F6F2] p-5 text-[#101D2B] min-h-[470px] flex flex-col justify-between">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. Why Nesta (1 Left Intro + 3 Right Cards) -->
+          <section id="why-nesta" class="mt-16 sm:mt-24 py-8 sm:py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              <div class="sr-fade-in lg:col-span-4">
+                <span class="inline-block px-3 py-1 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[11px] font-semibold mb-3">${isEn ? 'Why Nesta' : 'Kenapa Nesta'}</span>
+                <h2 class="text-2xl sm:text-3xl font-bold text-[#0F1E28] leading-tight mb-3">
+                  ${isEn ? 'Build a stronger financial future together' : 'Bangun masa depan finansial yang lebih sehat berdua'}
+                </h2>
+                <p class="text-xs text-[#5E6D7E] leading-relaxed mb-5">
+                  ${isEn
+                    ? 'Nesta is built for couples who value both openness in shared life and privacy in personal accounts.'
+                    : 'Nesta dirancang untuk pasangan yang ingin terbuka soal kebutuhan bersama tanpa kehilangan privasi akun pribadi.'}
+                </p>
+                <button type="button" onclick="openAuthModal('register')" class="px-4 py-2 rounded-full border border-[#0E4D38] text-[#0E4D38] hover:bg-[#EAF5F0] text-xs font-semibold inline-flex items-center gap-1.5">
+                  <span>${isEn ? 'Get Started' : 'Mulai Sekarang'}</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+              <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="sr-fade-up sr-d1 bg-white rounded-2xl border border-[#EAE7DF] p-6 text-center shadow-xs">
+                  <div class="w-11 h-11 rounded-2xl bg-[#EAF5F0] text-[#0E4D38] flex items-center justify-center mx-auto mb-3"><i data-lucide="calendar-check" class="w-5 h-5"></i></div>
+                  <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Plan ahead for life’s milestones' : 'Siapkan momen penting berdua'}</div>
+                  <p class="text-[11px] text-[#5E6D7E] mt-1.5">${isEn ? 'From wedding prep to home ownership.' : 'Dari persiapan nikah hingga beli rumah.'}</p>
+                </div>
+                <div class="sr-fade-up sr-d2 bg-white rounded-2xl border border-[#EAE7DF] p-6 text-center shadow-xs">
+                  <div class="w-11 h-11 rounded-2xl bg-[#EAF5F0] text-[#0E4D38] flex items-center justify-center mx-auto mb-3"><i data-lucide="piggy-bank" class="w-5 h-5"></i></div>
+                  <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Stay on track with your goals' : 'Tetap konsisten capai target'}</div>
+                  <p class="text-[11px] text-[#5E6D7E] mt-1.5">${isEn ? 'Turn shared dreams into clear monthly plans.' : 'Ubah rencana jadi progres tabungan nyata.'}</p>
+                </div>
+                <div class="sr-fade-up sr-d3 bg-white rounded-2xl border border-[#EAE7DF] p-6 text-center shadow-xs">
+                  <div class="w-11 h-11 rounded-2xl bg-[#EAF5F0] text-[#0E4D38] flex items-center justify-center mx-auto mb-3"><i data-lucide="sprout" class="w-5 h-5"></i></div>
+                  <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Grow together calmly' : 'Tumbuh bersama lebih tenang'}</div>
+                  <p class="text-[11px] text-[#5E6D7E] mt-1.5">${isEn ? 'Clear monthly settlements with zero awkwardness.' : 'Penyelesaian akhir bulan jelas tanpa canggung.'}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. 3-Column Soft Mint Trust Bar -->
+          <section id="security" class="sr-fade-up mt-14 sm:mt-20 rounded-2xl bg-[#EAF5F0] border border-[#D4E9DF] grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#CFE5DA]">
+            <div class="p-4 sm:p-5 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-white text-[#0E4D38] flex items-center justify-center shrink-0"><i data-lucide="shield-check" class="w-4 h-4"></i></div>
+              <div>
+                <div class="text-xs font-bold text-[#0F1E28]">${isEn ? 'Privacy-First Design' : 'Prinsip Privasi Penuh'}</div>
+                <div class="text-[11px] text-[#4B5B6B]">${isEn ? 'Personal balances are never stored or shared.' : 'Saldo pribadi tidak pernah dicatat atau dibagikan.'}</div>
+              </div>
+            </div>
+            <div class="p-4 sm:p-5 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-white text-[#0E4D38] flex items-center justify-center shrink-0"><i data-lucide="lock" class="w-4 h-4"></i></div>
+              <div>
+                <div class="text-xs font-bold text-[#0F1E28]">${isEn ? '2-Partner Space Lock' : 'Kunci Khusus 2 Pasangan'}</div>
+                <div class="text-[11px] text-[#4B5B6B]">${isEn ? 'Strictly limited to 2 accounts per shared space.' : 'Maksimal 2 akun per ruang bersama.'}</div>
+              </div>
+            </div>
+            <div class="p-4 sm:p-5 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-white text-[#0E4D38] flex items-center justify-center shrink-0"><i data-lucide="heart-handshake" class="w-4 h-4"></i></div>
+              <div>
+                <div class="text-xs font-bold text-[#0F1E28]">${isEn ? 'Made for Couples' : 'Dirancang untuk Pasangan'}</div>
+                <div class="text-[11px] text-[#4B5B6B]">${isEn ? 'Manage shared expenses and financial goals, together.' : 'Kelola pengeluaran bersama dan target keuangan, berdua.'}</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 7. Dark Forest-Emerald Bottom CTA Banner -->
+          <section class="sr-fade-up mt-10 sm:mt-14 rounded-3xl bg-gradient-to-r from-[#0F1E28] via-[#0E4D38] to-[#136B4E] text-white p-7 sm:p-9 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-lg">
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2.5 pr-4 border-r border-white/15">
+                <svg class="w-9 h-9 shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="10" fill="#0E4D38"/>
+          <path d="M9 31V18C9 11.9249 13.9249 7 20 7C26.0751 7 31 11.9249 31 18V31H24.5V19C24.5 16.5147 22.4853 14.5 20 14.5C17.5147 14.5 15.5 16.5147 15.5 19V31H9Z" fill="#FFFFFF"/>
+          <rect x="24.5" y="19" width="6.5" height="12" fill="#34D399"/>
+        </svg>
+                <span class="text-lg font-bold">NESTA</span>
+              </div>
+              <div>
+                <div class="text-lg font-bold">${isEn ? 'Start your journey today' : 'Mulai perjalanan kalian hari ini'}</div>
+                <div class="text-xs text-[#CBD5E1] mt-0.5">${isEn ? 'Separate Money. Shared Life. Simple, calm, and clear.' : 'Separate Money. Shared Life. Rapi, tenang, dan jelas.'}</div>
+              </div>
+            </div>
+            <button type="button" onclick="openAuthModal('register')" class="px-6 py-3 rounded-full bg-white text-[#0E4D38] hover:bg-[#F7F6F2] text-xs sm:text-sm font-bold inline-flex items-center gap-2 self-start md:self-auto shrink-0 shadow-sm">
+              <span>${isEn ? 'Get Started Free' : 'Mulai Gratis'}</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </section>
+
+          <!-- 8. Clean Footer -->
+          <footer class="mt-8 pt-6 border-t border-[#EAE7DF] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#5E6D7E]">
+            <div class="flex items-center gap-2 font-semibold text-[#101D2B]">
+              <span>NESTA</span>
+              <span class="font-normal text-[#5E6D7E]">• Separate Money. Shared Life.</span>
+            </div>
+            <div class="flex items-center gap-5">
+              <a href="#features" class="hover:text-[#0E4D38]">${isEn ? 'Features' : 'Fitur'}</a>
+              <a href="#why-nesta" class="hover:text-[#0E4D38]">${isEn ? 'Why Nesta' : 'Kenapa Nesta'}</a>
+              <a href="#security" class="hover:text-[#0E4D38]">${isEn ? 'Privacy' : 'Privasi'}</a>
+              <button type="button" onclick="openAuthModal('login')" class="hover:text-[#0E4D38] font-semibold">${isEn ? 'Login' : 'Masuk'}</button>
+            </div>
+            <div class="text-[11px] text-[#94A3B8]">© 2026 NESTA</div>
+          </footer>
+
+        </div>
+      `;
+    }
+
+    function renderAuthPage() {
+      const isReg = state.authTab === 'register';
+      const isForgot = state.authTab === 'forgot';
+      const isEn = state.lang === 'en';
+      return `
+        <div class="max-w-5xl mx-auto py-4 sm:py-8">
+          <div class="flex items-center justify-between mb-8">
+            <button type="button" onclick="navigate('landing')" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-[#EAE7DF] hover:bg-[#FAF9F6] text-xs font-semibold text-[#101D2B]">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+              <span>${isEn ? 'Back to Home' : 'Kembali ke Beranda'}</span>
+            </button>
+            <div class="flex items-center gap-3">
+              <div class="inline-flex bg-white border border-[#EAE7DF] rounded-full p-0.5 text-[11px] font-semibold">
+                <button type="button" onclick="setLanguage('id')" class="px-2.5 py-1 rounded-full ${!isEn ? 'bg-[#0F1E28] text-white' : 'text-[#5E6D7E]'}">ID</button>
+                <button type="button" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-full ${isEn ? 'bg-[#0F1E28] text-white' : 'text-[#5E6D7E]'}">EN</button>
+              </div>
+              <div class="flex items-center gap-2">
+                <svg class="w-8 h-8 shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="40" height="40" rx="10" fill="#0E4D38"/>
+                  <path d="M9 31V18C9 11.9249 13.9249 7 20 7C26.0751 7 31 11.9249 31 18V31H24.5V19C24.5 16.5147 22.4853 14.5 20 14.5C17.5147 14.5 15.5 16.5147 15.5 19V31H9Z" fill="#FFFFFF"/>
+                  <rect x="24.5" y="19" width="6.5" height="12" fill="#34D399"/>
+                </svg>
+                <span class="text-lg font-bold tracking-tight text-[#0F1E28]">NESTA</span>
+              </div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            <div class="lg:col-span-6 rounded-3xl bg-gradient-to-br from-[#0F1E28] via-[#152B38] to-[#0E4D38] text-white p-8 flex flex-col justify-between shadow-lg">
+            <div class="hidden lg:flex lg:col-span-5 rounded-3xl bg-gradient-to-br from-[#0F1E28] via-[#152B38] to-[#0E4D38] text-white p-8 flex-col justify-between shadow-lg">
               <div>
                 <span class="inline-block px-3 py-1 rounded-full bg-white/10 text-xs font-medium text-[#34D399] mb-4">${isEn ? 'Couple & Family Finance' : 'Keuangan Pasangan & Keluarga'}</span>
-                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight leading-tight mb-4">Separate Money.<br/>Shared Life.</h1>
-                <p class="text-sm text-[#CBD5E1] leading-relaxed mb-6">${isEn ? 'Manage monthly shared expenses, shared pots, recurring bills, and future goals without merging your personal bank accounts.' : 'Kelola pengeluaran bulanan, kas bersama, tagihan rutin, dan target masa depan tanpa harus menggabungkan rekening pribadi.'}</p>
-                <ul class="space-y-2.5 text-xs text-[#E2E8F0]">
-                  <li class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-[#34D399]"></i> ${isEn ? 'Private individual accounts — never expose personal balances' : 'Akun privat per individu — saldo pribadi tetap terlindungi'}</li>
-                  <li class="flex items-center gap-2"><i data-lucide="landmark" class="w-4 h-4 text-[#34D399]"></i> ${isEn ? 'Supports Personal Advances & Monthly Shared Pot' : 'Dukungan Talangan Pribadi & Kas Bersama bulanan'}</li>
-                  <li class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-[#34D399]"></i> ${isEn ? 'Monthly cycle tracking & clear couple settlement' : 'Pencatatan & anggaran terpisah per siklus bulan'}</li>
+                <h1 class="text-3xl font-bold tracking-tight leading-tight mb-4">Separate Money.<br/>Shared Life.</h1>
+                <p class="text-sm text-[#CBD5E1] leading-relaxed mb-6">${isEn ? 'Manage shared expenses, Shared Pot, recurring bills, and future goals without merging your personal bank accounts.' : 'Kelola pengeluaran bersama, kas patungan, tagihan rutin, dan target masa depan tanpa menggabungkan rekening pribadi.'}</p>
+                <ul class="space-y-3 text-xs text-[#E2E8F0]">
+                  <li class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-[#34D399] shrink-0"></i> ${isEn ? 'Personal balances stay 100% private' : 'Saldo rekening pribadi tetap 100% privat'}</li>
+                  <li class="flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-[#34D399] shrink-0"></i> ${isEn ? 'Strictly 2 partners per shared space' : 'Terbatas maksimal 2 orang per ruang bersama'}</li>
+                  <li class="flex items-center gap-2"><i data-lucide="refresh-cw" class="w-4 h-4 text-[#34D399] shrink-0"></i> ${isEn ? 'Live sync across both phones' : 'Sinkronisasi real-time di kedua HP'}</li>
                 </ul>
               </div>
               <div class="pt-6 mt-8 border-t border-white/15 flex items-center justify-between text-xs text-[#9FB0BE]">
@@ -3110,10 +3673,10 @@
               </div>
             </div>
 
-            <div class="lg:col-span-6 card-nesta p-7 sm:p-8 flex flex-col justify-center">
+            <div class="lg:col-span-7 card-nesta p-7 sm:p-9 flex flex-col justify-center bg-white">
               ${isForgot ? `
                 <button type="button" onclick="setAuthTab('login')" class="text-xs font-semibold text-[#16A37B] hover:underline self-start mb-4">← ${isEn ? 'Back to Sign In' : 'Kembali ke Masuk'}</button>
-                <h2 class="text-xl font-bold text-[#101D2B]">${isEn ? 'Reset Password' : 'Atur Ulang Kata Sandi'}</h2>
+                <h2 class="text-2xl font-bold text-[#101D2B]">${isEn ? 'Reset Password' : 'Atur Ulang Kata Sandi'}</h2>
                 <p class="text-xs text-[#5E6D7E] mt-1 mb-5">${isEn ? 'Enter your registered email and choose a new password.' : 'Masukkan email terdaftar Anda dan buat kata sandi baru.'}</p>
                 <form onsubmit="handleForgotSubmit(event)" class="space-y-3.5">
                   <div>
@@ -3122,19 +3685,22 @@
                   </div>
                   <div>
                     <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'New Password' : 'Kata Sandi Baru'}</label>
-                    <input type="password" id="forgot-newpass" required minlength="6" placeholder="${isEn ? 'Min 6 characters' : 'Minimal 6 karakter'}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                    <div class="relative">
+                      <input type="password" id="forgot-newpass" required minlength="6" placeholder="${isEn ? 'Min 6 chars, 1 uppercase & 1 number' : 'Min 6 karakter, 1 kapital & 1 angka'}" class="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-[#EAE7DF] text-sm" />
+                      <button type="button" onclick="togglePasswordVisibility('forgot-newpass', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#5E6D7E] hover:text-[#101D2B]" aria-label="Show password"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                    </div>
                   </div>
                   <div id="auth-error" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg"></div>
                   <button type="submit" class="btn-primary w-full py-3 rounded-xl text-sm font-semibold">${isEn ? 'Reset Password' : 'Simpan Kata Sandi Baru'}</button>
                 </form>
               ` : `
                 <div class="flex gap-2 p-1 bg-[#F7F6F2] rounded-xl mb-5">
-                  <button type="button" onclick="setAuthTab('login')" class="flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${!isReg ? 'bg-white text-[#101D2B] shadow-sm' : 'text-[#5E6D7E]'}">${isEn ? 'Sign In' : 'Masuk'}</button>
-                  <button type="button" onclick="setAuthTab('register')" class="flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${isReg ? 'bg-white text-[#101D2B] shadow-sm' : 'text-[#5E6D7E]'}">${isEn ? 'Create Account' : 'Daftar Akun Baru'}</button>
+                  <button type="button" onclick="setAuthTab('login')" class="flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all ${!isReg ? 'bg-white text-[#101D2B] shadow-sm' : 'text-[#5E6D7E]'}">${isEn ? 'Sign In' : 'Masuk'}</button>
+                  <button type="button" onclick="setAuthTab('register')" class="flex-1 py-2.5 rounded-lg text-xs font-semibold transition-all ${isReg ? 'bg-white text-[#101D2B] shadow-sm' : 'text-[#5E6D7E]'}">${isEn ? 'Create Account' : 'Daftar Akun Baru'}</button>
                 </div>
 
-                <h2 class="text-xl font-bold text-[#101D2B]">${isReg ? (isEn ? 'Create Your NESTA Account' : 'Buat Akun NESTA') : (isEn ? 'Sign In to Couple Space' : 'Masuk ke Ruang Bersama')}</h2>
-                <p class="text-xs text-[#5E6D7E] mt-1 mb-5">${isReg ? (isEn ? 'Register with your personal email, then create or join a space.' : 'Daftar dengan email pribadi Anda, lalu buat atau gabung ruang.') : (isEn ? 'Sign in using your registered account or Google.' : 'Masuk menggunakan akun terdaftar atau akun Google.')}</p>
+                <h2 class="text-2xl font-bold text-[#101D2B]">${isReg ? (isEn ? 'Create Your NESTA Account' : 'Buat Akun NESTA') : (isEn ? 'Sign In to Couple Space' : 'Masuk ke Ruang Bersama')}</h2>
+                <p class="text-xs text-[#5E6D7E] mt-1 mb-5">${isReg ? (isEn ? 'Register with your personal email or Google, then create or join a space.' : 'Daftar dengan email pribadi atau Google, lalu buat atau gabung ruang.') : (isEn ? 'Sign in using your registered account or Google.' : 'Masuk menggunakan akun terdaftar atau akun Google.')}</p>
 
                 <button type="button" onclick="handleGoogleLogin()" class="w-full py-2.5 px-4 rounded-xl border border-[#EAE7DF] bg-white hover:bg-[#F7F6F2] text-sm font-semibold text-[#101D2B] flex items-center justify-center gap-2.5 mb-4 transition-colors">
                   <svg class="w-4 h-4" viewBox="0 0 24 24">
@@ -3153,14 +3719,14 @@
 
                 <form onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
                   ${isReg ? `
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Display Name' : 'Nama Panggilan'}</label>
                         <input type="text" id="auth-name" required placeholder="${isEn ? 'Your name' : 'Nama Anda'}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
                       </div>
                       <div>
                         <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Space Option' : 'Pilihan Ruang'}</label>
-                        <select id="auth-role" onchange="toggleInviteInput()" class="w-full px-3 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white">
+                        <select id="auth-role" onchange="toggleInviteInput()" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm bg-white">
                           <option value="partner_a" ${!pendingInviteCode ? 'selected' : ''}>${isEn ? 'Create New Space' : 'Buat Ruang Baru'}</option>
                           <option value="partner_b" ${pendingInviteCode ? 'selected' : ''}>${isEn ? 'Join Partner Invite' : 'Gabung Undangan Pasangan'}</option>
                         </select>
@@ -3180,12 +3746,19 @@
                       <label class="block text-xs font-medium text-[#5E6D7E]">${isEn ? 'Password' : 'Kata Sandi'}</label>
                       ${!isReg ? `<button type="button" onclick="openForgotMode()" class="text-[11px] font-semibold text-[#16A37B] hover:underline">${isEn ? 'Forgot password?' : 'Lupa kata sandi?'}</button>` : ''}
                     </div>
-                    <input type="password" id="auth-password" required minlength="6" placeholder="${isEn ? 'Min 6 characters' : 'Minimal 6 karakter'}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                    <div class="relative">
+                      <input type="password" id="auth-password" required minlength="6" placeholder="${isReg ? (isEn ? 'Create password' : 'Buat kata sandi') : (isEn ? 'Enter password' : 'Masukkan kata sandi')}" class="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-[#EAE7DF] text-sm" />
+                      <button type="button" onclick="togglePasswordVisibility('auth-password', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#5E6D7E] hover:text-[#101D2B]" aria-label="Show password"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                    </div>
+                    ${isReg ? `<p class="text-[11px] text-[#5E6D7E] mt-1">${isEn ? 'At least 6 characters, 1 uppercase letter (A–Z), and 1 number (0–9).' : 'Minimal 6 karakter, wajib ada 1 huruf kapital (A–Z) dan 1 angka (0–9).'}</p>` : ''}
                   </div>
                   ${isReg ? `
                     <div>
                       <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${isEn ? 'Confirm Password' : 'Konfirmasi Kata Sandi'}</label>
-                      <input type="password" id="auth-confirm-password" required minlength="6" placeholder="${isEn ? 'Re-enter password' : 'Ulangi kata sandi'}" class="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] text-sm" />
+                      <div class="relative">
+                        <input type="password" id="auth-confirm-password" required minlength="6" placeholder="${isEn ? 'Re-enter password' : 'Ulangi kata sandi'}" class="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-[#EAE7DF] text-sm" />
+                        <button type="button" onclick="togglePasswordVisibility('auth-confirm-password', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[#5E6D7E] hover:text-[#101D2B]" aria-label="Show password"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                      </div>
                     </div>
                   ` : ''}
                   <div id="auth-error" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg"></div>
@@ -4384,7 +4957,7 @@
               <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Change Password' : 'Ubah Kata Sandi'}</div>
               <input type="password" id="acc-old-pass" required placeholder="${isEn ? 'Current password' : 'Kata sandi saat ini'}" class="w-full px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
               <div class="grid grid-cols-2 gap-2">
-                <input type="password" id="acc-new-pass" required minlength="6" placeholder="${isEn ? 'New password' : 'Kata sandi baru'}" class="w-full px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
+                <div class="relative"><input type="password" id="acc-new-pass" required minlength="6" placeholder="${isEn ? 'New password' : 'Kata sandi baru'}" class="w-full px-3.5 pr-10 py-2 rounded-xl border border-[#EAE7DF] text-xs" /><button type="button" onclick="togglePasswordVisibility('acc-new-pass', this)" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[#5E6D7E] hover:text-[#101D2B]" aria-label="Show password"><i data-lucide="eye" class="w-3.5 h-3.5"></i></button></div>
                 <input type="password" id="acc-conf-pass" required minlength="6" placeholder="${isEn ? 'Confirm new' : 'Konfirmasi baru'}" class="w-full px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
               </div>
               <div class="flex items-center justify-between pt-1">
@@ -4572,6 +5145,7 @@
       const pageChanged = lastRenderedPage !== state.activePage;
       lastRenderedPage = state.activePage;
       if (state.activePage === 'landing') container.innerHTML = renderLanding();
+      else if (state.activePage === 'auth') container.innerHTML = renderAuthPage();
       else if (state.activePage === 'dashboard') container.innerHTML = renderDashboard();
       else if (state.activePage === 'couple') container.innerHTML = renderCoupleSpace();
       else if (state.activePage === 'expenses') container.innerHTML = renderExpenses();
@@ -4579,6 +5153,7 @@
       else if (state.activePage === 'bills') container.innerHTML = renderBills();
       else if (state.activePage === 'goals') container.innerHTML = renderGoals();
       else if (state.activePage === 'settings') container.innerHTML = renderSettings();
+
 
       if (pageChanged && container) {
         container.classList.remove('nesta-page-enter');
@@ -4588,6 +5163,152 @@
       updateNavHighlight();
       if (window.lucide) lucide.createIcons();
       renderCharts();
+      initScrollReveals();
+    }
+
+    let activeStoryStep = 0;
+
+    function renderAppleStickyScreen(step) {
+      const box = document.getElementById('apple-sticky-screen');
+      if (!box) return;
+      const isEn = state.lang === 'en';
+      let inner = '';
+      if (step === 0) {
+        inner = `
+          <div class="apple-screen-swap space-y-3.5">
+            <div class="flex items-center justify-between text-[10px] text-[#5E6D7E]">
+              <span class="font-bold text-[#0E4D38]">01 • ${isEn ? 'BUDGET & POT' : 'ANGGARAN & KAS'}</span>
+              <span>9:41</span>
+            </div>
+            <div class="rounded-2xl bg-gradient-to-br from-[#0E4D38] to-[#16A37B] text-white p-4 shadow-sm">
+              <div class="text-[10px] text-white/80">${isEn ? 'Shared Pot Balance' : 'Saldo Kas Bersama'}</div>
+              <div class="text-2xl font-bold tabular-nums mt-0.5">Rp 4.250.000</div>
+              <div class="text-[10px] text-[#A7F3D0] mt-1">${isEn ? 'Monthly Budget: 68% used' : 'Anggaran Bulan Ini: 68% terpakai'}</div>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-[#EAE7DF] space-y-2.5">
+              <div class="flex justify-between text-xs"><span class="text-[#5E6D7E]">${isEn ? 'Groceries' : 'Belanja Harian'}</span><span class="font-bold tabular-nums">Rp 1.850.000</span></div>
+              <div class="w-full h-1.5 rounded-full bg-[#EAE7DF] overflow-hidden"><div class="h-full bg-[#16A37B]" style="width:62%"></div></div>
+              <div class="flex justify-between text-xs pt-1"><span class="text-[#5E6D7E]">${isEn ? 'Utilities & Home' : 'Utilitas & Rumah'}</span><span class="font-bold tabular-nums">Rp 1.270.000</span></div>
+              <div class="w-full h-1.5 rounded-full bg-[#EAE7DF] overflow-hidden"><div class="h-full bg-[#0E4D38]" style="width:45%"></div></div>
+            </div>
+          </div>`;
+      } else if (step === 1) {
+        inner = `
+          <div class="apple-screen-swap space-y-3.5">
+            <div class="flex items-center justify-between text-[10px] text-[#5E6D7E]">
+              <span class="font-bold text-[#0E4D38]">02 • ${isEn ? 'PERSONAL ADVANCE' : 'TALANGAN PRIBADI'}</span>
+              <span>9:41</span>
+            </div>
+            <div class="bg-white rounded-2xl p-4 border border-[#EAE7DF] space-y-2">
+              <div class="text-xs font-bold text-[#101D2B]">${isEn ? 'Dinner & Groceries' : 'Makan & Belanja'}</div>
+              <div class="text-xl font-bold tabular-nums text-[#0E4D38]">Rp 480.000</div>
+              <div class="text-[11px] text-[#5E6D7E]">${isEn ? 'Paid by Partner A • Split 50:50' : 'Dibayar Partner A • Bagi 50:50'}</div>
+            </div>
+            <div class="rounded-2xl bg-[#FDF6EB] border border-[#F5E4C8] p-4 space-y-1">
+              <div class="text-[11px] font-bold text-[#92600A]">${isEn ? 'Auto Settlement Preview' : 'Hitung Pelunasan Otomatis'}</div>
+              <div class="text-xs text-[#101D2B]">${isEn ? 'Partner B owes <strong>Rp 240.000</strong> to Partner A' : 'Partner B perlu bayar <strong>Rp 240.000</strong> ke Partner A'}</div>
+            </div>
+            <div class="rounded-2xl bg-[#EEF7F3] border border-[#D8ECE3] p-3 text-center text-xs font-semibold text-[#0E4D38]">${isEn ? 'Tap once to Mark Settled ✓' : '1 klik untuk Tandai Lunas ✓'}</div>
+          </div>`;
+      } else if (step === 2) {
+        inner = `
+          <div class="apple-screen-swap space-y-3">
+            <div class="flex items-center justify-between text-[10px] text-[#5E6D7E]">
+              <span class="font-bold text-[#0E4D38]">03 • ${isEn ? 'SAVINGS GOALS' : 'TARGET TABUNGAN'}</span>
+              <span>9:41</span>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-[#EAE7DF]">
+              <div class="flex justify-between text-xs font-bold"><span>${isEn ? 'Dream House DP' : 'DP Rumah Impian'}</span><span class="text-[#0E4D38]">38%</span></div>
+              <div class="text-[10px] text-[#5E6D7E] mt-0.5 tabular-nums">Rp 45 jt / Rp 120 jt</div>
+              <div class="w-full h-2 rounded-full bg-[#EAE7DF] mt-2 overflow-hidden"><div class="h-full bg-[#0E4D38]" style="width:38%"></div></div>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-[#EAE7DF]">
+              <div class="flex justify-between text-xs font-bold"><span>${isEn ? 'Wedding Fund' : 'Dana Pernikahan'}</span><span class="text-[#16A37B]">68%</span></div>
+              <div class="text-[10px] text-[#5E6D7E] mt-0.5 tabular-nums">Rp 34 jt / Rp 50 jt</div>
+              <div class="w-full h-2 rounded-full bg-[#EAE7DF] mt-2 overflow-hidden"><div class="h-full bg-[#16A37B]" style="width:68%"></div></div>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-[#EAE7DF]">
+              <div class="flex justify-between text-xs font-bold"><span>${isEn ? 'Emergency Fund' : 'Dana Darurat'}</span><span class="text-[#16A37B]">70%</span></div>
+              <div class="text-[10px] text-[#5E6D7E] mt-0.5 tabular-nums">Rp 28 jt / Rp 40 jt</div>
+              <div class="w-full h-2 rounded-full bg-[#EAE7DF] mt-2 overflow-hidden"><div class="h-full bg-[#16A37B]" style="width:70%"></div></div>
+            </div>
+          </div>`;
+      } else {
+        inner = `
+          <div class="apple-screen-swap space-y-3.5">
+            <div class="flex items-center justify-between text-[10px] text-[#5E6D7E]">
+              <span class="font-bold text-[#0E4D38]">04 • ${isEn ? 'BILLS & SYNC' : 'TAGIHAN & SINKRON'}</span>
+              <span>9:41</span>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-[#EAE7DF] flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-[#0F1E28] text-white text-xs font-bold flex items-center justify-center">A</div>
+                <div class="w-8 h-8 rounded-full bg-[#16A37B] text-white text-xs font-bold flex items-center justify-center -ml-4 border-2 border-white">B</div>
+                <div class="text-xs font-bold text-[#101D2B]">${isEn ? '2 Partners Synced' : '2 HP Tersinkron'}</div>
+              </div>
+              <span class="w-2 h-2 rounded-full bg-[#16A37B] nesta-pulse-dot"></span>
+            </div>
+            <div class="rounded-2xl bg-[#FDF6EB] border border-[#F5E4C8] p-3.5 space-y-1">
+              <div class="text-[11px] font-bold text-[#92600A]">${isEn ? 'Bill Reminder (H-3)' : 'Pengingat Tagihan (H-3)'}</div>
+              <div class="text-xs text-[#101D2B]">Internet & Listrik • Rp 750.000</div>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-[#EAE7DF] flex items-center justify-between text-xs">
+              <span class="font-semibold text-[#101D2B]">${isEn ? 'Monthly Report' : 'Laporan Bulanan'}</span>
+              <span class="px-2.5 py-1 rounded-lg bg-[#EAF5F0] text-[#0E4D38] font-bold text-[11px]">PDF • CSV</span>
+            </div>
+          </div>`;
+      }
+      box.innerHTML = inner + `
+        <div class="pt-4 mt-3 border-t border-[#EAE7DF] flex items-center justify-center gap-1.5">
+          ${[0, 1, 2, 3].map(i => `<span class="h-1.5 rounded-full transition-all duration-300 ${i === step ? 'w-6 bg-[#0E4D38]' : 'w-1.5 bg-[#CBD5E1]'}"></span>`).join('')}
+        </div>`;
+    }
+
+    let scrollRevealObserver = null;
+    let appleStoryObserver = null;
+    function initScrollReveals() {
+      const els = document.querySelectorAll('.sr-fade-up, .sr-fade-in, .sr-image-reveal');
+      if (!els.length) return;
+      if (scrollRevealObserver) {
+        scrollRevealObserver.disconnect();
+      }
+      const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced || !('IntersectionObserver' in window)) {
+        els.forEach(el => el.classList.add('is-visible'));
+        return;
+      }
+      scrollRevealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            scrollRevealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.05, rootMargin: '0px 0px -15% 0px' });
+      els.forEach(el => scrollRevealObserver.observe(el));
+
+      const chapters = document.querySelectorAll('.apple-chapter');
+      if (chapters.length) {
+        renderAppleStickyScreen(activeStoryStep);
+        if (appleStoryObserver) appleStoryObserver.disconnect();
+        appleStoryObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const step = parseInt(entry.target.getAttribute('data-story-step') || '0', 10);
+              if (step !== activeStoryStep) {
+                activeStoryStep = step;
+                renderAppleStickyScreen(step);
+              }
+              chapters.forEach(c => {
+                const cs = parseInt(c.getAttribute('data-story-step') || '0', 10);
+                c.classList.toggle('is-active', cs === step);
+                c.classList.toggle('is-dim', cs !== step);
+              });
+            }
+          });
+        }, { threshold: 0.45, rootMargin: '-15% 0px -25% 0px' });
+        chapters.forEach(c => appleStoryObserver.observe(c));
+      }
     }
 
     document.querySelectorAll('[data-nav]').forEach(btn => {
@@ -4605,6 +5326,7 @@
           pendingInviteCode = inv;
           try { localStorage.setItem('nesta_pending_invite', inv); } catch (e) {}
           state.authTab = 'register';
+          state.activePage = 'auth';
         } else {
           try { pendingInviteCode = localStorage.getItem('nesta_pending_invite') || ''; } catch (e) {}
         }
