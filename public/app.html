@@ -3662,20 +3662,32 @@
               </div>
             </div>
 
-            <form onsubmit="updateAccountProfile(event)" class="space-y-2.5">
-              <div class="flex gap-2">
-                <input type="text" id="acc-name" value="${escapeHTML(uName)}" required placeholder="${isEn ? 'Display name' : 'Nama panggilan'}" class="flex-1 px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
-                <button type="submit" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold">${isEn ? 'Save' : 'Simpan'}</button>
+            <form onsubmit="updateAccountProfile(event)" class="space-y-3">
+              <div>
+                <label class="block text-[11px] font-medium text-[#5E6D7E] mb-1">${isEn ? 'Display Name' : 'Nama Panggilan'}</label>
+                <div class="flex gap-2">
+                  <input type="text" id="acc-name" value="${escapeHTML(uName)}" required placeholder="${isEn ? 'Display name' : 'Nama panggilan'}" class="flex-1 px-3.5 py-2 rounded-xl border border-[#EAE7DF] text-sm" />
+                  <button type="submit" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold">${isEn ? 'Save' : 'Simpan'}</button>
+                </div>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <input type="date" id="acc-birthdate" value="${escapeHTML((state.currentUser && state.currentUser.birthDate) || '')}" title="${isEn ? 'Birth Date' : 'Tanggal Lahir'}" class="px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white" />
-                <select id="acc-stage" class="px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white">
-                  <option value="Pacaran" ${(state.currentUser && state.currentUser.relStage === 'Pacaran') ? 'selected' : ''}>${isEn ? 'Dating' : 'Pacaran'}</option>
-                  <option value="Persiapan Menikah" ${(state.currentUser && state.currentUser.relStage === 'Persiapan Menikah') ? 'selected' : ''}>${isEn ? 'Wedding Prep' : 'Persiapan Menikah'}</option>
-                  <option value="Baru Menikah (< 2 thn)" ${(state.currentUser && state.currentUser.relStage === 'Baru Menikah (< 2 thn)') ? 'selected' : ''}>${isEn ? 'Newlywed (< 2 yrs)' : 'Baru Menikah (< 2 thn)'}</option>
-                  <option value="Menikah (> 2 thn)" ${(state.currentUser && state.currentUser.relStage === 'Menikah (> 2 thn)') ? 'selected' : ''}>${isEn ? 'Married (> 2 yrs)' : 'Menikah (> 2 thn)'}</option>
-                </select>
-                <input type="text" id="acc-city" value="${escapeHTML((state.currentUser && state.currentUser.city) || '')}" placeholder="${isEn ? 'City' : 'Kota'}" class="px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div>
+                  <label class="block text-[11px] font-medium text-[#5E6D7E] mb-1">${isEn ? 'Birth Date' : 'Tanggal Lahir'}</label>
+                  <input type="date" id="acc-birthdate" value="${escapeHTML((state.currentUser && state.currentUser.birthDate) || '')}" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-[#5E6D7E] mb-1">${isEn ? 'Relationship Stage' : 'Status Hubungan'}</label>
+                  <select id="acc-stage" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white">
+                    <option value="Pacaran" ${(state.currentUser && state.currentUser.relStage === 'Pacaran') ? 'selected' : ''}>${isEn ? 'Dating' : 'Pacaran'}</option>
+                    <option value="Persiapan Menikah" ${(state.currentUser && state.currentUser.relStage === 'Persiapan Menikah') ? 'selected' : ''}>${isEn ? 'Wedding Prep' : 'Persiapan Menikah'}</option>
+                    <option value="Baru Menikah (< 2 thn)" ${(state.currentUser && state.currentUser.relStage === 'Baru Menikah (< 2 thn)') ? 'selected' : ''}>${isEn ? 'Newlywed (< 2 yrs)' : 'Baru Menikah (< 2 thn)'}</option>
+                    <option value="Menikah (> 2 thn)" ${(state.currentUser && state.currentUser.relStage === 'Menikah (> 2 thn)') ? 'selected' : ''}>${isEn ? 'Married (> 2 yrs)' : 'Menikah (> 2 thn)'}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-[#5E6D7E] mb-1">${isEn ? 'City' : 'Kota'}</label>
+                  <input type="text" id="acc-city" value="${escapeHTML((state.currentUser && state.currentUser.city) || '')}" placeholder="${isEn ? 'e.g. Jakarta' : 'Contoh: Jakarta'}" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
+                </div>
               </div>
             </form>
 
