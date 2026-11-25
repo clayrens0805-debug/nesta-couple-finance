@@ -3242,9 +3242,19 @@
       msgEl.textContent = isEn ? 'Connecting to partner’s space...' : 'Menghubungkan ke ruang pasangan...';
       msgEl.classList.add('text-[#5E6D7E]');
 
+      const withTimeout = (p, ms) => Promise.race([
+        p,
+        new Promise((_, rej) => setTimeout(() => rej(new Error(isEn ? 'Connection timed out. Please refresh and try again.' : 'Koneksi habis waktu. Coba refresh halaman lalu ulangi.')), ms))
+      ]);
+
       try {
-        const { data: userData } = await sbClient.auth.getUser();
-        const user = userData && userData.user;
+        let user = null;
+        const { data: sessData } = await withTimeout(sbClient.auth.getSession(), 8000);
+        user = sessData && sessData.session && sessData.session.user;
+        if (!user) {
+          const { data: userData } = await withTimeout(sbClient.auth.getUser(), 8000);
+          user = userData && userData.user;
+        }
         if (!user) {
           msgEl.textContent = isEn ? 'Please sign in first.' : 'Silakan masuk terlebih dahulu.';
           msgEl.classList.remove('text-[#5E6D7E]');
@@ -3252,16 +3262,20 @@
           return;
         }
         const myName = (state.currentUser && state.currentUser.name) || (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || 'Partner';
-        const { data: joined, error: joinErr } = await sbClient.rpc('join_nesta_space', { p_invite: shortCode, p_partner_name: myName });
+        const { data: joined, error: joinErr } = await withTimeout(
+          sbClient.rpc('join_nesta_space', { p_invite: shortCode, p_partner_name: myName }),
+          12000
+        );
         if (joinErr || !joined) {
           msgEl.textContent = (joinErr && joinErr.message) || (isEn ? 'Invite code not found or space is already full.' : 'Kode undangan tidak ditemukan atau ruang sudah terisi.');
           msgEl.classList.remove('text-[#5E6D7E]');
           msgEl.classList.add('text-red-600');
           return;
         }
-        await loadUserSpace(user);
+        await withTimeout(loadUserSpace(user), 12000);
         state.activePage = 'couple';
         render();
+        showToast(isEn ? 'Connected to partner’s space!' : 'Berhasil terhubung ke ruang pasangan!');
       } catch (err) {
         msgEl.textContent = (err && err.message) || (isEn ? 'Failed to connect.' : 'Gagal menghubungkan ruang.');
         msgEl.classList.remove('text-[#5E6D7E]');
