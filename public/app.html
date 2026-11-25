@@ -814,99 +814,10 @@
     </div>
   </div>
 
-  <!-- NESTA PRICING & CHECKOUT MODAL (Together Free vs Closer Monthly & Annual) -->
+  <!-- NESTA PRICING & CHECKOUT MODAL (Bilingual EN default / ID) -->
   <div id="upgrade-modal" class="fixed inset-0 z-[85] hidden items-center justify-center p-4">
     <div class="absolute inset-0 bg-[#0F1E28]/65 backdrop-blur-sm" onclick="closeUpgradeModal()"></div>
-    <div class="relative w-full max-w-3xl bg-white rounded-3xl border border-[#EAE7DF] shadow-2xl p-6 sm:p-8 z-10 max-h-[92vh] overflow-y-auto modal-panel-anim">
-      <div class="flex items-start justify-between gap-3 mb-2">
-        <div>
-          <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold uppercase tracking-wider">Launch Promotion • Early Adopter</span>
-          <h3 id="up-title" class="text-xl sm:text-2xl font-bold text-[#101D2B] mt-1.5">Paket NESTA: Together &amp; Closer</h3>
-        </div>
-        <button type="button" onclick="closeUpgradeModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2] text-[#5E6D7E]"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <p id="up-reason" class="text-xs sm:text-sm text-[#5E6D7E] mb-4">Satu langganan berlaku untuk dua pasangan di Couple Space. Harga promo terkunci untuk setiap perpanjangan berikutnya selama langganan tetap aktif.</p>
-
-      <!-- 3 Pricing Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-5">
-        <!-- 1. NESTA Together (Free) -->
-        <div class="rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF] p-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-sm font-bold text-[#101D2B]">NESTA Together</span>
-              <span class="px-2 py-0.5 rounded-full bg-white text-[#5E6D7E] text-[10px] font-bold">FREE</span>
-            </div>
-            <div class="text-2xl font-bold text-[#101D2B] tabular-nums">Rp0</div>
-            <div class="text-[11px] text-[#5E6D7E] mt-0.5 mb-3">Gratis selamanya</div>
-            <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
-              <li>✓ Couple Space (2 pasangan)</li>
-              <li>✓ Transaksi harian &amp; 50:50</li>
-              <li>✓ Kas Bersama &amp; Settlement dasar</li>
-              <li>✓ 1 anggaran utama + 1 kustom</li>
-              <li>✓ Maks. 3 tagihan &amp; 1 goal aktif</li>
-              <li>✓ Maks. 2 kategori kustom</li>
-            </ul>
-          </div>
-          <button type="button" onclick="closeUpgradeModal()" class="mt-4 w-full py-2 rounded-xl border border-[#EAE7DF] bg-white text-xs font-semibold text-[#5E6D7E]">Paket Saat Ini / Gratis</button>
-        </div>
-
-        <!-- 2. NESTA Closer Monthly -->
-        <div class="rounded-2xl bg-white border border-[#D4E9DF] p-5 flex flex-col justify-between shadow-xs">
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-sm font-bold text-[#0F1E28]">NESTA Closer</span>
-              <span class="px-2 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold">Launch Promotion</span>
-            </div>
-            <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">Rp59.000/bulan</div>
-            <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp39.000 <span class="text-xs font-normal text-[#5E6D7E]">/bulan</span></div>
-            <div class="text-[11px] text-[#16A37B] font-semibold mt-0.5 mb-3">Harga promo terkunci saat aktif</div>
-            <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
-              <li>✓ Semua fitur NESTA Together</li>
-              <li>✓ Custom % &amp; Nominal (Rp) Split</li>
-              <li>✓ Unlimited anggaran, tagihan &amp; goals</li>
-              <li>✓ Unlimited kategori kustom</li>
-              <li>✓ Export laporan PDF &amp; CSV</li>
-              <li>✓ Berlaku untuk berdua</li>
-            </ul>
-          </div>
-          <button type="button" onclick="startSubscriptionCheckout('closer_monthly')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0F1E28] hover:bg-[#1A3140] text-white text-xs font-semibold">Pilih Bulanan (Rp39.000)</button>
-        </div>
-
-        <!-- 3. NESTA Closer Annual -->
-        <div class="rounded-2xl bg-[#FAFDFB] border-2 border-[#16A37B] p-5 flex flex-col justify-between shadow-sm">
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-sm font-bold text-[#0E4D38]">NESTA Closer</span>
-              <span class="px-2 py-0.5 rounded-full bg-[#0E4D38] text-white text-[10px] font-bold">Launch Promotion</span>
-            </div>
-            <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">Rp599.000/tahun</div>
-            <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp399.000 <span class="text-xs font-normal text-[#5E6D7E]">/tahun</span></div>
-            <div class="mt-1 mb-3 p-2 rounded-xl bg-[#EAF5F0] text-[10px] text-[#0E4D38] font-semibold leading-snug">
-              Setara Rp33.250/bulan • Hemat Rp69.000 dibanding bulanan selama 12 bulan pada harga promo
-            </div>
-            <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
-              <li>✓ Semua fitur NESTA Closer</li>
-              <li>✓ Harga Rp399.000/thn terkunci selamanya selama aktif</li>
-              <li>✓ 1 langganan otomatis untuk berdua</li>
-            </ul>
-          </div>
-          <button type="button" onclick="startSubscriptionCheckout('closer_annual')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs font-semibold">Pilih Tahunan (Rp399.000)</button>
-        </div>
-      </div>
-
-      <!-- Early Adopter & Downgrade Guarantee Box -->
-      <div class="rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF] p-3.5 text-[11px] text-[#5E6D7E] space-y-1 mb-3">
-        <div><strong class="text-[#101D2B]">Harga Early Adopter Terkunci:</strong> Berlangganan selama masa promo mengunci harga promo di perpanjangan berikutnya selama langganan tidak terputus. Jika dibatalkan/kedaluwarsa, perpanjangan ulang mengikuti harga normal yang berlaku.</div>
-        <div><strong class="text-[#101D2B]">Jaminan Data Aman:</strong> Jika kembali ke paket Free, data transaksi, anggaran, tagihan, dan goals tidak pernah dihapus.</div>
-      </div>
-
-      <!-- Server Checkout Status Box -->
-      <div id="checkout-status-box" class="hidden rounded-2xl bg-[#EAF5F0] border border-[#CBE7DB] p-3.5 text-xs text-[#0E4D38] mb-3"></div>
-
-      <div class="flex items-center justify-end gap-2">
-        <button type="button" id="up-close-btn" onclick="closeUpgradeModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-xs font-semibold text-[#5E6D7E]">Tutup</button>
-      </div>
-    </div>
+    <div id="upgrade-modal-body" class="relative w-full max-w-3xl bg-white rounded-3xl border border-[#EAE7DF] shadow-2xl p-6 sm:p-8 z-10 max-h-[92vh] overflow-y-auto modal-panel-anim"></div>
   </div>
 
   <!-- DOWNGRADE CONFIRMATION & SELECTION MODAL -->
@@ -1533,20 +1444,126 @@
     function openUpgradeModal(reasonKey) {
       const isEn = state.lang === 'en';
       const m = document.getElementById('upgrade-modal');
-      if (!m) return;
-      const box = document.getElementById('checkout-status-box');
-      if (box) box.classList.add('hidden');
+      const body = document.getElementById('upgrade-modal-body');
+      if (!m || !body) return;
+
       const reasons = {
-        overview: 'Satu langganan berlaku untuk dua pasangan di Couple Space. Harga promo terkunci untuk setiap perpanjangan berikutnya selama langganan tetap aktif.',
-        goals: 'NESTA Together mencakup 1 Target Tabungan aktif. Upgrade ke NESTA Closer (harga promo terkunci selama aktif) untuk target tanpa batas.',
-        bills: 'NESTA Together mencakup maks. 3 Tagihan Rutin aktif. Upgrade ke NESTA Closer untuk tagihan tanpa batas.',
-        budgets: 'NESTA Together mencakup 1 anggaran bulanan utama + 1 anggaran kustom. Upgrade ke NESTA Closer untuk anggaran tanpa batas.',
-        categories: 'NESTA Together mencakup maks. 2 kategori kustom. Upgrade ke NESTA Closer untuk kategori tanpa batas.',
-        split: 'Pembagian 50:50 gratis selamanya! Upgrade ke NESTA Closer untuk menyimpan Custom Percentage (%) dan Custom Nominal (Rp).',
-        export: 'Export laporan PDF & CSV tersedia di NESTA Closer. Satu langganan otomatis berlaku untuk berdua.'
+        overview: isEn
+          ? 'One subscription covers both partners in your Couple Space. Promo pricing stays locked on every renewal as long as your plan remains active.'
+          : 'Satu langganan berlaku untuk dua pasangan di Couple Space. Harga promo terkunci untuk setiap perpanjangan berikutnya selama langganan tetap aktif.',
+        goals: isEn
+          ? 'NESTA Together includes 1 active Savings Goal. Upgrade to NESTA Closer (locked promo pricing while active) for unlimited goals.'
+          : 'NESTA Together mencakup 1 Target Tabungan aktif. Upgrade ke NESTA Closer (harga promo terkunci selama aktif) untuk target tanpa batas.',
+        bills: isEn
+          ? 'NESTA Together includes up to 3 active Recurring Bills. Upgrade to NESTA Closer for unlimited bills.'
+          : 'NESTA Together mencakup maks. 3 Tagihan Rutin aktif. Upgrade ke NESTA Closer untuk tagihan tanpa batas.',
+        budgets: isEn
+          ? 'NESTA Together includes 1 main monthly budget + 1 custom budget. Upgrade to NESTA Closer for unlimited budgets.'
+          : 'NESTA Together mencakup 1 anggaran bulanan utama + 1 anggaran kustom. Upgrade ke NESTA Closer untuk anggaran tanpa batas.',
+        categories: isEn
+          ? 'NESTA Together includes up to 2 custom categories. Upgrade to NESTA Closer for unlimited categories.'
+          : 'NESTA Together mencakup maks. 2 kategori kustom. Upgrade ke NESTA Closer untuk kategori tanpa batas.',
+        split: isEn
+          ? '50:50 split is Free forever! Upgrade to NESTA Closer to save Custom Percentage (%) and Custom Nominal (Rp) splits.'
+          : 'Pembagian 50:50 gratis selamanya! Upgrade ke NESTA Closer untuk menyimpan Custom Percentage (%) dan Custom Nominal (Rp).',
+        export: isEn
+          ? 'PDF & CSV report exports are part of NESTA Closer. One subscription covers both partners.'
+          : 'Export laporan PDF & CSV tersedia di NESTA Closer. Satu langganan otomatis berlaku untuk berdua.'
       };
-      document.getElementById('up-title').textContent = reasonKey === 'overview' ? 'Paket NESTA: Together & Closer' : 'Upgrade ke NESTA Closer';
-      document.getElementById('up-reason').textContent = reasons[reasonKey] || reasons.overview;
+
+      const title = reasonKey === 'overview'
+        ? (isEn ? 'NESTA Plans: Together & Closer' : 'Paket NESTA: Together & Closer')
+        : (isEn ? 'Upgrade to NESTA Closer' : 'Upgrade ke NESTA Closer');
+
+      body.innerHTML = `
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold uppercase tracking-wider">Launch Promotion • Early Adopter</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-[#101D2B] mt-1.5">${title}</h3>
+          </div>
+          <button type="button" onclick="closeUpgradeModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2] text-[#5E6D7E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <p class="text-xs sm:text-sm text-[#5E6D7E] mb-4">${reasons[reasonKey] || reasons.overview}</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-5">
+          <div class="rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF] p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-sm font-bold text-[#101D2B]">NESTA Together</span>
+                <span class="px-2 py-0.5 rounded-full bg-white text-[#5E6D7E] text-[10px] font-bold">FREE</span>
+              </div>
+              <div class="text-2xl font-bold text-[#101D2B] tabular-nums">Rp0</div>
+              <div class="text-[11px] text-[#5E6D7E] mt-0.5 mb-3">${isEn ? 'Free forever' : 'Gratis selamanya'}</div>
+              <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
+                <li>✓ ${isEn ? 'Couple Space (2 partners)' : 'Couple Space (2 pasangan)'}</li>
+                <li>✓ ${isEn ? 'Unlimited expenses & 50:50 split' : 'Transaksi harian & 50:50'}</li>
+                <li>✓ ${isEn ? 'Shared Pot & basic settlement' : 'Kas Bersama & Settlement dasar'}</li>
+                <li>✓ ${isEn ? '1 main + 1 custom budget' : '1 anggaran utama + 1 kustom'}</li>
+                <li>✓ ${isEn ? 'Max 3 bills & 1 active goal' : 'Maks. 3 tagihan & 1 goal aktif'}</li>
+                <li>✓ ${isEn ? 'Max 2 custom categories' : 'Maks. 2 kategori kustom'}</li>
+              </ul>
+            </div>
+            <button type="button" onclick="closeUpgradeModal()" class="mt-4 w-full py-2 rounded-xl border border-[#EAE7DF] bg-white text-xs font-semibold text-[#5E6D7E]">${isEn ? 'Current / Free Plan' : 'Paket Saat Ini / Gratis'}</button>
+          </div>
+
+          <div class="rounded-2xl bg-white border border-[#D4E9DF] p-5 flex flex-col justify-between shadow-xs">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-sm font-bold text-[#0F1E28]">NESTA Closer</span>
+                <span class="px-2 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold">Launch Promotion</span>
+              </div>
+              <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">${isEn ? 'Rp59.000/month' : 'Rp59.000/bulan'}</div>
+              <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp39.000 <span class="text-xs font-normal text-[#5E6D7E]">${isEn ? '/month' : '/bulan'}</span></div>
+              <div class="text-[11px] text-[#16A37B] font-semibold mt-0.5 mb-3">${isEn ? 'Promo price locked while active' : 'Harga promo terkunci saat aktif'}</div>
+              <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
+                <li>✓ ${isEn ? 'Everything in NESTA Together' : 'Semua fitur NESTA Together'}</li>
+                <li>✓ ${isEn ? 'Custom % & Nominal (Rp) Split' : 'Custom % & Nominal (Rp) Split'}</li>
+                <li>✓ ${isEn ? 'Unlimited budgets, bills & goals' : 'Unlimited anggaran, tagihan & goals'}</li>
+                <li>✓ ${isEn ? 'Unlimited custom categories' : 'Unlimited kategori kustom'}</li>
+                <li>✓ ${isEn ? 'PDF & CSV report exports' : 'Export laporan PDF & CSV'}</li>
+                <li>✓ ${isEn ? 'Covers both partners' : 'Berlaku untuk berdua'}</li>
+              </ul>
+            </div>
+            <button type="button" onclick="startSubscriptionCheckout('closer_monthly')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0F1E28] hover:bg-[#1A3140] text-white text-xs font-semibold">${isEn ? 'Choose Monthly (Rp39.000)' : 'Pilih Bulanan (Rp39.000)'}</button>
+          </div>
+
+          <div class="rounded-2xl bg-[#FAFDFB] border-2 border-[#16A37B] p-5 flex flex-col justify-between shadow-sm">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-sm font-bold text-[#0E4D38]">NESTA Closer</span>
+                <span class="px-2 py-0.5 rounded-full bg-[#0E4D38] text-white text-[10px] font-bold">Launch Promotion</span>
+              </div>
+              <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">${isEn ? 'Rp599.000/year' : 'Rp599.000/tahun'}</div>
+              <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp399.000 <span class="text-xs font-normal text-[#5E6D7E]">${isEn ? '/year' : '/tahun'}</span></div>
+              <div class="mt-1 mb-3 p-2 rounded-xl bg-[#EAF5F0] text-[10px] text-[#0E4D38] font-semibold leading-snug">
+                ${isEn
+                  ? 'Equals Rp33.250/month • Save Rp69.000 vs 12 months on promo monthly'
+                  : 'Setara Rp33.250/bulan • Hemat Rp69.000 dibanding bulanan selama 12 bulan pada harga promo'}
+              </div>
+              <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
+                <li>✓ ${isEn ? 'All NESTA Closer features' : 'Semua fitur NESTA Closer'}</li>
+                <li>✓ ${isEn ? 'Rp399.000/yr locked while active' : 'Harga Rp399.000/thn terkunci selama aktif'}</li>
+                <li>✓ ${isEn ? '1 subscription covers both partners' : '1 langganan otomatis untuk berdua'}</li>
+              </ul>
+            </div>
+            <button type="button" onclick="startSubscriptionCheckout('closer_annual')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs font-semibold">${isEn ? 'Choose Annual (Rp399.000)' : 'Pilih Tahunan (Rp399.000)'}</button>
+          </div>
+        </div>
+
+        <div class="rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF] p-3.5 text-[11px] text-[#5E6D7E] mb-3">
+          <strong class="text-[#101D2B]">${isEn ? 'Early Adopter Grandfathered Pricing:' : 'Harga Early Adopter Terkunci:'}</strong>
+          ${isEn
+            ? 'Subscribing during the launch promo locks your promo rate for every continuous renewal. If canceled or expired, re-subscribing uses the standard rate at that time.'
+            : 'Berlangganan selama masa promo mengunci harga promo di perpanjangan berikutnya selama langganan tidak terputus. Jika dibatalkan/kedaluwarsa, berlangganan kembali mengikuti harga yang berlaku saat itu.'}
+        </div>
+
+        <div id="checkout-status-box" class="hidden rounded-2xl bg-[#EAF5F0] border border-[#CBE7DB] p-3.5 text-xs text-[#0E4D38] mb-3"></div>
+
+        <div class="flex items-center justify-end gap-2">
+          <button type="button" onclick="closeUpgradeModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-xs font-semibold text-[#5E6D7E]">${isEn ? 'Close' : 'Tutup'}</button>
+        </div>
+      `;
+
       m.classList.remove('hidden');
       m.classList.add('flex');
       if (window.lucide) lucide.createIcons();
