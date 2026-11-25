@@ -319,6 +319,10 @@
           <div id="sidebar-user-email" class="text-[10px] text-[#8FA2B2] truncate">clay@nesta.id</div>
         </div>
       </div>
+      <button onclick="openUpgradeModal('overview')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold bg-[#16A37B]/15 text-[#34D399] hover:bg-[#16A37B]/25 transition-colors mb-1.5">
+        <span class="inline-flex items-center gap-2"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span class="i18n-seeplans">See Plans</span></span>
+        <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white" id="sidebar-plan-badge">FREE</span>
+      </button>
       <button onclick="logoutUser()" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#9FB0BE] hover:text-white hover:bg-white/5 transition-colors">
         <i data-lucide="log-out" class="w-4 h-4"></i>
         <span data-i18n="nav_logout">Keluar Akun</span>
@@ -362,6 +366,10 @@
             <div id="drawer-user-email" class="text-[10px] text-[#8FA2B2] truncate">clay@nesta.id</div>
           </div>
         </div>
+        <button onclick="toggleMobileDrawer(false); openUpgradeModal('overview');" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold bg-[#16A37B]/15 text-[#34D399] hover:bg-[#16A37B]/25 mb-1.5">
+          <span class="inline-flex items-center gap-2"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span class="i18n-seeplans">See Plans</span></span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white">FREE</span>
+        </button>
         <button onclick="toggleMobileDrawer(false); logoutUser();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#9FB0BE] hover:text-white hover:bg-white/5">
           <i data-lucide="log-out" class="w-4 h-4"></i> <span data-i18n="nav_logout">Keluar Akun</span>
         </button>
@@ -466,6 +474,13 @@
                 <label class="block text-[11px] text-[#5E6D7E] mb-1">Porsi <span class="name-pb">Partner</span> (Rp)</label>
                 <input type="text" inputmode="numeric" id="split-amt-b" oninput="onNominalInput(this); syncAmt('b')" class="w-full px-3 py-2 rounded-lg border border-[#EAE7DF] text-sm bg-white tabular-nums" />
               </div>
+            </div>
+            <div id="split-premium-banner" class="hidden rounded-xl bg-[#EAF5F0] border border-[#CBE7DB] px-3 py-2.5 flex items-center justify-between gap-2">
+              <div class="text-[11px] text-[#0E4D38] leading-snug">
+                <span class="font-bold">NESTA Closer Preview:</span>
+                <span id="split-premium-text">Upgrade to NESTA Closer (Rp19.900/mo) to save custom % or Rp splits (50:50 is Free).</span>
+              </div>
+              <button type="button" onclick="openUpgradeModal('split')" class="px-2.5 py-1 rounded-lg bg-[#0E4D38] text-white text-[11px] font-semibold shrink-0">NESTA Closer</button>
             </div>
           </div>
           <div class="bg-[#F0F8F5] rounded-xl px-3.5 py-3 text-xs border border-[#D4EDE4] space-y-1">
@@ -799,6 +814,127 @@
     </div>
   </div>
 
+  <!-- NESTA PRICING & CHECKOUT MODAL (Together Free vs Closer Monthly & Annual) -->
+  <div id="upgrade-modal" class="fixed inset-0 z-[85] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/65 backdrop-blur-sm" onclick="closeUpgradeModal()"></div>
+    <div class="relative w-full max-w-3xl bg-white rounded-3xl border border-[#EAE7DF] shadow-2xl p-6 sm:p-8 z-10 max-h-[92vh] overflow-y-auto modal-panel-anim">
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold uppercase tracking-wider">Launch Promotion • Early Adopter</span>
+          <h3 id="up-title" class="text-xl sm:text-2xl font-bold text-[#101D2B] mt-1.5">Paket NESTA: Together &amp; Closer</h3>
+        </div>
+        <button type="button" onclick="closeUpgradeModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2] text-[#5E6D7E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <p id="up-reason" class="text-xs sm:text-sm text-[#5E6D7E] mb-4">Satu langganan berlaku untuk dua pasangan di Couple Space. Harga promo terkunci untuk setiap perpanjangan berikutnya selama langganan tetap aktif.</p>
+
+      <!-- 3 Pricing Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-5">
+        <!-- 1. NESTA Together (Free) -->
+        <div class="rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF] p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-sm font-bold text-[#101D2B]">NESTA Together</span>
+              <span class="px-2 py-0.5 rounded-full bg-white text-[#5E6D7E] text-[10px] font-bold">FREE</span>
+            </div>
+            <div class="text-2xl font-bold text-[#101D2B] tabular-nums">Rp0</div>
+            <div class="text-[11px] text-[#5E6D7E] mt-0.5 mb-3">Gratis selamanya</div>
+            <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
+              <li>✓ Couple Space (2 pasangan)</li>
+              <li>✓ Transaksi harian &amp; 50:50</li>
+              <li>✓ Kas Bersama &amp; Settlement dasar</li>
+              <li>✓ 1 anggaran utama + 1 kustom</li>
+              <li>✓ Maks. 3 tagihan &amp; 1 goal aktif</li>
+              <li>✓ Maks. 2 kategori kustom</li>
+            </ul>
+          </div>
+          <button type="button" onclick="closeUpgradeModal()" class="mt-4 w-full py-2 rounded-xl border border-[#EAE7DF] bg-white text-xs font-semibold text-[#5E6D7E]">Paket Saat Ini / Gratis</button>
+        </div>
+
+        <!-- 2. NESTA Closer Monthly -->
+        <div class="rounded-2xl bg-white border border-[#D4E9DF] p-5 flex flex-col justify-between shadow-xs">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-sm font-bold text-[#0F1E28]">NESTA Closer</span>
+              <span class="px-2 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold">Launch Promotion</span>
+            </div>
+            <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">Rp59.000/bulan</div>
+            <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp39.000 <span class="text-xs font-normal text-[#5E6D7E]">/bulan</span></div>
+            <div class="text-[11px] text-[#16A37B] font-semibold mt-0.5 mb-3">Harga promo terkunci saat aktif</div>
+            <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
+              <li>✓ Semua fitur NESTA Together</li>
+              <li>✓ Custom % &amp; Nominal (Rp) Split</li>
+              <li>✓ Unlimited anggaran, tagihan &amp; goals</li>
+              <li>✓ Unlimited kategori kustom</li>
+              <li>✓ Export laporan PDF &amp; CSV</li>
+              <li>✓ Berlaku untuk berdua</li>
+            </ul>
+          </div>
+          <button type="button" onclick="startSubscriptionCheckout('closer_monthly')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0F1E28] hover:bg-[#1A3140] text-white text-xs font-semibold">Pilih Bulanan (Rp39.000)</button>
+        </div>
+
+        <!-- 3. NESTA Closer Annual -->
+        <div class="rounded-2xl bg-[#FAFDFB] border-2 border-[#16A37B] p-5 flex flex-col justify-between shadow-sm">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-sm font-bold text-[#0E4D38]">NESTA Closer</span>
+              <span class="px-2 py-0.5 rounded-full bg-[#0E4D38] text-white text-[10px] font-bold">Launch Promotion</span>
+            </div>
+            <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">Rp599.000/tahun</div>
+            <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp399.000 <span class="text-xs font-normal text-[#5E6D7E]">/tahun</span></div>
+            <div class="mt-1 mb-3 p-2 rounded-xl bg-[#EAF5F0] text-[10px] text-[#0E4D38] font-semibold leading-snug">
+              Setara Rp33.250/bulan • Hemat Rp69.000 dibanding bulanan selama 12 bulan pada harga promo
+            </div>
+            <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
+              <li>✓ Semua fitur NESTA Closer</li>
+              <li>✓ Harga Rp399.000/thn terkunci selamanya selama aktif</li>
+              <li>✓ 1 langganan otomatis untuk berdua</li>
+            </ul>
+          </div>
+          <button type="button" onclick="startSubscriptionCheckout('closer_annual')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs font-semibold">Pilih Tahunan (Rp399.000)</button>
+        </div>
+      </div>
+
+      <!-- Early Adopter & Downgrade Guarantee Box -->
+      <div class="rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF] p-3.5 text-[11px] text-[#5E6D7E] space-y-1 mb-3">
+        <div><strong class="text-[#101D2B]">Harga Early Adopter Terkunci:</strong> Berlangganan selama masa promo mengunci harga promo di perpanjangan berikutnya selama langganan tidak terputus. Jika dibatalkan/kedaluwarsa, perpanjangan ulang mengikuti harga normal yang berlaku.</div>
+        <div><strong class="text-[#101D2B]">Jaminan Data Aman:</strong> Jika kembali ke paket Free, data transaksi, anggaran, tagihan, dan goals tidak pernah dihapus.</div>
+      </div>
+
+      <!-- Server Checkout Status Box -->
+      <div id="checkout-status-box" class="hidden rounded-2xl bg-[#EAF5F0] border border-[#CBE7DB] p-3.5 text-xs text-[#0E4D38] mb-3"></div>
+
+      <div class="flex items-center justify-end gap-2">
+        <button type="button" id="up-close-btn" onclick="closeUpgradeModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-xs font-semibold text-[#5E6D7E]">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOWNGRADE CONFIRMATION & SELECTION MODAL -->
+  <div id="downgrade-modal" class="fixed inset-0 z-[88] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/65 backdrop-blur-sm"></div>
+    <div class="relative w-full max-w-2xl bg-white rounded-3xl border border-[#EAE7DF] shadow-2xl p-6 sm:p-7 z-10 max-h-[92vh] overflow-y-auto modal-panel-anim">
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#FDF6EB] text-[#92600A] text-[10px] font-bold uppercase tracking-wider">NESTA Together • Free Limits</span>
+          <h3 class="text-lg sm:text-xl font-bold text-[#101D2B] mt-1">Pilih Item yang Tetap Aktif</h3>
+        </div>
+        <button type="button" onclick="closeDowngradeModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2] text-[#5E6D7E]"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="p-3.5 rounded-2xl bg-[#EEF7F3] border border-[#D4E9DF] text-xs text-[#0E4D38] space-y-1 mb-4">
+        <div class="font-bold">Tidak ada transaksi atau data historis yang dihapus.</div>
+        <p>Item yang tidak dipilih akan berubah menjadi <strong>Archived / Inactive (Read-Only)</strong>. Transaksi historis dengan Custom Split tetap tampil sesuai nilai aslinya, dan semua item bisa diaktifkan kembali kapan saja jika upgrade ke <strong>NESTA Closer</strong>.</p>
+      </div>
+      <form onsubmit="submitDowngradeSelections(event)" class="space-y-4">
+        <div id="dg-sections" class="space-y-4"></div>
+        <div id="dg-error" class="hidden text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg"></div>
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#EAE7DF]">
+          <button type="button" onclick="closeDowngradeModal(); openUpgradeModal('overview');" class="px-4 py-2 rounded-xl border border-[#0E4D38] text-[#0E4D38] text-xs font-semibold">Upgrade ke NESTA Closer</button>
+          <button type="submit" class="btn-primary px-5 py-2.5 rounded-xl text-xs font-semibold">Konfirmasi &amp; Simpan Pilihan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 right-4 lg:right-6 z-50 hidden bg-[#0F1E28] text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2.5 max-w-sm">
     <i data-lucide="check-circle-2" class="w-4 h-4 text-[#16A37B] shrink-0"></i>
@@ -872,6 +1008,9 @@
         applySharedPayload(sp.data);
         if (sp.partner_id) {
           state.couple.partnerJoined = true;
+        }
+        if (sp.plan) {
+          state.couple.plan = sp.plan;
         }
         const role = sp.owner_id === user.id ? 'partner_a' : 'partner_b';
         state.activeRole = role;
@@ -1037,6 +1176,7 @@
         sidebarOpen: true,
         couple: {
           name: 'Shared Financial Space',
+          plan: 'free',
           inviteCode: 'https://nesta.id/couple/' + Math.random().toString(36).substring(2, 8),
           partnerJoined: false,
           monthlyBudget: 0,
@@ -1223,6 +1363,242 @@
     function t(key) {
       const lang = state.lang === 'en' ? 'en' : 'id';
       return (I18N[lang] && I18N[lang][key]) || I18N.id[key] || key;
+    }
+
+    function isItemActive(item) {
+      return !item || (!item.readOnly && item.status !== 'archived' && item.status !== 'inactive');
+    }
+
+    function getExtraCategoriesList() {
+      const archived = new Set(state.archivedCategories || []);
+      const exp = (state.categories || []).filter(c => !DEFAULT_CATEGORIES.includes(c) && !archived.has(c));
+      const bill = (state.billCategories || []).filter(c => !DEFAULT_BILL_CATS_LIST().includes(c) && !archived.has(c));
+      const goal = (state.goalCategories || []).filter(c => !DEFAULT_GOAL_CATS_LIST().includes(c) && !archived.has(c));
+      return Array.from(new Set([...exp, ...bill, ...goal]));
+    }
+    function DEFAULT_BILL_CATS_LIST() { return DEFAULT_BILL_CATEGORIES; }
+    function DEFAULT_GOAL_CATS_LIST() { return DEFAULT_GOAL_CATEGORIES; }
+
+    function needsDowngradeReview() {
+      if (isPremiumSpace()) return false;
+      const activeGoals = (state.goals || []).filter(isItemActive).length;
+      const activeBills = (state.bills || []).filter(isItemActive).length;
+      const activeBudgets = (state.customBudgets || []).filter(isItemActive).length;
+      const activeExtraCats = getExtraCategoriesList().length;
+      return activeGoals > 1 || activeBills > 3 || activeBudgets > 1 || activeExtraCats > 2;
+    }
+
+    function closeDowngradeModal() {
+      const m = document.getElementById('downgrade-modal');
+      if (!m) return;
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function openDowngradeModal() {
+      const m = document.getElementById('downgrade-modal');
+      const sec = document.getElementById('dg-sections');
+      const err = document.getElementById('dg-error');
+      if (!m || !sec) return;
+      if (err) err.classList.add('hidden');
+
+      const goals = state.goals || [];
+      const bills = state.bills || [];
+      const budgets = state.customBudgets || [];
+      const extraCats = Array.from(new Set([
+        ...(state.categories || []).filter(c => !DEFAULT_CATEGORIES.includes(c)),
+        ...(state.billCategories || []).filter(c => !DEFAULT_BILL_CATEGORIES.includes(c)),
+        ...(state.goalCategories || []).filter(c => !DEFAULT_GOAL_CATEGORIES.includes(c)),
+      ]));
+
+      let blocks = [];
+      if (goals.filter(isItemActive).length > 1) {
+        blocks.push(`
+          <div class="p-3.5 rounded-2xl border border-[#EAE7DF] bg-[#F7F6F2]">
+            <div class="text-xs font-bold text-[#101D2B] mb-2">Savings Goals (Pilih maksimal 1 aktif)</div>
+            <div class="space-y-1.5">
+              ${goals.map((g, i) => `
+                <label class="flex items-center gap-2 text-xs bg-white px-3 py-2 rounded-xl border border-[#EAE7DF]">
+                  <input type="checkbox" name="dg-goal" value="${escapeHTML(g.id)}" ${i === 0 ? 'checked' : ''} class="rounded text-[#0E4D38]" />
+                  <span class="font-medium">${escapeHTML(g.title)}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>`);
+      }
+      if (bills.filter(isItemActive).length > 3) {
+        blocks.push(`
+          <div class="p-3.5 rounded-2xl border border-[#EAE7DF] bg-[#F7F6F2]">
+            <div class="text-xs font-bold text-[#101D2B] mb-2">Recurring Bills (Pilih maksimal 3 aktif)</div>
+            <div class="space-y-1.5">
+              ${bills.map((b, i) => `
+                <label class="flex items-center gap-2 text-xs bg-white px-3 py-2 rounded-xl border border-[#EAE7DF]">
+                  <input type="checkbox" name="dg-bill" value="${escapeHTML(b.id)}" ${i < 3 ? 'checked' : ''} class="rounded text-[#0E4D38]" />
+                  <span class="font-medium">${escapeHTML(b.title)}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>`);
+      }
+      if (budgets.filter(isItemActive).length > 1) {
+        blocks.push(`
+          <div class="p-3.5 rounded-2xl border border-[#EAE7DF] bg-[#F7F6F2]">
+            <div class="text-xs font-bold text-[#101D2B] mb-2">Custom Budgets (Pilih maksimal 1 aktif)</div>
+            <div class="space-y-1.5">
+              ${budgets.map((cb, i) => `
+                <label class="flex items-center gap-2 text-xs bg-white px-3 py-2 rounded-xl border border-[#EAE7DF]">
+                  <input type="checkbox" name="dg-budget" value="${escapeHTML(cb.id)}" ${i === 0 ? 'checked' : ''} class="rounded text-[#0E4D38]" />
+                  <span class="font-medium">${escapeHTML(cb.name)}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>`);
+      }
+      if (extraCats.length > 2) {
+        blocks.push(`
+          <div class="p-3.5 rounded-2xl border border-[#EAE7DF] bg-[#F7F6F2]">
+            <div class="text-xs font-bold text-[#101D2B] mb-2">Custom Categories (Pilih maksimal 2 aktif)</div>
+            <div class="flex flex-wrap gap-2">
+              ${extraCats.map((c, i) => `
+                <label class="inline-flex items-center gap-1.5 text-xs bg-white px-3 py-1.5 rounded-xl border border-[#EAE7DF]">
+                  <input type="checkbox" name="dg-cat" value="${escapeHTML(c)}" ${i < 2 ? 'checked' : ''} class="rounded text-[#0E4D38]" />
+                  <span>${escapeHTML(c)}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>`);
+      }
+      sec.innerHTML = blocks.join('');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    async function submitDowngradeSelections(e) {
+      e.preventDefault();
+      const errEl = document.getElementById('dg-error');
+      const keepGoalIds = Array.from(document.querySelectorAll('input[name="dg-goal"]:checked')).map(x => x.value);
+      const keepBillIds = Array.from(document.querySelectorAll('input[name="dg-bill"]:checked')).map(x => x.value);
+      const keepBudgetIds = Array.from(document.querySelectorAll('input[name="dg-budget"]:checked')).map(x => x.value);
+      const keepExtraCategories = Array.from(document.querySelectorAll('input[name="dg-cat"]:checked')).map(x => x.value);
+
+      if (keepGoalIds.length > 1 || keepBillIds.length > 3 || keepBudgetIds.length > 1 || keepExtraCategories.length > 2) {
+        if (errEl) {
+          errEl.textContent = 'Pilihan melebihi batas paket Free (maks. 1 Goal, 3 Bills, 1 Custom Budget, 2 Custom Categories).';
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      // Apply locally (preserving ALL data, marking unselected as archived/inactive & readOnly)
+      if ((state.goals || []).filter(isItemActive).length > 1) {
+        const s = new Set(keepGoalIds);
+        state.goals = state.goals.map(g => ({ ...g, status: s.has(g.id) ? 'active' : 'archived', readOnly: !s.has(g.id) }));
+      }
+      if ((state.bills || []).filter(isItemActive).length > 3) {
+        const s = new Set(keepBillIds);
+        state.bills = state.bills.map(b => ({ ...b, status: s.has(b.id) ? 'active' : 'inactive', readOnly: !s.has(b.id) }));
+      }
+      if ((state.customBudgets || []).filter(isItemActive).length > 1) {
+        const s = new Set(keepBudgetIds);
+        state.customBudgets = state.customBudgets.map(cb => ({ ...cb, status: s.has(cb.id) ? 'active' : 'archived', readOnly: !s.has(cb.id) }));
+      }
+      const allExtra = Array.from(new Set([
+        ...(state.categories || []).filter(c => !DEFAULT_CATEGORIES.includes(c)),
+        ...(state.billCategories || []).filter(c => !DEFAULT_BILL_CATEGORIES.includes(c)),
+        ...(state.goalCategories || []).filter(c => !DEFAULT_GOAL_CATEGORIES.includes(c)),
+      ]));
+      if (allExtra.length > 2) {
+        const s = new Set(keepExtraCategories);
+        state.archivedCategories = allExtra.filter(c => !s.has(c));
+      }
+
+      saveState();
+      closeDowngradeModal();
+      render();
+      showToast(state.lang === 'en' ? 'Free plan selections saved. Historical data preserved.' : 'Pilihan paket Free disimpan. Semua data lama tetap aman.');
+    }
+
+    function isPremiumSpace() {
+      return Boolean(state.couple && state.couple.plan === 'premium');
+    }
+
+    function getCustomCategoryCount() {
+      const expExtra = (state.categories || []).filter(c => !DEFAULT_CATEGORIES.includes(c)).length;
+      const billExtra = (state.billCategories || []).filter(c => !DEFAULT_BILL_CATEGORIES.includes(c)).length;
+      const goalExtra = (state.goalCategories || []).filter(c => !DEFAULT_GOAL_CATEGORIES.includes(c)).length;
+      return expExtra + billExtra + goalExtra;
+    }
+
+    function openUpgradeModal(reasonKey) {
+      const isEn = state.lang === 'en';
+      const m = document.getElementById('upgrade-modal');
+      if (!m) return;
+      const box = document.getElementById('checkout-status-box');
+      if (box) box.classList.add('hidden');
+      const reasons = {
+        overview: 'Satu langganan berlaku untuk dua pasangan di Couple Space. Harga promo terkunci untuk setiap perpanjangan berikutnya selama langganan tetap aktif.',
+        goals: 'NESTA Together mencakup 1 Target Tabungan aktif. Upgrade ke NESTA Closer (harga promo terkunci selama aktif) untuk target tanpa batas.',
+        bills: 'NESTA Together mencakup maks. 3 Tagihan Rutin aktif. Upgrade ke NESTA Closer untuk tagihan tanpa batas.',
+        budgets: 'NESTA Together mencakup 1 anggaran bulanan utama + 1 anggaran kustom. Upgrade ke NESTA Closer untuk anggaran tanpa batas.',
+        categories: 'NESTA Together mencakup maks. 2 kategori kustom. Upgrade ke NESTA Closer untuk kategori tanpa batas.',
+        split: 'Pembagian 50:50 gratis selamanya! Upgrade ke NESTA Closer untuk menyimpan Custom Percentage (%) dan Custom Nominal (Rp).',
+        export: 'Export laporan PDF & CSV tersedia di NESTA Closer. Satu langganan otomatis berlaku untuk berdua.'
+      };
+      document.getElementById('up-title').textContent = reasonKey === 'overview' ? 'Paket NESTA: Together & Closer' : 'Upgrade ke NESTA Closer';
+      document.getElementById('up-reason').textContent = reasons[reasonKey] || reasons.overview;
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeUpgradeModal() {
+      const m = document.getElementById('upgrade-modal');
+      if (!m) return;
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    async function startSubscriptionCheckout(planId) {
+      const box = document.getElementById('checkout-status-box');
+      const isEn = state.lang === 'en';
+      if (!state.isAuthenticated) {
+        closeUpgradeModal();
+        openAuthModal('register');
+        return;
+      }
+      if (!box) return;
+      box.classList.remove('hidden');
+      box.textContent = isEn ? 'Validating Couple Space & locked pricing on server...' : 'Memvalidasi Couple Space dan harga di server...';
+
+      if (!sbClient || !currentSpaceId) {
+        box.textContent = isEn ? 'Please sign in to a live Couple Space to start checkout.' : 'Silakan masuk ke Couple Space terlebih dahulu untuk memulai pembayaran.';
+        return;
+      }
+      try {
+        const { data: sessData } = await sbClient.auth.getSession();
+        const token = sessData && sessData.session && sessData.session.access_token;
+        if (!token) {
+          box.textContent = isEn ? 'Session expired. Please sign in again.' : 'Sesi habis. Silakan masuk kembali.';
+          return;
+        }
+        const res = await fetch('/api/subscriptions/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ planId, coupleSpaceId: currentSpaceId })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          box.textContent = data.error || (isEn ? 'Checkout validation failed.' : 'Validasi checkout gagal.');
+          return;
+        }
+        box.innerHTML = `<strong>Order ${escapeHTML(data.orderId)}</strong> • Rp ${Number(data.amountIdr).toLocaleString('id-ID')} (${data.grandfatheredPricing ? (isEn ? 'Promo price locked for renewals' : 'Harga promo terkunci untuk perpanjangan') : ''}). ${isEn ? 'Awaiting payment gateway webhook verification.' : 'Menunggu verifikasi webhook payment gateway.'}`;
+      } catch (err) {
+        box.textContent = isEn ? 'Payment endpoint unavailable in offline preview.' : 'Endpoint pembayaran belum aktif di mode preview offline.';
+      }
     }
 
     function setLanguage(lang) {
@@ -1540,6 +1916,8 @@
 
     function goBackPage() {
       const modalIds = [
+        ['downgrade-modal', closeDowngradeModal],
+        ['upgrade-modal', closeUpgradeModal],
         ['join-confirm-modal', closeJoinConfirmModal],
         ['unbind-modal', closeUnbindModal],
         ['expense-modal', closeExpenseModal],
@@ -1623,6 +2001,9 @@
     function toggleSidebar(show) {
       state.sidebarOpen = show;
       saveState();
+      document.querySelectorAll('.i18n-seeplans').forEach(el => { el.textContent = state.lang === 'en' ? 'See Plans' : 'Lihat Paket'; });
+      const spBadge = document.getElementById('sidebar-plan-badge');
+      if (spBadge) spBadge.textContent = isPremiumSpace() ? 'CLOSER' : 'FREE';
       updateNavHighlight();
     }
 
@@ -1800,6 +2181,17 @@
 
     function setSplitMethod(method) {
       currentSplitMethod = method;
+      const premBanner = document.getElementById('split-premium-banner');
+      const premText = document.getElementById('split-premium-text');
+      if (premBanner) {
+        const showPrem = !isPremiumSpace() && method !== '50_50';
+        premBanner.classList.toggle('hidden', !showPrem);
+        if (premText) {
+          premText.textContent = state.lang === 'en'
+            ? 'Upgrade to NESTA Closer (Rp19.900/mo) to save custom % or Rp splits (50:50 is Free).'
+            : 'Upgrade ke NESTA Closer (Rp19.900/bln) untuk menyimpan bagi % atau Rp khusus (50:50 gratis).';
+        }
+      }
       document.querySelectorAll('.split-tab').forEach(btn => {
         const active = btn.getAttribute('data-split') === method;
         btn.classList.toggle('bg-[#0E4D38]', active);
@@ -1925,6 +2317,10 @@
       let b = amount - a;
 
       if (paymentSource === 'talangan') {
+        if (currentSplitMethod !== '50_50' && !isPremiumSpace()) {
+          openUpgradeModal('split');
+          return;
+        }
         paidBy = document.getElementById('exp-paidby').value;
         splitMethod = currentSplitMethod;
         const shares = computeShares();
@@ -2137,6 +2533,7 @@
 
 
     function exportCSV() {
+      if (!isPremiumSpace()) { openUpgradeModal('export'); return; }
       const ym = state.selectedMonth;
       const exps = getMonthExpenses(ym);
       const isEn = state.lang === 'en';
@@ -2184,6 +2581,7 @@
     }
 
     async function exportPDF() {
+      if (!isPremiumSpace()) { openUpgradeModal('export'); return; }
       const ym = state.selectedMonth;
       const exps = getMonthExpenses(ym);
       const budget = getMonthBudget(ym);
@@ -2333,6 +2731,10 @@
       const dueDate = document.getElementById('bill-due').value;
       const frequency = document.getElementById('bill-freq').value;
       if (!title || amount <= 0) return;
+      if (!isPremiumSpace() && state.bills.filter(isItemActive).length >= 3) {
+        openUpgradeModal('bills');
+        return;
+      }
       state.bills.push({
         id: 'bill-' + Date.now(),
         title, category, amount, dueDate, frequency, isPaid: false
@@ -2386,6 +2788,10 @@
 
     function addCatFromSettingsByType(type, inputId, e) {
       e.preventDefault();
+      if (!isPremiumSpace() && getExtraCategoriesList().length >= 2) {
+        openUpgradeModal('categories');
+        return;
+      }
       const inp = document.getElementById(inputId);
       const val = (inp.value || '').trim();
       if (!val) return;
@@ -2484,6 +2890,10 @@
       const limit = parseNominal(document.getElementById('cb-limit').value);
       if (!name || limit <= 0) return;
       if (!state.customBudgets) state.customBudgets = [];
+      if (!isPremiumSpace() && state.customBudgets.filter(isItemActive).length >= 1) {
+        openUpgradeModal('budgets');
+        return;
+      }
       state.customBudgets.push({
         id: 'cb-' + Date.now(),
         name,
@@ -2520,6 +2930,10 @@
       const targetAmount = parseNominal(document.getElementById('goal-target').value);
       const targetDate = document.getElementById('goal-date').value;
       if (!title || targetAmount <= 0) return;
+      if (!isPremiumSpace() && state.goals.filter(isItemActive).length >= 1) {
+        openUpgradeModal('goals');
+        return;
+      }
       state.goals.unshift({
         id: 'goal-' + Date.now(),
         title, category, targetAmount, targetDate, contributions: []
@@ -3362,6 +3776,7 @@
               <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-[#5E6D7E]">
                 <a href="#features" class="hover:text-[#0E4D38] transition-colors">${isEn ? 'Features' : 'Fitur'}</a>
                 <a href="#why-nesta" class="hover:text-[#0E4D38] transition-colors">${isEn ? 'Why Nesta' : 'Kenapa Nesta'}</a>
+                <button type="button" onclick="openUpgradeModal('overview')" class="hover:text-[#0E4D38] transition-colors">${isEn ? 'See Plans' : 'Lihat Paket'}</button>
                 <a href="#security" class="hover:text-[#0E4D38] transition-colors">${isEn ? 'Privacy' : 'Privasi'}</a>
               </nav>
             </div>
@@ -3618,6 +4033,7 @@
             <div class="flex items-center gap-5">
               <a href="#features" class="hover:text-[#0E4D38]">${isEn ? 'Features' : 'Fitur'}</a>
               <a href="#why-nesta" class="hover:text-[#0E4D38]">${isEn ? 'Why Nesta' : 'Kenapa Nesta'}</a>
+              <button type="button" onclick="openUpgradeModal('overview')" class="hover:text-[#0E4D38]">${isEn ? 'See Plans' : 'Lihat Paket'}</button>
               <a href="#security" class="hover:text-[#0E4D38]">${isEn ? 'Privacy' : 'Privasi'}</a>
               <button type="button" onclick="openAuthModal('login')" class="hover:text-[#0E4D38] font-semibold">${isEn ? 'Login' : 'Masuk'}</button>
             </div>
@@ -3777,6 +4193,20 @@
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const blocks = [];
+      if (needsDowngradeReview()) {
+        blocks.push(`
+          <div class="mb-4 rounded-2xl p-4 bg-[#FDF6EB] border border-[#F5E4C8] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <i data-lucide="alert-triangle" class="w-5 h-5 text-[#D97706] shrink-0 mt-0.5"></i>
+              <div class="text-xs text-[#101D2B]">
+                <div class="font-bold text-sm mb-0.5">${isEn ? 'Action Required: Select Active Items for Free Plan' : 'Perlu Konfirmasi: Pilih Item Aktif untuk Paket Free'}</div>
+                <div class="text-[#5E6D7E]">${isEn ? 'Your space has items above NESTA Together limits. No data is deleted—choose which items stay active while others become read-only.' : 'Ruang ini memiliki item melebihi batas Free. Tidak ada data yang dihapus—pilih item yang tetap aktif sementara sisanya menjadi read-only.'}</div>
+              </div>
+            </div>
+            <button onclick="openDowngradeModal()" class="px-3.5 py-2 rounded-xl bg-[#0F1E28] text-white text-xs font-semibold shrink-0">${isEn ? 'Choose Active Items' : 'Pilih Item Aktif'}</button>
+          </div>
+        `);
+      }
 
       if (notif.billReminder) {
         const dueSoon = state.bills.filter(b => {
