@@ -8,9 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script defer src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     tailwind.config = {
@@ -2036,7 +2035,18 @@
       showToast(isEn ? `Exported CSV for ${formatMonthLabel(ym)}.` : `Laporan CSV ${formatMonthLabel(ym)} berhasil diunduh.`);
     }
 
-    function exportPDF() {
+    function loadJsPDF() {
+      if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Failed to load jsPDF'));
+        document.head.appendChild(s);
+      });
+    }
+
+    async function exportPDF() {
       const ym = state.selectedMonth;
       const exps = getMonthExpenses(ym);
       const budget = getMonthBudget(ym);
@@ -2045,6 +2055,15 @@
       const settle = calculateSettlement(ym);
       const isEn = state.lang === 'en';
 
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        showToast(isEn ? 'Preparing PDF...' : 'Menyiapkan PDF...');
+        try {
+          await loadJsPDF();
+        } catch (err) {
+          window.print();
+          return;
+        }
+      }
       if (!window.jspdf || !window.jspdf.jsPDF) {
         window.print();
         return;
@@ -4590,6 +4609,17 @@
           try { pendingInviteCode = localStorage.getItem('nesta_pending_invite') || ''; } catch (e) {}
         }
       } catch (e) {}
+      const isOAuthOrInvite = Boolean(
+        (window.location.search && (window.location.search.includes('invite=') || window.location.search.includes('code='))) ||
+        (window.location.hash && window.location.hash.includes('access_token='))
+      );
+
+      // Instant render from local cache when already signed in (0ms perceived load)
+      if (!isOAuthOrInvite && state.isAuthenticated) {
+        render();
+        maybeTriggerPostLoginFlow();
+      }
+
       if (sbClient) {
         sbClient.auth.onAuthStateChange(async (event, session) => {
           if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && session.user && !state.isAuthenticated) {
@@ -4601,11 +4631,25 @@
           const { data } = await sbClient.auth.getSession();
           if (data && data.session && data.session.user) {
             await loadUserSpace(data.session.user);
+            render();
+          } else if (isOAuthOrInvite || !state.isAuthenticated) {
+            render();
           }
-        } catch (e) {}
+        } catch (e) {
+          if (isOAuthOrInvite || !state.isAuthenticated) render();
+        }
+      } else if (isOAuthOrInvite || !state.isAuthenticated) {
+        render();
       }
-      render();
-      maybeTriggerPostLoginFlow();
+
+      if (isOAuthOrInvite || !state.isAuthenticated) {
+        maybeTriggerPostLoginFlow();
+      }
+    });
+
+    window.addEventListener('load', () => {
+      if (window.lucide) lucide.createIcons();
+      renderCharts();
     });
   </script>
 </body>
