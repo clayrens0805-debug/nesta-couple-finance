@@ -600,11 +600,17 @@
         }
         const role = sp.owner_id === user.id ? 'partner_a' : 'partner_b';
         state.activeRole = role;
+        const myPartnerObj = role === 'partner_a' ? state.couple.partnerA : state.couple.partnerB;
+        const metaAvatar = (user.user_metadata && (user.user_metadata.avatar_url || user.user_metadata.picture)) || '';
+        const resolvedAvatar = myPartnerObj.avatar || (state.currentUser && state.currentUser.avatar) || metaAvatar || '';
+        if (resolvedAvatar && !myPartnerObj.avatar) {
+          myPartnerObj.avatar = resolvedAvatar;
+        }
         state.currentUser = {
-          name: (user.user_metadata && user.user_metadata.full_name) || (role === 'partner_a' ? state.couple.partnerA.name : state.couple.partnerB.name),
+          name: (user.user_metadata && user.user_metadata.full_name) || myPartnerObj.name,
           email: user.email,
           role,
-          avatar: (state.currentUser && state.currentUser.avatar) || '',
+          avatar: resolvedAvatar,
           birthDate: (user.user_metadata && user.user_metadata.birth_date) || '',
           relStage: (user.user_metadata && user.user_metadata.relationship_stage) || '',
           city: (user.user_metadata && user.user_metadata.city) || ''
@@ -2640,33 +2646,72 @@
       }
     }
 
+    function applyPartnerAvatar(dataUrl) {
+      if (!state.currentUser) return;
+      if (dataUrl) {
+        state.currentUser.avatar = dataUrl;
+        if (state.activeRole === 'partner_a') state.couple.partnerA.avatar = dataUrl;
+        else state.couple.partnerB.avatar = dataUrl;
+      } else {
+        delete state.currentUser.avatar;
+        if (state.activeRole === 'partner_a') delete state.couple.partnerA.avatar;
+        else delete state.couple.partnerB.avatar;
+      }
+      const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
+      if (reg) {
+        if (dataUrl) reg.avatar = dataUrl;
+        else delete reg.avatar;
+      }
+      saveState();
+      render();
+    }
+
     function handleAvatarUpload(input) {
       const file = input.files && input.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = function (ev) {
-        const dataUrl = ev.target.result;
-        if (state.currentUser) {
-          state.currentUser.avatar = dataUrl;
-          const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
-          if (reg) reg.avatar = dataUrl;
-          saveState();
-          render();
+        const rawUrl = ev.target.result;
+        const img = new Image();
+        img.onload = function () {
+          try {
+            const size = 240;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            const minSide = Math.min(img.width, img.height);
+            const sx = (img.width - minSide) / 2;
+            const sy = (img.height - minSide) / 2;
+            ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+            applyPartnerAvatar(canvas.toDataURL('image/jpeg', 0.85));
+          } catch (err) {
+            applyPartnerAvatar(rawUrl);
+          }
           showToast(state.lang === 'en' ? 'Profile picture updated.' : 'Foto profil berhasil diperbarui.');
-        }
+        };
+        img.onerror = function () {
+          applyPartnerAvatar(rawUrl);
+          showToast(state.lang === 'en' ? 'Profile picture updated.' : 'Foto profil berhasil diperbarui.');
+        };
+        img.src = rawUrl;
       };
       reader.readAsDataURL(file);
     }
 
     function removeAvatar() {
       if (state.currentUser) {
-        delete state.currentUser.avatar;
-        const reg = (state.registeredUsers || []).find(u => u.email === state.currentUser.email);
-        if (reg) delete reg.avatar;
-        saveState();
-        render();
+        applyPartnerAvatar('');
         showToast(state.lang === 'en' ? 'Profile picture removed.' : 'Foto profil dihapus.');
       }
+    }
+
+    function renderPartnerAvatar(partner, bgHex, sizeClasses) {
+      const initial = escapeHTML((partner && partner.name && partner.name[0]) || 'P');
+      if (partner && partner.avatar) {
+        return `<div class="${sizeClasses} rounded-full overflow-hidden shrink-0 border border-[#EAE7DF] bg-[${bgHex}]"><img src="${escapeHTML(partner.avatar)}" alt="${escapeHTML(partner.name || 'Partner')}" class="w-full h-full object-cover" /></div>`;
+      }
+      return `<div class="${sizeClasses} rounded-full bg-[${bgHex}] text-white flex items-center justify-center font-bold shrink-0">${initial}</div>`;
     }
 
     async function updateAccountProfile(e) {
@@ -2994,7 +3039,7 @@
               </div>
               <div class="grid grid-cols-2 gap-4 mb-4">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-[#0F1E28] text-white flex items-center justify-center font-bold text-sm shrink-0">${escapeHTML(state.couple.partnerA.name[0])}</div>
+                  ${renderPartnerAvatar(state.couple.partnerA, "#0F1E28", "w-10 h-10 text-sm")}
                   <div>
                     <div class="text-xs text-[#5E6D7E]">${escapeHTML(state.couple.partnerA.name)} (${state.lang === 'en' ? 'Paid' : 'Dibayar'})</div>
                     <div class="text-base font-bold text-[#101D2B] tabular-nums">${formatIDR(settle.paidA)}</div>
@@ -3002,7 +3047,7 @@
                   </div>
                 </div>
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-[#16A37B] text-white flex items-center justify-center font-bold text-sm shrink-0">${escapeHTML(state.couple.partnerB.name[0])}</div>
+                  ${renderPartnerAvatar(state.couple.partnerB, "#16A37B", "w-10 h-10 text-sm")}
                   <div>
                     <div class="text-xs text-[#5E6D7E]">${escapeHTML(state.couple.partnerB.name)} (${state.lang === 'en' ? 'Paid' : 'Dibayar'})</div>
                     <div class="text-base font-bold text-[#101D2B] tabular-nums">${formatIDR(settle.paidB)}</div>
@@ -3259,9 +3304,9 @@
               <h2 class="text-lg font-bold text-[#101D2B]">${escapeHTML(state.couple.name)}</h2>
               <p class="text-xs text-[#5E6D7E] mt-1 mb-5">${state.lang === 'en' ? 'Manage all your shared finances together here.' : 'Di sini kalian mengelola semua keuangan bersama.'}</p>
               <div class="flex items-center justify-center gap-3 mb-3">
-                <div class="w-12 h-12 rounded-full bg-[#0F1E28] text-white flex items-center justify-center font-bold text-lg">${escapeHTML(state.couple.partnerA.name[0])}</div>
+                ${renderPartnerAvatar(state.couple.partnerA, "#0F1E28", "w-12 h-12 text-lg")}
                 <span class="text-[#5E6D7E] font-bold">+</span>
-                <div class="w-12 h-12 rounded-full bg-[#16A37B] text-white flex items-center justify-center font-bold text-lg">${escapeHTML(state.couple.partnerB.name[0])}</div>
+                ${renderPartnerAvatar(state.couple.partnerB, "#16A37B", "w-12 h-12 text-lg")}
               </div>
               <div class="mb-5">
                 ${state.couple.partnerJoined ? `
