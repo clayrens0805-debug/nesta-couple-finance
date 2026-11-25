@@ -2016,7 +2016,7 @@
     }
 
     function updateNavHighlight() {
-      const isLanding = state.activePage === 'landing';
+      const isLanding = state.activePage === 'landing' || state.activePage === 'auth' || !state.isAuthenticated;
       const showDesktopSidebar = !isLanding && state.sidebarOpen !== false;
       const sidebarEl = document.getElementById('desktop-sidebar');
       sidebarEl.classList.toggle('md:flex', showDesktopSidebar);
