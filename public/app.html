@@ -75,9 +75,100 @@
       border-color: #16A37B !important;
       transition: all 250ms ease;
     }
+    @keyframes nestaPageIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes nestaCardIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes nestaModalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes nestaBackdropIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes nestaToastIn {
+      from { opacity: 0; transform: translateY(18px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes nestaPulseSoft {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.5; }
+    }
+    .nesta-page-enter {
+      animation: nestaPageIn 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .nesta-page-enter .card-nesta {
+      animation: nestaCardIn 540ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .nesta-page-enter .card-nesta:nth-child(2) { animation-delay: 50ms; }
+    .nesta-page-enter .card-nesta:nth-child(3) { animation-delay: 100ms; }
+    .nesta-page-enter .card-nesta:nth-child(4) { animation-delay: 150ms; }
+    .nesta-page-enter .card-nesta:nth-child(5) { animation-delay: 200ms; }
+    .nesta-pulse-dot {
+      animation: nestaPulseSoft 2.6s ease-in-out infinite;
+    }
+    .card-nesta {
+      transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .btn-primary, .btn-emerald, button {
+      transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), background-color 240ms ease, opacity 240ms ease, box-shadow 240ms ease;
+    }
+    .btn-primary:active, .btn-emerald:active {
+      transform: scale(0.975);
+    }
+    #expense-modal:not(.hidden) > div:first-child,
+    #deposit-modal:not(.hidden) > div:first-child,
+    #bill-pay-modal:not(.hidden) > div:first-child,
+    #wrapup-modal:not(.hidden) > div:first-child,
+    #share-modal:not(.hidden) > div:first-child,
+    #confirm-modal:not(.hidden) > div:first-child,
+    #unbind-modal:not(.hidden) > div:first-child,
+    #join-confirm-modal:not(.hidden) > div:first-child {
+      animation: nestaBackdropIn 320ms ease both;
+    }
+    #expense-modal:not(.hidden) > div:nth-child(2),
+    #deposit-modal:not(.hidden) > div:nth-child(2),
+    #bill-pay-modal:not(.hidden) > div:nth-child(2),
+    #wrapup-modal:not(.hidden) > div:nth-child(2),
+    #share-modal:not(.hidden) > div:nth-child(2),
+    #confirm-modal:not(.hidden) > div:nth-child(2),
+    #unbind-modal:not(.hidden) > div:nth-child(2),
+    #join-confirm-modal:not(.hidden) > div:nth-child(2) {
+      animation: nestaModalIn 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    #toast:not(.hidden) {
+      animation: nestaToastIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    #ios-swipe-indicator {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      z-index: 90;
+      width: 42px;
+      height: 42px;
+      border-radius: 9999px;
+      background: rgba(15, 30, 40, 0.88);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(15, 30, 40, 0.25);
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-48px, -50%) scale(0.85);
+      transition: opacity 120ms ease;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
+  <div id="ios-swipe-indicator" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+  </div>
 
   <!-- Desktop Collapsible Left Sidebar -->
   <aside id="desktop-sidebar" class="hidden md:flex md:flex-col md:w-60 lg:w-64 md:fixed md:inset-y-0 md:left-0 bg-[#0F1E28] text-white z-30">
@@ -548,6 +639,37 @@
           <button type="submit" id="unbind-submit-btn" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold">Ya, Putuskan Koneksi</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- JOIN SPACE CONFIRMATION MODAL -->
+  <div id="join-confirm-modal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0F1E28]/50 backdrop-blur-sm" onclick="closeJoinConfirmModal()"></div>
+    <div class="relative w-full max-w-md bg-white rounded-2xl border border-[#EAE7DF] shadow-2xl p-6 z-10">
+      <div class="flex items-center justify-between mb-3">
+        <h3 id="jc-title" class="text-lg font-bold text-[#101D2B]">Konfirmasi Gabung Ruang</h3>
+        <button type="button" onclick="closeJoinConfirmModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2] text-[#5E6D7E]"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <p id="jc-desc" class="text-xs text-[#5E6D7E] mb-4">Pastikan detail ruang di bawah ini milik pasanganmu sebelum menghubungkan akun.</p>
+      <div class="p-4 rounded-xl bg-[#FAFDFB] border border-[#CBE7DB] space-y-2 mb-4">
+        <div class="flex items-center justify-between gap-2 text-xs">
+          <span id="jc-lbl-space" class="text-[#5E6D7E]">Nama Ruang</span>
+          <span id="jc-val-space" class="font-bold text-[#101D2B] text-right">-</span>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-xs">
+          <span id="jc-lbl-owner" class="text-[#5E6D7E]">Pemilik Ruang</span>
+          <span id="jc-val-owner" class="font-bold text-[#0E4D38] text-right">-</span>
+        </div>
+        <div class="flex items-center justify-between gap-2 text-xs">
+          <span id="jc-lbl-code" class="text-[#5E6D7E]">Kode Undangan</span>
+          <span id="jc-val-code" class="font-mono font-bold text-[#101D2B]">-</span>
+        </div>
+      </div>
+      <div id="jc-error" class="text-xs text-red-600 mb-3 hidden"></div>
+      <div class="flex items-center justify-end gap-2">
+        <button type="button" id="jc-cancel-btn" onclick="closeJoinConfirmModal()" class="px-4 py-2 rounded-xl border border-[#EAE7DF] text-xs font-semibold text-[#5E6D7E]">Batal</button>
+        <button type="button" id="jc-confirm-btn" onclick="executeConfirmedJoin()" class="btn-emerald px-4 py-2 rounded-xl text-xs font-semibold">Ya, Hubungkan Sekarang</button>
+      </div>
     </div>
   </div>
 
@@ -1235,12 +1357,132 @@
       else el.classList.add('hidden');
     }
 
-    function navigate(page) {
+    let navHistory = ['dashboard'];
+    let lastBackPressAt = 0;
+
+    function pushNestaHistory(page) {
+      try {
+        if (window.history && window.history.pushState) {
+          window.history.pushState({ nestaPage: page }, '', window.location.href);
+        }
+      } catch (e) {}
+    }
+
+    function navigate(page, isBack) {
+      if (!isBack && state.activePage && state.activePage !== page) {
+        navHistory.push(state.activePage);
+        if (navHistory.length > 25) navHistory.shift();
+        if (state.isAuthenticated) pushNestaHistory(page);
+      }
       state.activePage = page;
       saveState();
       render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    (function initSystemBackGuard() {
+      try {
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState({ nestaRoot: true }, '', window.location.href);
+          window.history.pushState({ nestaPage: 'dashboard' }, '', window.location.href);
+        }
+      } catch (e) {}
+
+      window.addEventListener('popstate', () => {
+        if (!state.isAuthenticated) return;
+        const handled = goBackPage();
+        if (handled) {
+          pushNestaHistory(state.activePage);
+          return;
+        }
+        const now = Date.now();
+        if (now - lastBackPressAt < 2000) {
+          // User pressed Back twice within 2 seconds: allow exit
+          return;
+        }
+        lastBackPressAt = now;
+        pushNestaHistory('dashboard');
+        showToast(state.lang === 'en' ? 'Press Back again to exit NESTA' : 'Tekan Back sekali lagi untuk keluar');
+      });
+    })();
+
+    function goBackPage() {
+      const modalIds = [
+        ['join-confirm-modal', closeJoinConfirmModal],
+        ['unbind-modal', closeUnbindModal],
+        ['expense-modal', closeExpenseModal],
+        ['deposit-modal', closeDepositModal],
+        ['bill-pay-modal', closeBillPayModal],
+        ['wrapup-modal', closeWrapupModal],
+        ['share-modal', closeShareModal],
+        ['confirm-modal', closeConfirmModal]
+      ];
+      for (const [id, fn] of modalIds) {
+        const el = document.getElementById(id);
+        if (el && !el.classList.contains('hidden')) {
+          fn();
+          return true;
+        }
+      }
+      if (state.activePage !== 'dashboard') {
+        const prev = navHistory.pop() || 'dashboard';
+        navigate(prev === state.activePage ? 'dashboard' : prev, true);
+        return true;
+      }
+      return false;
+    }
+
+    (function initIOSSwipeBack() {
+      let startX = 0, startY = 0, tracking = false, lastDx = 0;
+      const getInd = () => document.getElementById('ios-swipe-indicator');
+
+      document.addEventListener('touchstart', (e) => {
+        if (!state.isAuthenticated || !e.touches || e.touches.length !== 1) return;
+        const t = e.touches[0];
+        if (t.clientX <= 110) {
+          startX = t.clientX;
+          startY = t.clientY;
+          lastDx = 0;
+          tracking = true;
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!tracking || !e.touches || e.touches.length !== 1) return;
+        const t = e.touches[0];
+        const dx = t.clientX - startX;
+        const dy = Math.abs(t.clientY - startY);
+        if (dy > 45 && dx < 35) {
+          tracking = false;
+          const ind = getInd();
+          if (ind) { ind.style.opacity = '0'; ind.style.transform = 'translate(-48px, -50%) scale(0.85)'; }
+          return;
+        }
+        if (dx > 12 && state.activePage !== 'dashboard') {
+          lastDx = dx;
+          const ind = getInd();
+          if (ind) {
+            const progress = Math.min(1, dx / 90);
+            const tx = Math.min(28, -42 + progress * 70);
+            ind.style.opacity = String(Math.min(1, progress * 1.1));
+            ind.style.transform = `translate(${tx}px, -50%) scale(${0.85 + progress * 0.15})`;
+          }
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', () => {
+        const ind = getInd();
+        if (ind) {
+          ind.style.opacity = '0';
+          ind.style.transform = 'translate(-48px, -50%) scale(0.85)';
+        }
+        if (tracking && lastDx > 72) {
+          goBackPage();
+        }
+        tracking = false;
+        lastDx = 0;
+      }, { passive: true });
+    })();
 
     function toggleSidebar(show) {
       state.sidebarOpen = show;
@@ -1614,7 +1856,21 @@
           });
           saveState();
           render();
-          showToast('Penyelesaian bulan ini telah ditandai lunas!');
+          showToast(state.lang === 'en' ? 'Settlement marked as paid!' : 'Penyelesaian bulan ini telah ditandai lunas!');
+        }
+      );
+    }
+
+    function deleteSettlement(id) {
+      const isEn = state.lang === 'en';
+      openConfirm(
+        isEn ? 'Undo Settlement' : 'Batalkan Pelunasan',
+        isEn ? 'Remove this settlement record and restore the advance balance?' : 'Hapus catatan pelunasan ini dan kembalikan perhitungan talangan?',
+        () => {
+          state.settlements = (state.settlements || []).filter(s => s.id !== id);
+          saveState();
+          render();
+          showToast(isEn ? 'Settlement removed.' : 'Catatan pelunasan dibatalkan.');
         }
       );
     }
@@ -3103,6 +3359,21 @@
                 <span>${t('balanced_msg')}</span>
               </div>
             `}
+            ${(() => {
+              const mSets = (state.settlements || []).filter(s => s.date && s.date.startsWith(state.selectedMonth));
+              if (!mSets.length) return '';
+              return `<div class="mt-3 pt-3 border-t border-[#F0EDE5] space-y-1.5">
+                <div class="text-[11px] font-semibold text-[#5E6D7E]">${state.lang === 'en' ? 'Recorded Settlements' : 'Riwayat Pelunasan Bulan Ini'}</div>
+                ${mSets.map(s => `
+                  <div class="flex items-center justify-between gap-2 text-xs bg-[#F7F6F2] px-3 py-2 rounded-xl">
+                    <span class="text-[#101D2B]"><strong>${escapeHTML(partnerName(s.from))}</strong> &rarr; <strong>${escapeHTML(partnerName(s.to))}</strong> • <span class="font-semibold tabular-nums text-[#0E4D38]">${formatIDR(s.amount)}</span></span>
+                    <button type="button" onclick="deleteSettlement('${s.id}')" class="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600 hover:text-red-700 shrink-0" title="${state.lang === 'en' ? 'Undo' : 'Batalkan'}">
+                      <i data-lucide="rotate-ccw" class="w-3 h-3"></i> ${state.lang === 'en' ? 'Undo' : 'Batalkan'}
+                    </button>
+                  </div>
+                `).join('')}
+              </div>`;
+            })()}
           </div>
 
           <div class="lg:col-span-5 card-nesta p-6 flex flex-col justify-between">
@@ -3211,6 +3482,38 @@
       return s.trim().toLowerCase();
     }
 
+    let pendingJoinConfirmCode = '';
+
+    function closeJoinConfirmModal() {
+      const m = document.getElementById('join-confirm-modal');
+      if (!m) return;
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function openJoinConfirmModal(code, spaceName, ownerName) {
+      const isEn = state.lang === 'en';
+      pendingJoinConfirmCode = code;
+      const m = document.getElementById('join-confirm-modal');
+      if (!m) return;
+      document.getElementById('jc-title').textContent = isEn ? 'Confirm Join Space' : 'Konfirmasi Gabung Ruang';
+      document.getElementById('jc-desc').textContent = isEn
+        ? 'Please verify this space belongs to your partner before connecting your account.'
+        : 'Pastikan detail ruang di bawah ini milik pasanganmu sebelum menghubungkan akun.';
+      document.getElementById('jc-lbl-space').textContent = isEn ? 'Space Name' : 'Nama Ruang';
+      document.getElementById('jc-lbl-owner').textContent = isEn ? 'Space Owner' : 'Pemilik Ruang';
+      document.getElementById('jc-lbl-code').textContent = isEn ? 'Invite Code' : 'Kode Undangan';
+      document.getElementById('jc-val-space').textContent = spaceName || (isEn ? 'Partner’s Shared Space' : 'Ruang Bersama Pasangan');
+      document.getElementById('jc-val-owner').textContent = ownerName || (isEn ? 'Partner' : 'Pasangan');
+      document.getElementById('jc-val-code').textContent = code;
+      document.getElementById('jc-cancel-btn').textContent = isEn ? 'Cancel' : 'Batal';
+      document.getElementById('jc-confirm-btn').textContent = isEn ? 'Yes, Connect Now' : 'Ya, Hubungkan Sekarang';
+      document.getElementById('jc-error').classList.add('hidden');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
     async function joinExistingSpace(e) {
       e.preventDefault();
       const isEn = state.lang === 'en';
@@ -3232,15 +3535,70 @@
         msgEl.classList.add('text-red-600');
         return;
       }
+
       if (!sbClient) {
-        msgEl.textContent = isEn ? 'Cloud sync is not connected.' : 'Sinkronisasi cloud belum terhubung.';
-        msgEl.classList.add('text-red-600');
+        openJoinConfirmModal(shortCode, isEn ? 'Partner’s Shared Space (Preview)' : 'Ruang Bersama Pasangan (Preview)', 'Partner');
         return;
       }
 
       if (btnEl) btnEl.disabled = true;
-      msgEl.textContent = isEn ? 'Connecting to partner’s space...' : 'Menghubungkan ke ruang pasangan...';
+      msgEl.textContent = isEn ? 'Checking invite code...' : 'Memeriksa kode undangan...';
       msgEl.classList.add('text-[#5E6D7E]');
+
+      const withTimeout = (p, ms) => Promise.race([
+        p,
+        new Promise((_, rej) => setTimeout(() => rej(new Error(isEn ? 'Connection timed out. Please refresh and try again.' : 'Koneksi habis waktu. Coba refresh halaman lalu ulangi.')), ms))
+      ]);
+
+      try {
+        const { data: preview, error: prevErr } = await withTimeout(
+          sbClient.rpc('preview_nesta_space', { p_invite: shortCode }),
+          10000
+        );
+        if (!prevErr && preview) {
+          if (!preview.found) {
+            msgEl.textContent = isEn ? 'Invite code not found.' : 'Kode undangan tidak ditemukan.';
+            msgEl.classList.remove('text-[#5E6D7E]');
+            msgEl.classList.add('text-red-600');
+            return;
+          }
+          if (preview.is_full) {
+            msgEl.textContent = isEn ? 'This space is already full (2/2 connected).' : 'Ruang ini sudah penuh (sudah terhubung dengan pasangan).';
+            msgEl.classList.remove('text-[#5E6D7E]');
+            msgEl.classList.add('text-red-600');
+            return;
+          }
+          msgEl.classList.add('hidden');
+          openJoinConfirmModal(shortCode, preview.space_name, preview.owner_name);
+        } else {
+          // Fallback if preview RPC is not yet installed in Supabase
+          msgEl.classList.add('hidden');
+          openJoinConfirmModal(shortCode, isEn ? 'Partner’s Shared Space' : 'Ruang Bersama Pasangan', isEn ? 'Verified via Invite Code' : 'Terverifikasi lewat Kode Undangan');
+        }
+      } catch (err) {
+        msgEl.textContent = (err && err.message) || (isEn ? 'Failed to check code.' : 'Gagal memeriksa kode.');
+        msgEl.classList.remove('text-[#5E6D7E]');
+        msgEl.classList.add('text-red-600');
+      } finally {
+        if (btnEl) btnEl.disabled = false;
+      }
+    }
+
+    async function executeConfirmedJoin() {
+      const isEn = state.lang === 'en';
+      const errEl = document.getElementById('jc-error');
+      const btnEl = document.getElementById('jc-confirm-btn');
+      const shortCode = pendingJoinConfirmCode;
+      if (!shortCode) return;
+
+      if (!sbClient) {
+        closeJoinConfirmModal();
+        showToast(isEn ? 'Preview mode: confirmation works!' : 'Mode preview: konfirmasi berhasil!');
+        return;
+      }
+
+      if (btnEl) btnEl.disabled = true;
+      if (errEl) errEl.classList.add('hidden');
 
       const withTimeout = (p, ms) => Promise.race([
         p,
@@ -3256,10 +3614,7 @@
           user = userData && userData.user;
         }
         if (!user) {
-          msgEl.textContent = isEn ? 'Please sign in first.' : 'Silakan masuk terlebih dahulu.';
-          msgEl.classList.remove('text-[#5E6D7E]');
-          msgEl.classList.add('text-red-600');
-          return;
+          throw new Error(isEn ? 'Please sign in first.' : 'Silakan masuk terlebih dahulu.');
         }
         const myName = (state.currentUser && state.currentUser.name) || (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || 'Partner';
         const { data: joined, error: joinErr } = await withTimeout(
@@ -3267,19 +3622,18 @@
           12000
         );
         if (joinErr || !joined) {
-          msgEl.textContent = (joinErr && joinErr.message) || (isEn ? 'Invite code not found or space is already full.' : 'Kode undangan tidak ditemukan atau ruang sudah terisi.');
-          msgEl.classList.remove('text-[#5E6D7E]');
-          msgEl.classList.add('text-red-600');
-          return;
+          throw new Error((joinErr && joinErr.message) || (isEn ? 'Invite code not found or space is already full.' : 'Kode undangan tidak ditemukan atau ruang sudah terisi.'));
         }
         await withTimeout(loadUserSpace(user), 12000);
+        closeJoinConfirmModal();
         state.activePage = 'couple';
         render();
         showToast(isEn ? 'Connected to partner’s space!' : 'Berhasil terhubung ke ruang pasangan!');
       } catch (err) {
-        msgEl.textContent = (err && err.message) || (isEn ? 'Failed to connect.' : 'Gagal menghubungkan ruang.');
-        msgEl.classList.remove('text-[#5E6D7E]');
-        msgEl.classList.add('text-red-600');
+        if (errEl) {
+          errEl.textContent = (err && err.message) || (isEn ? 'Failed to connect.' : 'Gagal menghubungkan ruang.');
+          errEl.classList.remove('hidden');
+        }
       } finally {
         if (btnEl) btnEl.disabled = false;
       }
@@ -3432,7 +3786,11 @@
           <h3 class="text-xs font-bold uppercase tracking-wider text-[#5E6D7E] mb-2.5">${state.lang === 'en' ? 'Shared Pot Deposit History' : 'Riwayat Setoran Kas Bersama'}</h3>
           <div class="divide-y divide-[#EAE7DF] bg-white rounded-xl border border-[#EAE7DF]">
             ${state.poolDeposits.length === 0 ? `
-              <div class="p-4 text-xs text-[#5E6D7E] text-center">${state.lang === 'en' ? 'No deposits to Shared Pot yet.' : 'Belum ada setoran ke Kas Bersama.'}</div>
+              <div class="p-6 text-center space-y-2">
+                <div class="w-9 h-9 rounded-full bg-[#EEF7F3] text-[#16A37B] flex items-center justify-center mx-auto"><i data-lucide="wallet" class="w-4 h-4"></i></div>
+                <div class="text-xs text-[#5E6D7E]">${state.lang === 'en' ? 'No deposits to Shared Pot yet.' : 'Belum ada setoran ke Kas Bersama.'}</div>
+                <button onclick="openDepositModal()" class="text-xs font-semibold text-[#0E4D38] hover:underline">+ ${state.lang === 'en' ? 'Make First Deposit' : 'Buat Setoran Pertama'}</button>
+              </div>
             ` : state.poolDeposits.slice(0, 6).map(d => `
               <div class="px-4 py-3 flex items-center justify-between gap-3 text-xs">
                 <div>
@@ -3462,7 +3820,7 @@
               <div class="mb-5 flex flex-col items-center gap-2">
                 ${state.couple.partnerJoined ? `
                   <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EEF7F3] border border-[#CBE7DB] text-[#0E4D38] text-xs font-semibold">
-                    <span class="w-2 h-2 rounded-full bg-[#16A37B]"></span>
+                    <span class="w-2 h-2 rounded-full bg-[#16A37B] nesta-pulse-dot"></span>
                     ${state.lang === 'en' ? 'Connected:' : 'Terhubung:'} ${escapeHTML(state.couple.partnerA.name)} &amp; ${escapeHTML(state.couple.partnerB.name)}
                   </span>
                   <button type="button" onclick="openUnbindModal()" class="text-[11px] font-semibold text-red-600 hover:text-red-700 hover:underline">
@@ -3572,7 +3930,17 @@
               <span class="font-medium text-[#0E4D38]">${state.lang === 'en' ? 'Settled ✓ — No advance balance owed in' : 'Seimbang ✓ — Tidak ada utang talangan pada'} ${formatMonthLabel(state.selectedMonth)}.</span>
             `}
           </div>
-          ${settle.amount > 0 ? `<button onclick="markSettlementPaid()" class="btn-primary px-4 py-2 rounded-xl text-xs font-medium shrink-0">${t('settle_btn')}</button>` : ''}
+          <div class="flex items-center gap-2 shrink-0">
+            ${settle.amount > 0 ? `<button onclick="markSettlementPaid()" class="btn-primary px-4 py-2 rounded-xl text-xs font-medium">${t('settle_btn')}</button>` : ''}
+            ${(() => {
+              const mSets = (state.settlements || []).filter(s => s.date && s.date.startsWith(state.selectedMonth));
+              if (!mSets.length) return '';
+              const latest = mSets[0];
+              return `<button type="button" onclick="deleteSettlement('${latest.id}')" class="px-3 py-2 rounded-xl border border-red-200 bg-white text-red-600 hover:bg-red-50 text-xs font-semibold inline-flex items-center gap-1.5">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> ${state.lang === 'en' ? 'Undo Settlement' : 'Batalkan Pelunasan'}
+              </button>`;
+            })()}
+          </div>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-3 mb-5">
@@ -3972,14 +4340,14 @@
                   <button type="submit" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold">${isEn ? 'Save' : 'Simpan'}</button>
                 </div>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label class="block text-[11px] font-medium text-[#5E6D7E] mb-1">${isEn ? 'Birth Date' : 'Tanggal Lahir'}</label>
-                  <input type="date" id="acc-birthdate" value="${escapeHTML((state.currentUser && state.currentUser.birthDate) || '')}" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white" />
+                  <label class="block text-[11px] font-semibold text-[#5E6D7E] mb-1">${isEn ? 'Birth Date' : 'Tanggal Lahir'}</label>
+                  <input type="date" id="acc-birthdate" value="${escapeHTML((state.currentUser && state.currentUser.birthDate) || '')}" class="w-full h-[40px] px-3 rounded-xl border border-[#EAE7DF] text-xs bg-white" />
                 </div>
                 <div>
-                  <label class="block text-[11px] font-medium text-[#5E6D7E] mb-1">${isEn ? 'Relationship Stage' : 'Status Hubungan'}</label>
-                  <select id="acc-stage" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs bg-white">
+                  <label class="block text-[11px] font-semibold text-[#5E6D7E] mb-1">${isEn ? 'Relationship Stage' : 'Status Hubungan'}</label>
+                  <select id="acc-stage" class="w-full h-[40px] px-3 rounded-xl border border-[#EAE7DF] text-xs bg-white">
                     <option value="Pacaran" ${(state.currentUser && state.currentUser.relStage === 'Pacaran') ? 'selected' : ''}>${isEn ? 'Dating' : 'Pacaran'}</option>
                     <option value="Persiapan Menikah" ${(state.currentUser && state.currentUser.relStage === 'Persiapan Menikah') ? 'selected' : ''}>${isEn ? 'Wedding Prep' : 'Persiapan Menikah'}</option>
                     <option value="Baru Menikah (< 2 thn)" ${(state.currentUser && state.currentUser.relStage === 'Baru Menikah (< 2 thn)') ? 'selected' : ''}>${isEn ? 'Newlywed (< 2 yrs)' : 'Baru Menikah (< 2 thn)'}</option>
@@ -3987,8 +4355,8 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[11px] font-medium text-[#5E6D7E] mb-1">${isEn ? 'City' : 'Kota'}</label>
-                  <input type="text" id="acc-city" value="${escapeHTML((state.currentUser && state.currentUser.city) || '')}" placeholder="${isEn ? 'e.g. Jakarta' : 'Contoh: Jakarta'}" class="w-full px-3 py-2 rounded-xl border border-[#EAE7DF] text-xs" />
+                  <label class="block text-[11px] font-semibold text-[#5E6D7E] mb-1">${isEn ? 'City' : 'Kota'}</label>
+                  <input type="text" id="acc-city" value="${escapeHTML((state.currentUser && state.currentUser.city) || '')}" placeholder="${isEn ? 'e.g. Jakarta' : 'Contoh: Jakarta'}" class="w-full h-[40px] px-3 rounded-xl border border-[#EAE7DF] text-xs bg-white" />
                 </div>
               </div>
             </form>
@@ -4179,8 +4547,11 @@
       }
     }
 
+    let lastRenderedPage = null;
     function render() {
       const container = document.getElementById('app-content');
+      const pageChanged = lastRenderedPage !== state.activePage;
+      lastRenderedPage = state.activePage;
       if (state.activePage === 'landing') container.innerHTML = renderLanding();
       else if (state.activePage === 'dashboard') container.innerHTML = renderDashboard();
       else if (state.activePage === 'couple') container.innerHTML = renderCoupleSpace();
@@ -4190,6 +4561,11 @@
       else if (state.activePage === 'goals') container.innerHTML = renderGoals();
       else if (state.activePage === 'settings') container.innerHTML = renderSettings();
 
+      if (pageChanged && container) {
+        container.classList.remove('nesta-page-enter');
+        void container.offsetWidth;
+        container.classList.add('nesta-page-enter');
+      }
       updateNavHighlight();
       if (window.lucide) lucide.createIcons();
       renderCharts();
