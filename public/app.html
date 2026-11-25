@@ -587,10 +587,12 @@
         .from('nesta_spaces')
         .select('*')
         .or(`owner_id.eq.${user.id},partner_id.eq.${user.id}`)
-        .limit(1);
+        .limit(10);
 
       if (spaces && spaces.length > 0) {
-        const sp = spaces[0];
+        const sp = spaces.find(s => s.partner_id === user.id)
+          || spaces.find(s => s.owner_id === user.id && s.partner_id)
+          || spaces[0];
         currentSpaceId = sp.id;
         applySharedPayload(sp.data);
         const role = sp.owner_id === user.id ? 'partner_a' : 'partner_b';
@@ -2524,7 +2526,7 @@
 
           if (roleChoice === 'partner_b') {
             const entered = (document.getElementById('auth-invite-code').value || '').trim();
-            const shortCode = entered.split('/').pop();
+            const shortCode = extractInviteCode(entered);
             const { data: joined, error: joinErr } = await sbClient.rpc('join_nesta_space', { p_invite: shortCode, p_partner_name: name });
             if (joinErr || !joined) {
               errEl.textContent = (joinErr && joinErr.message) || (isEn ? 'Invite code not found.' : 'Kode undangan tidak ditemukan.');
@@ -3120,6 +3122,77 @@
       `;
     }
 
+    function extractInviteCode(raw) {
+      let s = (raw || '').trim();
+      if (!s) return '';
+      if (s.includes('invite=')) {
+        s = s.split('invite=').pop().split('&')[0].split('#')[0];
+      } else if (s.includes('/')) {
+        s = s.split('/').pop().split('?')[0].split('#')[0];
+      }
+      return s.trim().toLowerCase();
+    }
+
+    async function joinExistingSpace(e) {
+      e.preventDefault();
+      const isEn = state.lang === 'en';
+      const inputEl = document.getElementById('join-space-code');
+      const msgEl = document.getElementById('join-space-msg');
+      const btnEl = document.getElementById('join-space-btn');
+      if (!inputEl || !msgEl) return;
+
+      const shortCode = extractInviteCode(inputEl.value);
+      msgEl.classList.remove('hidden', 'text-red-600', 'text-[#0E4D38]');
+
+      if (!shortCode) {
+        msgEl.textContent = isEn ? 'Please enter an invite code or link.' : 'Masukkan kode atau tautan undangan pasangan.';
+        msgEl.classList.add('text-red-600');
+        return;
+      }
+      if (shortCode === getShortInviteCode().toLowerCase()) {
+        msgEl.textContent = isEn ? 'That is your own invite code. Ask for your partner’s code.' : 'Itu kode ruang Anda sendiri. Masukkan kode milik pasangan Anda.';
+        msgEl.classList.add('text-red-600');
+        return;
+      }
+      if (!sbClient) {
+        msgEl.textContent = isEn ? 'Cloud sync is not connected.' : 'Sinkronisasi cloud belum terhubung.';
+        msgEl.classList.add('text-red-600');
+        return;
+      }
+
+      if (btnEl) btnEl.disabled = true;
+      msgEl.textContent = isEn ? 'Connecting to partner’s space...' : 'Menghubungkan ke ruang pasangan...';
+      msgEl.classList.add('text-[#5E6D7E]');
+
+      try {
+        const { data: userData } = await sbClient.auth.getUser();
+        const user = userData && userData.user;
+        if (!user) {
+          msgEl.textContent = isEn ? 'Please sign in first.' : 'Silakan masuk terlebih dahulu.';
+          msgEl.classList.remove('text-[#5E6D7E]');
+          msgEl.classList.add('text-red-600');
+          return;
+        }
+        const myName = (state.currentUser && state.currentUser.name) || (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || 'Partner';
+        const { data: joined, error: joinErr } = await sbClient.rpc('join_nesta_space', { p_invite: shortCode, p_partner_name: myName });
+        if (joinErr || !joined) {
+          msgEl.textContent = (joinErr && joinErr.message) || (isEn ? 'Invite code not found or space is already full.' : 'Kode undangan tidak ditemukan atau ruang sudah terisi.');
+          msgEl.classList.remove('text-[#5E6D7E]');
+          msgEl.classList.add('text-red-600');
+          return;
+        }
+        await loadUserSpace(user);
+        state.activePage = 'couple';
+        render();
+      } catch (err) {
+        msgEl.textContent = (err && err.message) || (isEn ? 'Failed to connect.' : 'Gagal menghubungkan ruang.');
+        msgEl.classList.remove('text-[#5E6D7E]');
+        msgEl.classList.add('text-red-600');
+      } finally {
+        if (btnEl) btnEl.disabled = false;
+      }
+    }
+
     function renderCoupleSpace() {
       const kas = calculateKasBersama();
 
@@ -3199,14 +3272,26 @@
               <div class="text-left text-[11px] text-[#5E6D7E] bg-[#EEF7F3]/60 rounded-xl p-3 border border-[#D8ECE3] space-y-1">
                 <div class="font-semibold text-[#0E4D38]">${state.lang === 'en' ? 'How Your Partner Joins:' : 'Cara Pasangan Bergabung:'}</div>
                 <div>${state.lang === 'en' ? '1. Send the invite link above to your partner.' : '1. Kirim tautan di atas ke WhatsApp pasangan.'}</div>
-                <div>${state.lang === 'en' ? '2. Partner opens NESTA → selects Create Account.' : '2. Pasangan buka NESTA → pilih Daftar Akun Baru.'}</div>
-                <div>${state.lang === 'en' ? '3. Select Join Partner Invite & paste the invite link.' : '3. Pilih Gabung Undangan Pasangan & tempel tautan undangan.'}</div>
+                <div>${state.lang === 'en' ? '2. New user: open link → Create Account.' : '2. Belum punya akun: buka link → Daftar Akun Baru.'}</div>
+                <div>${state.lang === 'en' ? '3. Already have an account? Go to Couple Space → enter the code below.' : '3. Sudah punya akun? Buka Couple Space → masukkan kode di bawah.'}</div>
               </div>
             </div>
           </div>
 
-          <div class="lg:col-span-7 card-nesta p-6">
-            <h2 class="text-lg font-bold text-[#101D2B] mb-4">${state.lang === 'en' ? 'Couple Space Settings' : 'Pengaturan Ruang Pasangan'}</h2>
+          <div class="lg:col-span-7 flex flex-col gap-6">
+            <!-- Connect to Partner's Space (Already Have an Account) -->
+            <div class="card-nesta p-6 border-[#D8ECE3] bg-[#FAFDFB]">
+              <h2 class="text-base font-bold text-[#101D2B]">${state.lang === 'en' ? 'Join Partner’s Space (Already Have an Account?)' : 'Gabung ke Ruang Pasangan (Sudah Punya Akun?)'}</h2>
+              <p class="text-xs text-[#5E6D7E] mt-1 mb-3.5">${state.lang === 'en' ? 'Already signed in separately? Enter your partner’s 6-character invite code (e.g. mb66tk) or full link to connect into one shared space.' : 'Sudah terlanjur punya akun masing-masing? Masukkan kode undangan 6 huruf milik pasangan (contoh: mb66tk) atau link undangannya untuk langsung terhubung.'}</p>
+              <form onsubmit="joinExistingSpace(event)" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                <input type="text" id="join-space-code" placeholder="${state.lang === 'en' ? 'Invite code or link (e.g. mb66tk)' : 'Kode atau link undangan (mis. mb66tk)'}" class="flex-1 px-3.5 py-2.5 rounded-xl border border-[#EAE7DF] bg-white text-sm" />
+                <button type="submit" id="join-space-btn" class="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap">${state.lang === 'en' ? 'Connect Space' : 'Hubungkan Ruang'}</button>
+              </form>
+              <div id="join-space-msg" class="text-xs mt-2.5 hidden"></div>
+            </div>
+
+            <div class="card-nesta p-6">
+              <h2 class="text-lg font-bold text-[#101D2B] mb-4">${state.lang === 'en' ? 'Couple Space Settings' : 'Pengaturan Ruang Pasangan'}</h2>
             <form onsubmit="updateCoupleSettings(event)" class="space-y-4">
               <div>
                 <label class="block text-xs font-medium text-[#5E6D7E] mb-1">${state.lang === 'en' ? 'Couple Space Name' : 'Nama Ruang Pasangan'}</label>
@@ -3224,10 +3309,9 @@
               </div>
               <button type="submit" class="btn-emerald px-5 py-2.5 rounded-xl text-sm font-medium">${state.lang === 'en' ? 'Save Changes' : 'Simpan Perubahan'}</button>
             </form>
+            </div>
           </div>
         </div>
-
-
       `;
     }
 
