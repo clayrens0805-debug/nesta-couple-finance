@@ -1005,6 +1005,9 @@
               if (payload.new.partner_id) {
                 state.couple.partnerJoined = true;
               }
+              if (payload.new.plan) {
+                state.couple.plan = payload.new.plan;
+              }
               saveStateLocalOnly();
               render();
             }
@@ -2067,6 +2070,15 @@
       });
 
 
+
+      const spBadge = document.getElementById('sidebar-plan-badge');
+      if (spBadge) {
+        const prem = isPremiumSpace();
+        spBadge.textContent = prem ? 'CLOSER' : 'FREE';
+        spBadge.className = prem
+          ? 'text-[10px] px-1.5 py-0.5 rounded bg-[#16A37B] text-white font-bold'
+          : 'text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white';
+      }
 
       document.querySelectorAll('[data-nav]').forEach(btn => {
         const isActive = btn.getAttribute('data-nav') === state.activePage;
@@ -5819,6 +5831,18 @@
     window.addEventListener('load', () => {
       if (window.lucide) lucide.createIcons();
       renderCharts();
+    });
+
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible' && sbClient && state.isAuthenticated) {
+        try {
+          const { data } = await sbClient.auth.getSession();
+          if (data && data.session && data.session.user) {
+            await loadUserSpace(data.session.user);
+            render();
+          }
+        } catch (e) {}
+      }
     });
   </script>
 </body>
