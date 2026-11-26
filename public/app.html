@@ -1283,6 +1283,66 @@
       return !item || (!item.readOnly && item.status !== 'archived' && item.status !== 'inactive');
     }
 
+    function enforceFreeLimitsLocally() {
+      let changed = false;
+      if (state.archivedCategories && state.archivedCategories.length > 0) {
+        state.archivedCategories = [];
+        changed = true;
+      }
+      if (isPremiumSpace()) {
+        if ((state.goals || []).some(g => !isItemActive(g))) {
+          state.goals = state.goals.map(g => ({ ...g, status: 'active', readOnly: false }));
+          changed = true;
+        }
+        if ((state.bills || []).some(b => !isItemActive(b))) {
+          state.bills = state.bills.map(b => ({ ...b, status: 'active', readOnly: false }));
+          changed = true;
+        }
+        if ((state.customBudgets || []).some(cb => !isItemActive(cb))) {
+          state.customBudgets = state.customBudgets.map(cb => ({ ...cb, status: 'active', readOnly: false }));
+          changed = true;
+        }
+        return changed;
+      }
+      const goals = state.goals || [];
+      goals.forEach((g, idx) => {
+        const shouldActive = idx < 1;
+        if (shouldActive && !isItemActive(g)) {
+          state.goals[idx] = { ...g, status: 'active', readOnly: false };
+          changed = true;
+        } else if (!shouldActive && isItemActive(g)) {
+          state.goals[idx] = { ...g, status: 'archived', readOnly: true };
+          changed = true;
+        }
+      });
+      const bills = state.bills || [];
+      bills.forEach((b, idx) => {
+        const shouldActive = idx < 3;
+        if (shouldActive && !isItemActive(b)) {
+          state.bills[idx] = { ...b, status: 'active', readOnly: false };
+          changed = true;
+        } else if (!shouldActive && isItemActive(b)) {
+          state.bills[idx] = { ...b, status: 'inactive', readOnly: true };
+          changed = true;
+        }
+      });
+      const budgets = state.customBudgets || [];
+      budgets.forEach((cb, idx) => {
+        const shouldActive = idx < 1;
+        if (shouldActive && !isItemActive(cb)) {
+          state.customBudgets[idx] = { ...cb, status: 'active', readOnly: false };
+          changed = true;
+        } else if (!shouldActive && isItemActive(cb)) {
+          state.customBudgets[idx] = { ...cb, status: 'archived', readOnly: true };
+          changed = true;
+        }
+      });
+      if (changed) {
+        state.downgradeAutoLocked = true;
+      }
+      return changed;
+    }
+
     function getExtraCategoriesList() {
       const archived = new Set(state.archivedCategories || []);
       const exp = (state.categories || []).filter(c => !DEFAULT_CATEGORIES.includes(c) && !archived.has(c));
@@ -1295,11 +1355,11 @@
 
     function needsDowngradeReview() {
       if (isPremiumSpace()) return false;
-      const activeGoals = (state.goals || []).filter(isItemActive).length;
-      const activeBills = (state.bills || []).filter(isItemActive).length;
-      const activeBudgets = (state.customBudgets || []).filter(isItemActive).length;
-      const activeExtraCats = getExtraCategoriesList().length;
-      return activeGoals > 1 || activeBills > 3 || activeBudgets > 1 || activeExtraCats > 2;
+      return (
+        (state.goals || []).some(g => !isItemActive(g)) ||
+        (state.bills || []).some(b => !isItemActive(b)) ||
+        (state.customBudgets || []).some(cb => !isItemActive(cb))
+      );
     }
 
     function closeDowngradeModal() {
@@ -1312,18 +1372,20 @@
     let downgradePromptShown = false;
 
     function renderDowngradeBanner() {
-      if (!needsDowngradeReview()) return '';
+      if (isPremiumSpace()) return '';
+      const hasLockedItems = needsDowngradeReview();
+      if (!hasLockedItems && !state.downgradeAutoLocked) return '';
       const isEn = state.lang === 'en';
       return `
         <div class="mb-5 rounded-2xl p-4 bg-[#FDF6EB] border border-[#F5E4C8] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-start gap-3">
             <i data-lucide="alert-triangle" class="w-5 h-5 text-[#D97706] shrink-0 mt-0.5"></i>
             <div class="text-xs text-[#101D2B]">
-              <div class="font-bold text-sm mb-0.5">${isEn ? 'Free Plan Limit: Choose Active Items' : 'Batas Paket Free: Pilih Item yang Tetap Aktif'}</div>
-              <div class="text-[#5E6D7E]">${isEn ? 'Free plan allows 1 active Savings Goal, 3 Bills, 1 Custom Budget & 2 Custom Categories. No data is deleted—unselected items are safely locked (read-only) until you switch or upgrade.' : 'Paket Free maksimal 1 Target Tabungan, 3 Tagihan, 1 Anggaran Kustom & 2 Kategori Kustom aktif. Data tidak dihapus—sisanya akan dikunci (read-only) hingga ditukar atau upgrade.'}</div>
+              <div class="font-bold text-sm mb-0.5">${isEn ? 'Your Account Is Back on the Free Plan' : 'Akun Kamu Kembali ke Paket Free'}</div>
+              <div class="text-[#5E6D7E]">${isEn ? 'Only your top 1 Savings Goal, 3 Bills, and 1 Custom Budget remain active. Older extra items are safely locked (read-only) with no data deleted until you reactivate NESTA Closer.' : 'Hanya 1 Target Tabungan, 3 Tagihan, dan 1 Anggaran Kustom teratas yang tetap aktif. Item lainnya dikunci (read-only) tanpa menghapus data sampai kamu mengaktifkan ulang NESTA Closer.'}</div>
             </div>
           </div>
-          <button type="button" onclick="openDowngradeModal()" class="px-3.5 py-2 rounded-xl bg-[#0F1E28] text-white text-xs font-semibold shrink-0">${isEn ? 'Choose Active Items' : 'Pilih Item Aktif'}</button>
+          <button type="button" onclick="openUpgradeModal('overview')" class="px-3.5 py-2 rounded-xl bg-[#0E4D38] text-white text-xs font-semibold shrink-0">${isEn ? 'Reactivate NESTA Closer' : 'Aktifkan Ulang Closer'}</button>
         </div>
       `;
     }
@@ -1540,7 +1602,7 @@
                 <li>✓ ${isEn ? 'Shared Pot & basic settlement' : 'Kas Bersama & Settlement dasar'}</li>
                 <li>✓ ${isEn ? '1 main + 1 custom budget' : '1 anggaran utama + 1 kustom'}</li>
                 <li>✓ ${isEn ? 'Max 3 bills & 1 active goal' : 'Maks. 3 tagihan & 1 goal aktif'}</li>
-                <li>✓ ${isEn ? 'Max 2 custom categories' : 'Maks. 2 kategori kustom'}</li>
+                <li>✓ ${isEn ? 'Unlimited custom categories' : 'Kategori kustom tanpa batas'}</li>
               </ul>
             </div>
             <button type="button" onclick="closeUpgradeModal()" class="mt-4 w-full py-2 rounded-xl border border-[#EAE7DF] bg-white text-xs font-semibold text-[#5E6D7E]">${isEn ? 'Current / Free Plan' : 'Paket Saat Ini / Gratis'}</button>
@@ -2859,10 +2921,7 @@
 
     function addCatFromSettingsByType(type, inputId, e) {
       e.preventDefault();
-      if (!isPremiumSpace() && getExtraCategoriesList().length >= 2) {
-        openUpgradeModal('categories');
-        return;
-      }
+
       const inp = document.getElementById(inputId);
       const val = (inp.value || '').trim();
       if (!val) return;
@@ -4274,20 +4333,8 @@
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const blocks = [];
-      if (needsDowngradeReview()) {
-        blocks.push(`
-          <div class="mb-4 rounded-2xl p-4 bg-[#FDF6EB] border border-[#F5E4C8] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-start gap-3">
-              <i data-lucide="alert-triangle" class="w-5 h-5 text-[#D97706] shrink-0 mt-0.5"></i>
-              <div class="text-xs text-[#101D2B]">
-                <div class="font-bold text-sm mb-0.5">${isEn ? 'Action Required: Select Active Items for Free Plan' : 'Perlu Konfirmasi: Pilih Item Aktif untuk Paket Free'}</div>
-                <div class="text-[#5E6D7E]">${isEn ? 'Your space has items above NESTA Together limits. No data is deleted—choose which items stay active while others become read-only.' : 'Ruang ini memiliki item melebihi batas Free. Tidak ada data yang dihapus—pilih item yang tetap aktif sementara sisanya menjadi read-only.'}</div>
-              </div>
-            </div>
-            <button onclick="openDowngradeModal()" class="px-3.5 py-2 rounded-xl bg-[#0F1E28] text-white text-xs font-semibold shrink-0">${isEn ? 'Choose Active Items' : 'Pilih Item Aktif'}</button>
-          </div>
-        `);
-      }
+      const dgBanner = renderDowngradeBanner();
+      if (dgBanner) blocks.push(dgBanner);
 
       if (notif.billReminder) {
         const dueSoon = state.bills.filter(b => {
@@ -5303,7 +5350,7 @@
                   </div>
                   <div class="flex items-center justify-between sm:justify-end gap-2.5">
                     ${locked
-                      ? `<button type="button" onclick="openDowngradeModal()" class="px-3 py-1.5 rounded-full text-xs font-medium bg-[#F7F6F2] text-[#5E6D7E] border border-[#EAE7DF]">${state.lang === 'en' ? 'Switch Active' : 'Tukar Aktif'}</button>`
+                      ? `<button type="button" onclick="openUpgradeModal('bills')" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-[#0E4D38] text-white">${state.lang === 'en' ? 'Reactivate Closer' : 'Aktifkan Closer'}</button>`
                       : `<button onclick="toggleBillPaid('${b.id}')" class="px-3 py-1.5 rounded-full text-xs font-medium ${isBillPaid(b) ? 'bg-[#EEF7F3] text-[#16A37B]' : 'bg-[#FDF6EB] text-[#D97706] border border-[#F5E4C8]'}">${isBillPaid(b) ? (state.lang === 'en' ? 'Paid ✓' : 'Lunas ✓') : (state.lang === 'en' ? 'Mark Paid' : 'Tandai Lunas')}</button>`
                     }
                     <button onclick="deleteBill('${b.id}')" class="p-1.5 rounded-lg text-red-600 hover:bg-red-50">
@@ -5319,15 +5366,11 @@
     }
 
     function renderGoals() {
-      const canSwapGoals = !isPremiumSpace() && (state.goals || []).length > 1;
       return `
         ${renderDowngradeBanner()}
-        <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('goals_title')}</h1>
-            <p class="text-sm text-[#5E6D7E] mt-0.5">${t('goals_sub')}</p>
-          </div>
-          ${canSwapGoals && !needsDowngradeReview() ? `<button type="button" onclick="openDowngradeModal()" class="px-3.5 py-2 rounded-xl border border-[#EAE7DF] bg-white text-xs font-semibold text-[#101D2B] self-start sm:self-auto">${state.lang === 'en' ? 'Switch Active Goal (Free Limit)' : 'Tukar Goal Aktif (Batas Free)'}</button>` : ''}
+        <div class="mb-6">
+          <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('goals_title')}</h1>
+          <p class="text-sm text-[#5E6D7E] mt-0.5">${t('goals_sub')}</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -5399,10 +5442,7 @@
                     ${locked ? `
                       <div class="pt-3 border-t border-[#F0EDE5] flex items-center justify-between gap-2">
                         <span class="text-[11px] text-[#92600A] font-medium">🔒 ${state.lang === 'en' ? 'Locked on Free plan (data safe)' : 'Dikunci di paket Free (data aman)'}</span>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                          <button type="button" onclick="openDowngradeModal()" class="px-2.5 py-1 rounded-lg border border-[#EAE7DF] bg-[#F7F6F2] text-[11px] font-semibold text-[#101D2B]">${state.lang === 'en' ? 'Activate' : 'Aktifkan'}</button>
-                          <button type="button" onclick="openUpgradeModal('goals')" class="px-2.5 py-1 rounded-lg bg-[#0E4D38] text-white text-[11px] font-semibold">Closer</button>
-                        </div>
+                        <button type="button" onclick="openUpgradeModal('goals')" class="px-3 py-1.5 rounded-lg bg-[#0E4D38] text-white text-[11px] font-semibold shrink-0">${state.lang === 'en' ? 'Reactivate Closer' : 'Aktifkan Closer'}</button>
                       </div>
                     ` : `
                       <form onsubmit="contributeGoal('${g.id}', event)" class="flex gap-2 pt-3 border-t border-[#F0EDE5]">
@@ -5678,6 +5718,10 @@
 
     let lastRenderedPage = null;
     function render() {
+      const autoLockedNow = enforceFreeLimitsLocally();
+      if (autoLockedNow) {
+        saveStateLocalOnly();
+      }
       const container = document.getElementById('app-content');
       const pageChanged = lastRenderedPage !== state.activePage;
       lastRenderedPage = state.activePage;
@@ -5701,10 +5745,7 @@
       if (window.lucide) lucide.createIcons();
       renderCharts();
       initScrollReveals();
-      if (state.isAuthenticated && state.activePage !== 'landing' && state.activePage !== 'auth' && needsDowngradeReview() && !downgradePromptShown) {
-        downgradePromptShown = true;
-        setTimeout(() => { if (needsDowngradeReview()) openDowngradeModal(); }, 180);
-      }
+
     }
 
     let activeStoryStep = 0;
