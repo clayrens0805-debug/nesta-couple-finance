@@ -1309,6 +1309,25 @@
       m.classList.remove('flex');
     }
 
+    let downgradePromptShown = false;
+
+    function renderDowngradeBanner() {
+      if (!needsDowngradeReview()) return '';
+      const isEn = state.lang === 'en';
+      return `
+        <div class="mb-5 rounded-2xl p-4 bg-[#FDF6EB] border border-[#F5E4C8] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-start gap-3">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-[#D97706] shrink-0 mt-0.5"></i>
+            <div class="text-xs text-[#101D2B]">
+              <div class="font-bold text-sm mb-0.5">${isEn ? 'Free Plan Limit: Choose Active Items' : 'Batas Paket Free: Pilih Item yang Tetap Aktif'}</div>
+              <div class="text-[#5E6D7E]">${isEn ? 'Free plan allows 1 active Savings Goal, 3 Bills, 1 Custom Budget & 2 Custom Categories. No data is deleted—unselected items are safely locked (read-only) until you switch or upgrade.' : 'Paket Free maksimal 1 Target Tabungan, 3 Tagihan, 1 Anggaran Kustom & 2 Kategori Kustom aktif. Data tidak dihapus—sisanya akan dikunci (read-only) hingga ditukar atau upgrade.'}</div>
+            </div>
+          </div>
+          <button type="button" onclick="openDowngradeModal()" class="px-3.5 py-2 rounded-xl bg-[#0F1E28] text-white text-xs font-semibold shrink-0">${isEn ? 'Choose Active Items' : 'Pilih Item Aktif'}</button>
+        </div>
+      `;
+    }
+
     function openDowngradeModal() {
       const m = document.getElementById('downgrade-modal');
       const sec = document.getElementById('dg-sections');
@@ -1316,6 +1335,7 @@
       if (!m || !sec) return;
       if (err) err.classList.add('hidden');
 
+      const isEn = state.lang === 'en';
       const goals = state.goals || [];
       const bills = state.bills || [];
       const budgets = state.customBudgets || [];
@@ -1326,59 +1346,74 @@
       ]));
 
       let blocks = [];
-      if (goals.filter(isItemActive).length > 1) {
+      if (goals.length > 1) {
+        const activeG = goals.filter(isItemActive);
         blocks.push(`
           <div class="p-3.5 rounded-2xl border border-[#EAE7DF] bg-[#F7F6F2]">
-            <div class="text-xs font-bold text-[#101D2B] mb-2">Savings Goals (Pilih maksimal 1 aktif)</div>
+            <div class="text-xs font-bold text-[#101D2B] mb-2">${isEn ? 'Savings Goals (Keep max 1 active, rest locked)' : 'Savings Goals (Pilih maks. 1 aktif, sisanya dikunci)'}</div>
             <div class="space-y-1.5">
-              ${goals.map((g, i) => `
-                <label class="flex items-center gap-2 text-xs bg-white px-3 py-2 rounded-xl border border-[#EAE7DF]">
-                  <input type="checkbox" name="dg-goal" value="${escapeHTML(g.id)}" ${i === 0 ? 'checked' : ''} class="rounded text-[#0E4D38]" />
-                  <span class="font-medium">${escapeHTML(g.title)}</span>
-                </label>
-              `).join('')}
+              ${goals.map((g, i) => {
+                const checked = activeG.length === 1 ? isItemActive(g) : i === 0;
+                return `
+                <label class="flex items-center justify-between gap-2 text-xs bg-white px-3 py-2 rounded-xl border border-[#EAE7DF]">
+                  <span class="flex items-center gap-2">
+                    <input type="checkbox" name="dg-goal" value="${escapeHTML(g.id)}" ${checked ? 'checked' : ''} class="rounded text-[#0E4D38]" />
+                    <span class="font-medium">${escapeHTML(g.title)}</span>
+                  </span>
+                  <span class="text-[11px] text-[#5E6D7E] tabular-nums">${formatIDR(g.targetAmount)}</span>
+                </label>`;
+              }).join('')}
             </div>
           </div>`);
       }
-      if (bills.filter(isItemActive).length > 3) {
+      if (bills.length > 3) {
+        const activeB = bills.filter(isItemActive);
         blocks.push(`
           <div class="p-3.5 rounded-2xl border border-[#EAE7DF] bg-[#F7F6F2]">
-            <div class="text-xs font-bold text-[#101D2B] mb-2">Recurring Bills (Pilih maksimal 3 aktif)</div>
+            <div class="text-xs font-bold text-[#101D2B] mb-2">${isEn ? 'Recurring Bills (Keep max 3 active, rest locked)' : 'Recurring Bills (Pilih maks. 3 aktif, sisanya dikunci)'}</div>
             <div class="space-y-1.5">
-              ${bills.map((b, i) => `
+              ${bills.map((b, i) => {
+                const checked = activeB.length <= 3 ? isItemActive(b) : i < 3;
+                return `
                 <label class="flex items-center gap-2 text-xs bg-white px-3 py-2 rounded-xl border border-[#EAE7DF]">
-                  <input type="checkbox" name="dg-bill" value="${escapeHTML(b.id)}" ${i < 3 ? 'checked' : ''} class="rounded text-[#0E4D38]" />
+                  <input type="checkbox" name="dg-bill" value="${escapeHTML(b.id)}" ${checked ? 'checked' : ''} class="rounded text-[#0E4D38]" />
                   <span class="font-medium">${escapeHTML(b.title)}</span>
-                </label>
-              `).join('')}
+                </label>`;
+              }).join('')}
             </div>
           </div>`);
       }
-      if (budgets.filter(isItemActive).length > 1) {
+      if (budgets.length > 1) {
+        const activeBud = budgets.filter(isItemActive);
         blocks.push(`
           <div class="p-3.5 rounded-2xl border border-[#EAE7DF] bg-[#F7F6F2]">
-            <div class="text-xs font-bold text-[#101D2B] mb-2">Custom Budgets (Pilih maksimal 1 aktif)</div>
+            <div class="text-xs font-bold text-[#101D2B] mb-2">${isEn ? 'Custom Budgets (Keep max 1 active, rest locked)' : 'Custom Budgets (Pilih maks. 1 aktif, sisanya dikunci)'}</div>
             <div class="space-y-1.5">
-              ${budgets.map((cb, i) => `
+              ${budgets.map((cb, i) => {
+                const checked = activeBud.length === 1 ? isItemActive(cb) : i === 0;
+                return `
                 <label class="flex items-center gap-2 text-xs bg-white px-3 py-2 rounded-xl border border-[#EAE7DF]">
-                  <input type="checkbox" name="dg-budget" value="${escapeHTML(cb.id)}" ${i === 0 ? 'checked' : ''} class="rounded text-[#0E4D38]" />
+                  <input type="checkbox" name="dg-budget" value="${escapeHTML(cb.id)}" ${checked ? 'checked' : ''} class="rounded text-[#0E4D38]" />
                   <span class="font-medium">${escapeHTML(cb.name)}</span>
-                </label>
-              `).join('')}
+                </label>`;
+              }).join('')}
             </div>
           </div>`);
       }
       if (extraCats.length > 2) {
+        const archivedSet = new Set(state.archivedCategories || []);
         blocks.push(`
           <div class="p-3.5 rounded-2xl border border-[#EAE7DF] bg-[#F7F6F2]">
-            <div class="text-xs font-bold text-[#101D2B] mb-2">Custom Categories (Pilih maksimal 2 aktif)</div>
+            <div class="text-xs font-bold text-[#101D2B] mb-2">${isEn ? 'Custom Categories (Keep max 2 active, rest locked)' : 'Custom Categories (Pilih maks. 2 aktif, sisanya dikunci)'}</div>
             <div class="flex flex-wrap gap-2">
-              ${extraCats.map((c, i) => `
+              ${extraCats.map((c, i) => {
+                const checked = archivedSet.size > 0 ? !archivedSet.has(c) : i < 2;
+                return `
                 <label class="inline-flex items-center gap-1.5 text-xs bg-white px-3 py-1.5 rounded-xl border border-[#EAE7DF]">
-                  <input type="checkbox" name="dg-cat" value="${escapeHTML(c)}" ${i < 2 ? 'checked' : ''} class="rounded text-[#0E4D38]" />
+                  <input type="checkbox" name="dg-cat" value="${escapeHTML(c)}" ${checked ? 'checked' : ''} class="rounded text-[#0E4D38]" />
                   <span>${escapeHTML(c)}</span>
-                </label>
-              `).join('')}
+                </label>`;
+              }).join('')}
             </div>
           </div>`);
       }
@@ -1398,22 +1433,24 @@
 
       if (keepGoalIds.length > 1 || keepBillIds.length > 3 || keepBudgetIds.length > 1 || keepExtraCategories.length > 2) {
         if (errEl) {
-          errEl.textContent = 'Pilihan melebihi batas paket Free (maks. 1 Goal, 3 Bills, 1 Custom Budget, 2 Custom Categories).';
+          errEl.textContent = state.lang === 'en'
+            ? 'Selection exceeds Free plan limits (max 1 Goal, 3 Bills, 1 Custom Budget, 2 Custom Categories).'
+            : 'Pilihan melebihi batas paket Free (maks. 1 Goal, 3 Bills, 1 Custom Budget, 2 Custom Categories).';
           errEl.classList.remove('hidden');
         }
         return;
       }
 
       // Apply locally (preserving ALL data, marking unselected as archived/inactive & readOnly)
-      if ((state.goals || []).filter(isItemActive).length > 1) {
+      if ((state.goals || []).length > 1 && document.querySelectorAll('input[name="dg-goal"]').length > 0) {
         const s = new Set(keepGoalIds);
         state.goals = state.goals.map(g => ({ ...g, status: s.has(g.id) ? 'active' : 'archived', readOnly: !s.has(g.id) }));
       }
-      if ((state.bills || []).filter(isItemActive).length > 3) {
+      if ((state.bills || []).length > 3 && document.querySelectorAll('input[name="dg-bill"]').length > 0) {
         const s = new Set(keepBillIds);
         state.bills = state.bills.map(b => ({ ...b, status: s.has(b.id) ? 'active' : 'inactive', readOnly: !s.has(b.id) }));
       }
-      if ((state.customBudgets || []).filter(isItemActive).length > 1) {
+      if ((state.customBudgets || []).length > 1 && document.querySelectorAll('input[name="dg-budget"]').length > 0) {
         const s = new Set(keepBudgetIds);
         state.customBudgets = state.customBudgets.map(cb => ({ ...cb, status: s.has(cb.id) ? 'active' : 'archived', readOnly: !s.has(cb.id) }));
       }
@@ -2455,6 +2492,11 @@
     function toggleBillPaid(id) {
       const b = state.bills.find(x => x.id === id);
       if (!b) return;
+      if (!isItemActive(b)) {
+        showToast(state.lang === 'en' ? 'This bill is locked on the Free plan.' : 'Tagihan ini dikunci pada paket Free.');
+        openUpgradeModal('bills');
+        return;
+      }
       if (!b.paidMonths) b.paidMonths = {};
       const ym = state.selectedMonth;
       const linkedExpId = `exp-bill-${b.id}-${ym}`;
@@ -2938,6 +2980,11 @@
       if (!state.customBudgets) return;
       const item = state.customBudgets.find(b => b.id === id);
       if (!item) return;
+      if (!isItemActive(item)) {
+        showToast(state.lang === 'en' ? 'This budget is locked on the Free plan.' : 'Anggaran ini dikunci pada paket Free.');
+        openUpgradeModal('budgets');
+        return;
+      }
       item.limit = Math.max(0, parseNominal(val));
       saveState();
       render();
@@ -2974,12 +3021,17 @@
 
     function contributeGoal(goalId, e) {
       e.preventDefault();
+      const goal = state.goals.find(g => g.id === goalId);
+      if (!goal) return;
+      if (!isItemActive(goal)) {
+        showToast(state.lang === 'en' ? 'This goal is locked on the Free plan.' : 'Target ini dikunci pada paket Free.');
+        openUpgradeModal('goals');
+        return;
+      }
       const amtInput = document.getElementById('contrib-amt-' + goalId);
       const partnerInput = document.getElementById('contrib-partner-' + goalId);
       const amount = parseNominal(amtInput.value);
       if (amount <= 0) return;
-      const goal = state.goals.find(g => g.id === goalId);
-      if (!goal) return;
       goal.contributions.push({
         id: 'c-' + Date.now(),
         partner: partnerInput.value,
@@ -5059,6 +5111,7 @@
       const isEn = state.lang === 'en';
 
       return `
+        ${renderDowngradeBanner()}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('bud_title')}</h1>
@@ -5126,12 +5179,14 @@
               const spent = catSpent[item.category] || 0;
               const pct = item.limit > 0 ? Math.min(100, Math.round((spent / item.limit) * 100)) : (spent > 0 ? 100 : 0);
               const over = spent > item.limit;
+              const locked = !isItemActive(item);
               return `
-                <div class="card-nesta p-5">
+                <div class="card-nesta p-5 ${locked ? 'opacity-75 bg-[#FAF9F6]' : ''}">
                   <div class="flex items-center justify-between gap-2 mb-2">
                     <div>
                       <span class="font-bold text-sm text-[#101D2B]">${escapeHTML(item.name)}</span>
                       <span class="ml-1.5 text-[11px] px-2 py-0.5 rounded-full bg-[#F7F6F2] text-[#5E6D7E]">${escapeHTML(displayCat(item.category))}</span>
+                      ${locked ? `<span class="ml-1.5 text-[10px] px-2 py-0.5 rounded-full bg-[#FDF6EB] text-[#92600A] border border-[#F5E4C8] font-semibold">🔒 ${isEn ? 'Locked' : 'Dikunci'}</span>` : ''}
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-xs font-medium ${over ? 'text-red-600' : 'text-[#16A37B]'} tabular-nums">
@@ -5149,7 +5204,7 @@
                     <span class="tabular-nums">${isEn ? 'Spent:' : 'Terpakai:'} <strong class="text-[#101D2B]">${formatIDR(spent)}</strong></span>
                     <div class="flex items-center gap-1.5">
                       <span>${isEn ? 'Limit:' : 'Batas:'}</span>
-                      <input type="text" inputmode="numeric" value="${formatNominalStr(item.limit) || '0'}" oninput="onNominalInput(this)" onchange="updateCustomBudgetLimit('${item.id}', this.value)" class="w-28 px-2 py-1 rounded-lg border border-[#EAE7DF] text-xs text-right tabular-nums text-[#101D2B]" />
+                      <input type="text" inputmode="numeric" value="${formatNominalStr(item.limit) || '0'}" oninput="onNominalInput(this)" onchange="updateCustomBudgetLimit('${item.id}', this.value)" ${locked ? 'disabled' : ''} class="w-28 px-2 py-1 rounded-lg border border-[#EAE7DF] text-xs text-right tabular-nums text-[#101D2B] ${locked ? 'bg-[#F7F6F2] cursor-not-allowed' : ''}" />
                     </div>
                   </div>
                 </div>
@@ -5170,6 +5225,7 @@
       const totalUnpaid = state.bills.filter(b => !isBillPaid(b)).reduce((s, b) => s + b.amount, 0);
 
       return `
+        ${renderDowngradeBanner()}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('bills_title')}</h1>
@@ -5232,27 +5288,30 @@
             <div class="card-nesta divide-y divide-[#F0EDE5]">
               ${filtered.length === 0 ? `
                 <div class="p-8 text-center text-sm text-[#5E6D7E]">${state.lang === 'en' ? 'No bills found for this filter.' : 'Tidak ada tagihan pada filter ini.'}</div>
-              ` : filtered.map(b => `
-                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              ` : filtered.map(b => {
+                const locked = !isItemActive(b);
+                return `
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${locked ? 'opacity-75 bg-[#FAF9F6]' : ''}">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-[#F7F6F2] text-[#0E4D38] flex items-center justify-center shrink-0">
                       <i data-lucide="${b.category === 'Listrik' ? 'zap' : b.category === 'Internet' ? 'wifi' : b.category === 'Sewa Rumah' ? 'home' : 'file-text'}" class="w-4 h-4"></i>
                     </div>
                     <div>
-                      <div class="font-bold text-sm text-[#101D2B]">${escapeHTML(b.title)}</div>
+                      <div class="font-bold text-sm text-[#101D2B] flex items-center gap-1.5">${escapeHTML(b.title)} ${locked ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-[#FDF6EB] text-[#92600A] border border-[#F5E4C8] font-semibold">🔒 ${state.lang === 'en' ? 'Locked' : 'Dikunci'}</span>` : ''}</div>
                       <div class="text-xs text-[#5E6D7E]">${formatIDR(b.amount)} • ${formatDateID(b.dueDate)}</div>
                     </div>
                   </div>
                   <div class="flex items-center justify-between sm:justify-end gap-2.5">
-                    <button onclick="toggleBillPaid('${b.id}')" class="px-3 py-1.5 rounded-full text-xs font-medium ${isBillPaid(b) ? 'bg-[#EEF7F3] text-[#16A37B]' : 'bg-[#FDF6EB] text-[#D97706] border border-[#F5E4C8]'}">
-                      ${isBillPaid(b) ? (state.lang === 'en' ? 'Paid ✓' : 'Lunas ✓') : (state.lang === 'en' ? 'Mark Paid' : 'Tandai Lunas')}
-                    </button>
+                    ${locked
+                      ? `<button type="button" onclick="openDowngradeModal()" class="px-3 py-1.5 rounded-full text-xs font-medium bg-[#F7F6F2] text-[#5E6D7E] border border-[#EAE7DF]">${state.lang === 'en' ? 'Switch Active' : 'Tukar Aktif'}</button>`
+                      : `<button onclick="toggleBillPaid('${b.id}')" class="px-3 py-1.5 rounded-full text-xs font-medium ${isBillPaid(b) ? 'bg-[#EEF7F3] text-[#16A37B]' : 'bg-[#FDF6EB] text-[#D97706] border border-[#F5E4C8]'}">${isBillPaid(b) ? (state.lang === 'en' ? 'Paid ✓' : 'Lunas ✓') : (state.lang === 'en' ? 'Mark Paid' : 'Tandai Lunas')}</button>`
+                    }
                     <button onclick="deleteBill('${b.id}')" class="p-1.5 rounded-lg text-red-600 hover:bg-red-50">
                       <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                   </div>
-                </div>
-              `).join('')}
+                </div>`;
+              }).join('')}
             </div>
           </div>
         </div>
@@ -5260,10 +5319,15 @@
     }
 
     function renderGoals() {
+      const canSwapGoals = !isPremiumSpace() && (state.goals || []).length > 1;
       return `
-        <div class="mb-6">
-          <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('goals_title')}</h1>
-          <p class="text-sm text-[#5E6D7E] mt-0.5">${t('goals_sub')}</p>
+        ${renderDowngradeBanner()}
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#101D2B]">${t('goals_title')}</h1>
+            <p class="text-sm text-[#5E6D7E] mt-0.5">${t('goals_sub')}</p>
+          </div>
+          ${canSwapGoals && !needsDowngradeReview() ? `<button type="button" onclick="openDowngradeModal()" class="px-3.5 py-2 rounded-xl border border-[#EAE7DF] bg-white text-xs font-semibold text-[#101D2B] self-start sm:self-auto">${state.lang === 'en' ? 'Switch Active Goal (Free Limit)' : 'Tukar Goal Aktif (Batas Free)'}</button>` : ''}
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -5305,10 +5369,14 @@
               const totalB = g.contributions.filter(c => c.partner === 'partner_b').reduce((s, c) => s + c.amount, 0);
               const collected = totalA + totalB;
               const pct = g.targetAmount > 0 ? Math.min(100, Math.round((collected / g.targetAmount) * 100)) : 0;
+              const locked = !isItemActive(g);
               return `
-                <div class="card-nesta overflow-hidden flex flex-col justify-between">
-                  <div class="h-20 bg-gradient-to-r from-[#0F1E28] to-[#16A37B] p-4 flex items-end justify-between text-white">
-                    <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/15 font-medium">${escapeHTML(displayCat(g.category))}</span>
+                <div class="card-nesta overflow-hidden flex flex-col justify-between ${locked ? 'opacity-80' : ''}">
+                  <div class="h-20 ${locked ? 'bg-gradient-to-r from-[#334155] to-[#64748B]' : 'bg-gradient-to-r from-[#0F1E28] to-[#16A37B]'} p-4 flex items-end justify-between text-white">
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/15 font-medium">${escapeHTML(displayCat(g.category))}</span>
+                      ${locked ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-100 font-semibold">🔒 ${state.lang === 'en' ? 'Locked' : 'Dikunci'}</span>` : ''}
+                    </div>
                     <button onclick="deleteGoal('${g.id}')" class="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white">
                       <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                     </button>
@@ -5328,14 +5396,24 @@
                       </div>
                     </div>
 
-                    <form onsubmit="contributeGoal('${g.id}', event)" class="flex gap-2 pt-3 border-t border-[#F0EDE5]">
-                      <select id="contrib-partner-${g.id}" class="px-2.5 py-1.5 rounded-xl border border-[#EAE7DF] text-xs bg-white">
-                        <option value="partner_a" ${state.activeRole === 'partner_a' ? 'selected' : ''}>${escapeHTML(state.couple.partnerA.name)}</option>
-                        <option value="partner_b" ${state.activeRole === 'partner_b' ? 'selected' : ''}>${escapeHTML(state.couple.partnerB.name)}</option>
-                      </select>
-                      <input type="text" inputmode="numeric" id="contrib-amt-${g.id}" required placeholder="Setoran (Rp)" oninput="onNominalInput(this)" class="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl border border-[#EAE7DF] text-xs tabular-nums" />
-                      <button type="submit" class="btn-emerald px-3 py-1.5 rounded-xl text-xs font-medium">${state.lang === 'en' ? '+ Deposit' : '+ Setor'}</button>
-                    </form>
+                    ${locked ? `
+                      <div class="pt-3 border-t border-[#F0EDE5] flex items-center justify-between gap-2">
+                        <span class="text-[11px] text-[#92600A] font-medium">🔒 ${state.lang === 'en' ? 'Locked on Free plan (data safe)' : 'Dikunci di paket Free (data aman)'}</span>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                          <button type="button" onclick="openDowngradeModal()" class="px-2.5 py-1 rounded-lg border border-[#EAE7DF] bg-[#F7F6F2] text-[11px] font-semibold text-[#101D2B]">${state.lang === 'en' ? 'Activate' : 'Aktifkan'}</button>
+                          <button type="button" onclick="openUpgradeModal('goals')" class="px-2.5 py-1 rounded-lg bg-[#0E4D38] text-white text-[11px] font-semibold">Closer</button>
+                        </div>
+                      </div>
+                    ` : `
+                      <form onsubmit="contributeGoal('${g.id}', event)" class="flex gap-2 pt-3 border-t border-[#F0EDE5]">
+                        <select id="contrib-partner-${g.id}" class="px-2.5 py-1.5 rounded-xl border border-[#EAE7DF] text-xs bg-white">
+                          <option value="partner_a" ${state.activeRole === 'partner_a' ? 'selected' : ''}>${escapeHTML(state.couple.partnerA.name)}</option>
+                          <option value="partner_b" ${state.activeRole === 'partner_b' ? 'selected' : ''}>${escapeHTML(state.couple.partnerB.name)}</option>
+                        </select>
+                        <input type="text" inputmode="numeric" id="contrib-amt-${g.id}" required placeholder="Setoran (Rp)" oninput="onNominalInput(this)" class="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl border border-[#EAE7DF] text-xs tabular-nums" />
+                        <button type="submit" class="btn-emerald px-3 py-1.5 rounded-xl text-xs font-medium">${state.lang === 'en' ? '+ Deposit' : '+ Setor'}</button>
+                      </form>
+                    `}
                   </div>
                 </div>
               `;
@@ -5623,6 +5701,10 @@
       if (window.lucide) lucide.createIcons();
       renderCharts();
       initScrollReveals();
+      if (state.isAuthenticated && state.activePage !== 'landing' && state.activePage !== 'auth' && needsDowngradeReview() && !downgradePromptShown) {
+        downgradePromptShown = true;
+        setTimeout(() => { if (needsDowngradeReview()) openDowngradeModal(); }, 180);
+      }
     }
 
     let activeStoryStep = 0;
