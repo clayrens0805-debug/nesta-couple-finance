@@ -478,7 +478,7 @@
             <div id="split-premium-banner" class="hidden rounded-xl bg-[#EAF5F0] border border-[#CBE7DB] px-3 py-2.5 flex items-center justify-between gap-2">
               <div class="text-[11px] text-[#0E4D38] leading-snug">
                 <span class="font-bold">NESTA Closer Preview:</span>
-                <span id="split-premium-text">Upgrade to NESTA Closer (Rp19.900/mo) to save custom % or Rp splits (50:50 is Free).</span>
+                <span id="split-premium-text">50:50 &amp; Custom (%) splits are Free! Upgrade to NESTA Closer (Rp39.000/mo) to save Custom Nominal (Rp) splits.</span>
               </div>
               <button type="button" onclick="openUpgradeModal('split')" class="px-2.5 py-1 rounded-lg bg-[#0E4D38] text-white text-[11px] font-semibold shrink-0">NESTA Closer</button>
             </div>
@@ -1551,26 +1551,23 @@
 
       const reasons = {
         overview: isEn
-          ? 'One subscription covers both partners in your Couple Space. Promo pricing stays locked on every renewal as long as your plan remains active.'
-          : 'Satu langganan berlaku untuk dua pasangan di Couple Space. Harga promo terkunci untuk setiap perpanjangan berikutnya selama langganan tetap aktif.',
+          ? 'One subscription covers both partners in your Couple Space.'
+          : 'Satu langganan otomatis berlaku untuk dua pasangan di Couple Space.',
         goals: isEn
-          ? 'NESTA Together includes 1 active Savings Goal. Upgrade to NESTA Closer (locked promo pricing while active) for unlimited goals.'
-          : 'NESTA Together mencakup 1 Target Tabungan aktif. Upgrade ke NESTA Closer (harga promo terkunci selama aktif) untuk target tanpa batas.',
+          ? 'NESTA Together includes 1 active Savings Goal. Upgrade to NESTA Closer for unlimited goals.'
+          : 'NESTA Together mencakup 1 Target Tabungan aktif. Upgrade ke NESTA Closer untuk target tanpa batas.',
         bills: isEn
           ? 'NESTA Together includes up to 3 active Recurring Bills. Upgrade to NESTA Closer for unlimited bills.'
           : 'NESTA Together mencakup maks. 3 Tagihan Rutin aktif. Upgrade ke NESTA Closer untuk tagihan tanpa batas.',
         budgets: isEn
           ? 'NESTA Together includes 1 main monthly budget + 1 custom budget. Upgrade to NESTA Closer for unlimited budgets.'
           : 'NESTA Together mencakup 1 anggaran bulanan utama + 1 anggaran kustom. Upgrade ke NESTA Closer untuk anggaran tanpa batas.',
-        categories: isEn
-          ? 'NESTA Together includes up to 2 custom categories. Upgrade to NESTA Closer for unlimited categories.'
-          : 'NESTA Together mencakup maks. 2 kategori kustom. Upgrade ke NESTA Closer untuk kategori tanpa batas.',
         split: isEn
-          ? '50:50 split is Free forever! Upgrade to NESTA Closer to save Custom Percentage (%) and Custom Nominal (Rp) splits.'
-          : 'Pembagian 50:50 gratis selamanya! Upgrade ke NESTA Closer untuk menyimpan Custom Percentage (%) dan Custom Nominal (Rp).',
+          ? '50:50 & Custom (%) splits are Free forever! Upgrade to NESTA Closer to save Custom Nominal (Rp) splits.'
+          : 'Pembagian 50:50 & Persen (%) gratis selamanya! Upgrade ke NESTA Closer untuk menyimpan pembagian Nominal (Rp).',
         export: isEn
           ? 'PDF & CSV report exports are part of NESTA Closer. One subscription covers both partners.'
-          : 'Export laporan PDF & CSV tersedia di NESTA Closer. Satu langganan otomatis berlaku untuk berdua.'
+          : 'Ekspor laporan PDF & CSV tersedia di NESTA Closer. Satu langganan otomatis berlaku untuk berdua.'
       };
 
       const title = reasonKey === 'overview'
@@ -1580,7 +1577,7 @@
       body.innerHTML = `
         <div class="flex items-start justify-between gap-3 mb-2">
           <div>
-            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold uppercase tracking-wider">Launch Promotion • Early Adopter</span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold uppercase tracking-wider">${isEn ? 'Launch Promotion' : 'Promo Peluncuran'}</span>
             <h3 class="text-xl sm:text-2xl font-bold text-[#101D2B] mt-1.5">${title}</h3>
           </div>
           <button type="button" onclick="closeUpgradeModal()" class="p-1.5 rounded-lg hover:bg-[#F7F6F2] text-[#5E6D7E]"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -1592,16 +1589,16 @@
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <span class="text-sm font-bold text-[#101D2B]">NESTA Together</span>
-                <span class="px-2 py-0.5 rounded-full bg-white text-[#5E6D7E] text-[10px] font-bold">FREE</span>
+                <span class="px-2 py-0.5 rounded-full bg-white text-[#5E6D7E] text-[10px] font-bold">${isEn ? 'FREE' : 'GRATIS'}</span>
               </div>
               <div class="text-2xl font-bold text-[#101D2B] tabular-nums">Rp0</div>
               <div class="text-[11px] text-[#5E6D7E] mt-0.5 mb-3">${isEn ? 'Free forever' : 'Gratis selamanya'}</div>
               <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
                 <li>✓ ${isEn ? 'Couple Space (2 partners)' : 'Couple Space (2 pasangan)'}</li>
-                <li>✓ ${isEn ? 'Unlimited expenses & 50:50 split' : 'Transaksi harian & 50:50'}</li>
-                <li>✓ ${isEn ? 'Shared Pot & basic settlement' : 'Kas Bersama & Settlement dasar'}</li>
-                <li>✓ ${isEn ? '1 main + 1 custom budget' : '1 anggaran utama + 1 kustom'}</li>
-                <li>✓ ${isEn ? 'Max 3 bills & 1 active goal' : 'Maks. 3 tagihan & 1 goal aktif'}</li>
+                <li>✓ ${isEn ? 'Unlimited expenses, 50:50 & Custom (%) split' : 'Transaksi tanpa batas, bagi 50:50 & Persen (%)'}</li>
+                <li>✓ ${isEn ? 'Shared Pot & basic settlement' : 'Kas Bersama & pelunasan dasar'}</li>
+                <li>✓ ${isEn ? '1 main + 1 custom budget' : '1 anggaran utama + 1 anggaran kustom'}</li>
+                <li>✓ ${isEn ? 'Max 3 bills & 1 active goal' : 'Maks. 3 tagihan & 1 target tabungan aktif'}</li>
                 <li>✓ ${isEn ? 'Unlimited custom categories' : 'Kategori kustom tanpa batas'}</li>
               </ul>
             </div>
@@ -1612,18 +1609,17 @@
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <span class="text-sm font-bold text-[#0F1E28]">NESTA Closer</span>
-                <span class="px-2 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold">Launch Promotion</span>
+                <span class="px-2 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold">${isEn ? 'Monthly' : 'Bulanan'}</span>
               </div>
               <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">${isEn ? 'Rp59.000/month' : 'Rp59.000/bulan'}</div>
               <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp39.000 <span class="text-xs font-normal text-[#5E6D7E]">${isEn ? '/month' : '/bulan'}</span></div>
-              <div class="text-[11px] text-[#16A37B] font-semibold mt-0.5 mb-3">${isEn ? 'Promo price locked while active' : 'Harga promo terkunci saat aktif'}</div>
+              <div class="text-[11px] text-[#5E6D7E] mt-0.5 mb-3">${isEn ? 'Billed monthly • Cancel anytime' : 'Tagihan bulanan • Bisa batal kapan saja'}</div>
               <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
                 <li>✓ ${isEn ? 'Everything in NESTA Together' : 'Semua fitur NESTA Together'}</li>
-                <li>✓ ${isEn ? 'Custom % & Nominal (Rp) Split' : 'Custom % & Nominal (Rp) Split'}</li>
-                <li>✓ ${isEn ? 'Unlimited budgets, bills & goals' : 'Unlimited anggaran, tagihan & goals'}</li>
-                <li>✓ ${isEn ? 'Unlimited custom categories' : 'Unlimited kategori kustom'}</li>
-                <li>✓ ${isEn ? 'PDF & CSV report exports' : 'Export laporan PDF & CSV'}</li>
-                <li>✓ ${isEn ? 'Covers both partners' : 'Berlaku untuk berdua'}</li>
+                <li>✓ ${isEn ? 'Custom Nominal (Rp) split' : 'Pembagian Nominal (Rp) khusus'}</li>
+                <li>✓ ${isEn ? 'Unlimited budgets, bills & goals' : 'Anggaran, tagihan & target tanpa batas'}</li>
+                <li>✓ ${isEn ? 'PDF & CSV report exports' : 'Ekspor laporan PDF & CSV'}</li>
+                <li>✓ ${isEn ? '1 subscription covers both partners' : '1 langganan otomatis untuk berdua'}</li>
               </ul>
             </div>
             <button type="button" onclick="startSubscriptionCheckout('closer_monthly')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0F1E28] hover:bg-[#1A3140] text-white text-xs font-semibold">${isEn ? 'Choose Monthly (Rp39.000)' : 'Pilih Bulanan (Rp39.000)'}</button>
@@ -1633,30 +1629,23 @@
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <span class="text-sm font-bold text-[#0E4D38]">NESTA Closer</span>
-                <span class="px-2 py-0.5 rounded-full bg-[#0E4D38] text-white text-[10px] font-bold">Launch Promotion</span>
+                <span class="px-2 py-0.5 rounded-full bg-[#0E4D38] text-white text-[10px] font-bold">${isEn ? 'Best Value' : 'Paling Hemat'}</span>
               </div>
               <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">${isEn ? 'Rp599.000/year' : 'Rp599.000/tahun'}</div>
               <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp399.000 <span class="text-xs font-normal text-[#5E6D7E]">${isEn ? '/year' : '/tahun'}</span></div>
               <div class="mt-1 mb-3 p-2 rounded-xl bg-[#EAF5F0] text-[10px] text-[#0E4D38] font-semibold leading-snug">
                 ${isEn
-                  ? 'Equals Rp33.250/month • Save Rp69.000 vs 12 months on promo monthly'
-                  : 'Setara Rp33.250/bulan • Hemat Rp69.000 dibanding bulanan selama 12 bulan pada harga promo'}
+                  ? 'Equals Rp33.250/month • Save Rp69.000 vs 12 months monthly'
+                  : 'Setara Rp33.250/bulan • Hemat Rp69.000 dibanding bulanan 12 bulan'}
               </div>
               <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
                 <li>✓ ${isEn ? 'All NESTA Closer features' : 'Semua fitur NESTA Closer'}</li>
-                <li>✓ ${isEn ? 'Rp399.000/yr locked while active' : 'Harga Rp399.000/thn terkunci selama aktif'}</li>
+                <li>✓ ${isEn ? 'Custom Nominal (Rp) split' : 'Pembagian Nominal (Rp) khusus'}</li>
                 <li>✓ ${isEn ? '1 subscription covers both partners' : '1 langganan otomatis untuk berdua'}</li>
               </ul>
             </div>
             <button type="button" onclick="startSubscriptionCheckout('closer_annual')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs font-semibold">${isEn ? 'Choose Annual (Rp399.000)' : 'Pilih Tahunan (Rp399.000)'}</button>
           </div>
-        </div>
-
-        <div class="rounded-2xl bg-[#F7F6F2] border border-[#EAE7DF] p-3.5 text-[11px] text-[#5E6D7E] mb-3">
-          <strong class="text-[#101D2B]">${isEn ? 'Early Adopter Grandfathered Pricing:' : 'Harga Early Adopter Terkunci:'}</strong>
-          ${isEn
-            ? 'Subscribing during the launch promo locks your promo rate for every continuous renewal. If canceled or expired, re-subscribing uses the standard rate at that time.'
-            : 'Berlangganan selama masa promo mengunci harga promo di perpanjangan berikutnya selama langganan tidak terputus. Jika dibatalkan/kedaluwarsa, berlangganan kembali mengikuti harga yang berlaku saat itu.'}
         </div>
 
         <div id="checkout-status-box" class="hidden rounded-2xl bg-[#EAF5F0] border border-[#CBE7DB] p-3.5 text-xs text-[#0E4D38] mb-3"></div>
@@ -1714,7 +1703,7 @@
           box.textContent = data.error || (isEn ? 'Checkout validation failed.' : 'Validasi checkout gagal.');
           return;
         }
-        box.innerHTML = `<strong>Order ${escapeHTML(data.orderId)}</strong> • Rp ${Number(data.amountIdr).toLocaleString('id-ID')} (${data.grandfatheredPricing ? (isEn ? 'Promo price locked for renewals' : 'Harga promo terkunci untuk perpanjangan') : ''}). ${isEn ? 'Awaiting payment gateway webhook verification.' : 'Menunggu verifikasi webhook payment gateway.'}`;
+        box.innerHTML = `<strong>Order ${escapeHTML(data.orderId)}</strong> • Rp ${Number(data.amountIdr).toLocaleString('id-ID')}. ${isEn ? 'Awaiting payment gateway webhook verification.' : 'Menunggu verifikasi webhook payment gateway.'}`;
       } catch (err) {
         box.textContent = isEn ? 'Payment endpoint unavailable in offline preview.' : 'Endpoint pembayaran belum aktif di mode preview offline.';
       }
@@ -2312,12 +2301,12 @@
       const premBanner = document.getElementById('split-premium-banner');
       const premText = document.getElementById('split-premium-text');
       if (premBanner) {
-        const showPrem = !isPremiumSpace() && method !== '50_50';
+        const showPrem = !isPremiumSpace() && method === 'custom_amt';
         premBanner.classList.toggle('hidden', !showPrem);
         if (premText) {
           premText.textContent = state.lang === 'en'
-            ? 'Upgrade to NESTA Closer (Rp19.900/mo) to save custom % or Rp splits (50:50 is Free).'
-            : 'Upgrade ke NESTA Closer (Rp19.900/bln) untuk menyimpan bagi % atau Rp khusus (50:50 gratis).';
+            ? '50:50 & Custom (%) splits are Free! Upgrade to NESTA Closer (Rp39.000/mo) to save Custom Nominal (Rp) splits.'
+            : 'Pembagian 50:50 & Persen (%) gratis! Upgrade ke NESTA Closer (Rp39.000/bln) untuk menyimpan pembagian Nominal (Rp).';
         }
       }
       document.querySelectorAll('.split-tab').forEach(btn => {
@@ -2402,9 +2391,9 @@
       const settleEl = document.getElementById('split-settle-preview');
       if (settleEl) {
         if (paidBy === 'partner_a' && b > 0) {
-          settleEl.textContent = `→ ${pB} mengganti ${formatIDR(b)} ke ${pA}`;
+          settleEl.textContent = state.lang === 'en' ? `→ ${pB} owes ${formatIDR(b)} to ${pA}` : `→ ${pB} mengganti ${formatIDR(b)} ke ${pA}`;
         } else if (paidBy === 'partner_b' && a > 0) {
-          settleEl.textContent = `→ ${pA} mengganti ${formatIDR(a)} ke ${pB}`;
+          settleEl.textContent = state.lang === 'en' ? `→ ${pA} owes ${formatIDR(a)} to ${pB}` : `→ ${pA} mengganti ${formatIDR(a)} ke ${pB}`;
         } else {
           settleEl.textContent = '';
         }
@@ -2445,7 +2434,7 @@
       let b = amount - a;
 
       if (paymentSource === 'talangan') {
-        if (currentSplitMethod !== '50_50' && !isPremiumSpace()) {
+        if (currentSplitMethod === 'custom_amt' && !isPremiumSpace()) {
           openUpgradeModal('split');
           return;
         }
@@ -2455,7 +2444,7 @@
         a = shares.a;
         b = shares.b;
         if (Math.round(a + b) !== Math.round(amount)) {
-          errEl.textContent = `Total porsi (${formatIDR(a + b)}) harus sama dengan jumlah (${formatIDR(amount)}).`;
+          errEl.textContent = state.lang === 'en' ? `Total shares (${formatIDR(a + b)}) must match amount (${formatIDR(amount)}).` : `Total porsi (${formatIDR(a + b)}) harus sama dengan jumlah (${formatIDR(amount)}).`;
           errEl.classList.remove('hidden');
           return;
         }
@@ -2471,10 +2460,10 @@
       if (id) {
         const idx = state.expenses.findIndex(x => x.id === id);
         if (idx >= 0) state.expenses[idx] = record;
-        showToast('Pengeluaran berhasil diperbarui.');
+        showToast(state.lang === 'en' ? 'Expense updated.' : 'Pengeluaran berhasil diperbarui.');
       } else {
         state.expenses.unshift(record);
-        showToast('Pengeluaran tercatat pada ' + formatMonthLabel(date.slice(0, 7)) + '.');
+        showToast(state.lang === 'en' ? 'Expense recorded for ' + formatMonthLabel(date.slice(0, 7)) + '.' : 'Pengeluaran tercatat pada ' + formatMonthLabel(date.slice(0, 7)) + '.');
       }
       state.selectedMonth = date.slice(0, 7);
       saveState();
@@ -2496,7 +2485,7 @@
         state.expenses = state.expenses.filter(x => x.id !== id);
         saveState();
         render();
-        showToast('Pengeluaran dihapus.');
+        showToast(state.lang === 'en' ? 'Expense deleted.' : 'Pengeluaran dihapus.');
       });
     }
 
@@ -2853,7 +2842,7 @@
       state.bills = state.bills.filter(x => x.id !== id);
       saveState();
       render();
-      showToast('Tagihan dihapus.');
+      showToast(state.lang === 'en' ? 'Bill deleted.' : 'Tagihan dihapus.');
     }
 
     function addBill(e) {
@@ -2874,7 +2863,7 @@
       });
       saveState();
       render();
-      showToast('Tagihan rutin baru ditambahkan.');
+      showToast(state.lang === 'en' ? 'Recurring bill added.' : 'Tagihan rutin baru ditambahkan.');
     }
 
     function updateMonthlyBudget(e) {
@@ -2916,7 +2905,7 @@
       inp.value = '';
       if (boxId) document.getElementById(boxId).classList.add('hidden');
       if (type !== 'exp') render();
-      showToast(`Kategori "${val}" ditambahkan.`);
+      showToast(state.lang === 'en' ? `Category "${val}" added.` : `Kategori "${val}" ditambahkan.`);
     }
 
     function addCatFromSettingsByType(type, inputId, e) {
@@ -2933,7 +2922,7 @@
       list.push(val);
       saveState();
       render();
-      showToast(`Kategori "${val}" ditambahkan.`);
+      showToast(state.lang === 'en' ? `Category "${val}" added.` : `Kategori "${val}" ditambahkan.`);
     }
 
     function deleteCategoryByType(type, catName) {
@@ -2975,7 +2964,7 @@
       catSel.value = val;
       inp.value = '';
       document.getElementById('quick-cat-box').classList.add('hidden');
-      showToast(`Kategori "${val}" ditambahkan.`);
+      showToast(state.lang === 'en' ? `Category "${val}" added.` : `Kategori "${val}" ditambahkan.`);
     }
 
     function addCategoryFromSettings(e) {
@@ -2991,7 +2980,7 @@
       cats.push(val);
       saveState();
       render();
-      showToast(`Kategori "${val}" ditambahkan.`);
+      showToast(state.lang === 'en' ? `Category "${val}" added.` : `Kategori "${val}" ditambahkan.`);
     }
 
     function deleteCategory(catName) {
@@ -3047,7 +3036,7 @@
       item.limit = Math.max(0, parseNominal(val));
       saveState();
       render();
-      showToast(`Batas "${item.name}" diperbarui.`);
+      showToast(state.lang === 'en' ? `Limit for "${item.name}" updated.` : `Batas "${item.name}" diperbarui.`);
     }
 
     function deleteCustomBudget(id) {
@@ -3055,7 +3044,7 @@
       state.customBudgets = state.customBudgets.filter(b => b.id !== id);
       saveState();
       render();
-      showToast('Pos anggaran dihapus.');
+      showToast(state.lang === 'en' ? 'Custom budget deleted.' : 'Pos anggaran dihapus.');
     }
 
     function addGoal(e) {
@@ -3075,7 +3064,7 @@
       });
       saveState();
       render();
-      showToast('Target tabungan baru dibuat.');
+      showToast(state.lang === 'en' ? 'Savings goal created.' : 'Target tabungan baru dibuat.');
     }
 
     function contributeGoal(goalId, e) {
@@ -3099,7 +3088,7 @@
       });
       saveState();
       render();
-      showToast(`Setoran ${formatIDR(amount)} berhasil dicatat.`);
+      showToast(state.lang === 'en' ? `Deposit of ${formatIDR(amount)} recorded.` : `Setoran ${formatIDR(amount)} berhasil dicatat.`);
     }
 
     function deleteGoal(id) {
