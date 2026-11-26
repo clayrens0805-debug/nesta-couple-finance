@@ -478,7 +478,7 @@
             <div id="split-premium-banner" class="hidden rounded-xl bg-[#EAF5F0] border border-[#CBE7DB] px-3 py-2.5 flex items-center justify-between gap-2">
               <div class="text-[11px] text-[#0E4D38] leading-snug">
                 <span class="font-bold">NESTA Closer Preview:</span>
-                <span id="split-premium-text">50:50 &amp; Custom (%) splits are Free! Upgrade to NESTA Closer (Rp39.000/mo) to save Custom Nominal (Rp) splits.</span>
+                <span id="split-premium-text">50:50 &amp; Custom (%) splits are Free! Upgrade to NESTA Closer (Rp19.000/mo) to save Custom Nominal (Rp) splits.</span>
               </div>
               <button type="button" onclick="openUpgradeModal('split')" class="px-2.5 py-1 rounded-lg bg-[#0E4D38] text-white text-[11px] font-semibold shrink-0">NESTA Closer</button>
             </div>
@@ -1611,8 +1611,8 @@
                 <span class="text-sm font-bold text-[#0F1E28]">NESTA Closer</span>
                 <span class="px-2 py-0.5 rounded-full bg-[#EAF5F0] text-[#0E4D38] text-[10px] font-bold">${isEn ? 'Monthly' : 'Bulanan'}</span>
               </div>
-              <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">${isEn ? 'Rp59.000/month' : 'Rp59.000/bulan'}</div>
-              <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp39.000 <span class="text-xs font-normal text-[#5E6D7E]">${isEn ? '/month' : '/bulan'}</span></div>
+              <div class="flex items-center gap-2"><span class="text-[11px] text-[#94A3B8] line-through tabular-nums">${isEn ? 'Rp29.000/month' : 'Rp29.000/bulan'}</span><span class="px-1.5 py-0.5 rounded bg-[#EAF5F0] text-[#0E4D38] text-[9px] font-bold">${isEn ? 'SAVE 34%' : 'HEMAT 34%'}</span></div>
+              <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp19.000 <span class="text-xs font-normal text-[#5E6D7E]">${isEn ? '/month' : '/bulan'}</span></div>
               <div class="text-[11px] text-[#5E6D7E] mt-0.5 mb-3">${isEn ? 'Billed monthly • Cancel anytime' : 'Tagihan bulanan • Bisa batal kapan saja'}</div>
               <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
                 <li>✓ ${isEn ? 'Everything in NESTA Together' : 'Semua fitur NESTA Together'}</li>
@@ -1622,7 +1622,7 @@
                 <li>✓ ${isEn ? '1 subscription covers both partners' : '1 langganan otomatis untuk berdua'}</li>
               </ul>
             </div>
-            <button type="button" onclick="startSubscriptionCheckout('closer_monthly')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0F1E28] hover:bg-[#1A3140] text-white text-xs font-semibold">${isEn ? 'Choose Monthly (Rp39.000)' : 'Pilih Bulanan (Rp39.000)'}</button>
+            <button type="button" onclick="startSubscriptionCheckout('closer_monthly')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0F1E28] hover:bg-[#1A3140] text-white text-xs font-semibold">${isEn ? 'Choose Monthly (Rp19.000)' : 'Pilih Bulanan (Rp19.000)'}</button>
           </div>
 
           <div class="rounded-2xl bg-[#FAFDFB] border-2 border-[#16A37B] p-5 flex flex-col justify-between shadow-sm">
@@ -1631,12 +1631,12 @@
                 <span class="text-sm font-bold text-[#0E4D38]">NESTA Closer</span>
                 <span class="px-2 py-0.5 rounded-full bg-[#0E4D38] text-white text-[10px] font-bold">${isEn ? 'Best Value' : 'Paling Hemat'}</span>
               </div>
-              <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">${isEn ? 'Rp599.000/year' : 'Rp599.000/tahun'}</div>
-              <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp399.000 <span class="text-xs font-normal text-[#5E6D7E]">${isEn ? '/year' : '/tahun'}</span></div>
+              <div class="text-[11px] text-[#94A3B8] line-through tabular-nums">${isEn ? 'Rp299.000/year' : 'Rp299.000/tahun'}</div>
+              <div class="text-2xl font-bold text-[#0E4D38] tabular-nums">Rp199.000 <span class="text-xs font-normal text-[#5E6D7E]">${isEn ? '/year' : '/tahun'}</span></div>
               <div class="mt-1 mb-3 p-2 rounded-xl bg-[#EAF5F0] text-[10px] text-[#0E4D38] font-semibold leading-snug">
                 ${isEn
-                  ? 'Equals Rp33.250/month • Save Rp69.000 vs 12 months monthly'
-                  : 'Setara Rp33.250/bulan • Hemat Rp69.000 dibanding bulanan 12 bulan'}
+                  ? 'Save 33% • Equals Rp16.583/month (Save Rp29.000 vs 12 months monthly)'
+                  : 'Hemat 33% • Setara Rp16.583/bulan (Hemat Rp29.000 dibanding bulanan 12 bulan)'}
               </div>
               <ul class="space-y-1.5 text-[11px] text-[#101D2B]">
                 <li>✓ ${isEn ? 'All NESTA Closer features' : 'Semua fitur NESTA Closer'}</li>
@@ -1644,7 +1644,7 @@
                 <li>✓ ${isEn ? '1 subscription covers both partners' : '1 langganan otomatis untuk berdua'}</li>
               </ul>
             </div>
-            <button type="button" onclick="startSubscriptionCheckout('closer_annual')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs font-semibold">${isEn ? 'Choose Annual (Rp399.000)' : 'Pilih Tahunan (Rp399.000)'}</button>
+            <button type="button" onclick="startSubscriptionCheckout('closer_annual')" class="mt-4 w-full py-2.5 rounded-xl bg-[#0E4D38] hover:bg-[#0B3D2C] text-white text-xs font-semibold">${isEn ? 'Choose Annual (Rp199.000)' : 'Pilih Tahunan (Rp199.000)'}</button>
           </div>
         </div>
 
@@ -2305,8 +2305,8 @@
         premBanner.classList.toggle('hidden', !showPrem);
         if (premText) {
           premText.textContent = state.lang === 'en'
-            ? '50:50 & Custom (%) splits are Free! Upgrade to NESTA Closer (Rp39.000/mo) to save Custom Nominal (Rp) splits.'
-            : 'Pembagian 50:50 & Persen (%) gratis! Upgrade ke NESTA Closer (Rp39.000/bln) untuk menyimpan pembagian Nominal (Rp).';
+            ? '50:50 & Custom (%) splits are Free! Upgrade to NESTA Closer (Rp19.000/mo) to save Custom Nominal (Rp) splits.'
+            : 'Pembagian 50:50 & Persen (%) gratis! Upgrade ke NESTA Closer (Rp19.000/bln) untuk menyimpan pembagian Nominal (Rp).';
         }
       }
       document.querySelectorAll('.split-tab').forEach(btn => {
